@@ -1,4 +1,4 @@
-18988334252631994
+18996473604408718
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -51575,6 +51575,41 @@ Fuse Fuseholder TR5 Littelfuse/Wickmann No. 460 No560
 0
 2
 2
+HTV-mcu
+ESP-WROOM-02
+http://espressif.com/sites/default/files/documentation/0c-esp-wroom-02_datasheet_en.pdf
+ESP WROOM-02 espressif esp8266ex
+0
+19
+19
+HTV-mcu
+ESP32-S2-WROVER
+ESP32-S2-WROVER(-I) 2.4 GHz Wi-Fi https://www.espressif.com/sites/default/files/documentation/esp32-s2-wroom_esp32-s2-wroom-i_datasheet_en.pdf
+ESP32-S2  ESP32  WIFI
+0
+43
+43
+HTV-mcu
+ESP32-WROOM-32
+Single 2.4 GHz Wi-Fi and Bluetooth combo chip https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf
+Single 2.4 GHz Wi-Fi and Bluetooth combo  chip
+0
+39
+39
+HTV-mcu
+ESP32-WROOM-32E
+ESP32-WROOM module
+
+0
+51
+39
+HTV-mcu
+ESP32-WROOM-32U
+Single 2.4 GHz Wi-Fi and Bluetooth combo chip with U.FL connector, https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf
+Single 2.4 GHz Wi-Fi and Bluetooth combo  chip
+0
+39
+39
 Heatsink
 Heatsink_35x26mm_1xFixation3mm_Fischer-SK486-35
 Heatsink, 35mm x 26mm, 1x Fixation 3mm, Fischer SK486-35
