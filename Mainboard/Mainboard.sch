@@ -587,24 +587,24 @@ Text Label 5950 3050 0    50   ~ 0
 LCON_AUD
 Text Label 5950 3150 0    50   ~ 0
 RCON_AUD
-Text Label 1350 5850 2    50   ~ 0
+Text Label 1350 6050 2    50   ~ 0
 LCON_BM_A
 Wire Wire Line
-	1900 5850 1350 5850
-Text Label 1850 5850 2    50   ~ 0
+	1900 6050 1350 6050
+Text Label 1850 6050 2    50   ~ 0
 RCON_BM_A
 Text Label 1850 5950 2    50   ~ 0
 RCON_BM_B
-Text Label 1850 6050 2    50   ~ 0
+Text Label 1850 5850 2    50   ~ 0
 RCON_BM_C
 Text Label 1350 5950 2    50   ~ 0
 LCON_BM_B
-Text Label 1350 6050 2    50   ~ 0
+Text Label 1350 5850 2    50   ~ 0
 LCON_BM_C
 Wire Wire Line
 	1350 5950 1900 5950
 Wire Wire Line
-	1900 6050 1350 6050
+	1900 5850 1350 5850
 Text Label 3300 5550 0    50   ~ 0
 LCON_BM_1
 Text Label 3300 5650 0    50   ~ 0
@@ -1121,8 +1121,8 @@ L Device:C C8
 U 1 1 612DF00C
 P 10750 3750
 F 0 "C8" H 10865 3796 50  0000 L CNN
-F 1 "2.2u" H 10865 3705 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0402_1005Metric" H 10788 3600 50  0001 C CNN
+F 1 "10u" H 10865 3705 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 10788 3600 50  0001 C CNN
 F 3 "~" H 10750 3750 50  0001 C CNN
 	1    10750 3750
 	1    0    0    -1  
