@@ -6,6 +6,8 @@
 #include "freertos/queue.h"
 #include <esp_log.h>
 
+#include "bootlogo.c"
+
 #define NO_GFX
 #include "../ESP32-HUB75-MatrixPanel-I2S-DMA/ESP32-HUB75-MatrixPanel-I2S-DMA.h"
 
@@ -45,33 +47,43 @@ void app_main(void)
 	);
 	mxconfig.driver = HUB75_I2S_CFG::FM6126A;
 	mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_10M;
+	mxconfig.double_buff = true;
 	dma_display = new MatrixPanel_I2S_DMA(mxconfig);
 	dma_display->begin();
-	while(1){
-	ESP_LOGI("TAG","ich versuche da was anzuzeigen");
 	dma_display->setPanelBrightness(20);
-	dma_display->fillRect(0,0,64,32,255,0,0);
-	vTaskDelay(1000 / portTICK_PERIOD_MS);
-	dma_display->fillRect(0,0,64,32,0,255,0);
-	vTaskDelay(1000 / portTICK_PERIOD_MS);
-	dma_display->fillRect(0,0,64,32,0,0,255);
-	vTaskDelay(1000 / portTICK_PERIOD_MS);
-	dma_display->fillRect(0,0,64,32,0,0,0);
-	dma_display->fillRect(0,26,64,5,255,0,0);
-	dma_display->fillRect(0,21,64,5,255,127,0);
-	dma_display->fillRect(0,16,64,5,255,255,0);
-	dma_display->fillRect(0,11,64,5,0,255,0);
-	dma_display->fillRect(0,6,64,5,0,0,255);
-	dma_display->fillRect(0,1,64,5,255,0,255);
-	vTaskDelay(1000 / portTICK_PERIOD_MS);
-	
-	//dma_display->setBrightness8(255);
-	dma_display->fillRect(0,0,64,32,0,0,0);
-	dma_display->fillRect(25,0,1,32,255,255,255);
-	vTaskDelay(1000 / portTICK_PERIOD_MS);
-	
-	dma_display->fillRect(0,0,64,32,255,255,255);
-	vTaskDelay(3000 / portTICK_PERIOD_MS);
+	while(1){
+		dma_display->flipDMABuffer();
+		dma_display->clearScreen();
+		for (int i = 0; i < 64 * 32; i++) {
+			dma_display->drawPixel(i % 64, i/64, ((bootlogo[i/8] >> (i%8)) & 1) ? 0xFFFF : 0);
+		}
+		dma_display->showDMABuffer();
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+			
+		ESP_LOGI("TAG","ich versuche da was anzuzeigen");
+		/*dma_display->setPanelBrightness(20);
+		dma_display->fillRect(0,0,64,32,255,0,0);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+		dma_display->fillRect(0,0,64,32,0,255,0);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+		dma_display->fillRect(0,0,64,32,0,0,255);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+		dma_display->fillRect(0,0,64,32,0,0,0);
+		dma_display->fillRect(0,26,64,5,255,0,0);
+		dma_display->fillRect(0,21,64,5,255,127,0);
+		dma_display->fillRect(0,16,64,5,255,255,0);
+		dma_display->fillRect(0,11,64,5,0,255,0);
+		dma_display->fillRect(0,6,64,5,0,0,255);
+		dma_display->fillRect(0,1,64,5,255,0,255);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+		
+		//dma_display->setBrightness8(255);
+		dma_display->fillRect(0,0,64,32,0,0,0);
+		dma_display->fillRect(25,0,1,32,255,255,255);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+		
+		dma_display->fillRect(0,0,64,32,255,255,255);
+		vTaskDelay(3000 / portTICK_PERIOD_MS);*/
 	}
 	//dma_display->showDMABuffer();
 	//dma_display->fillRect(2,2,10,10,255,255,255);

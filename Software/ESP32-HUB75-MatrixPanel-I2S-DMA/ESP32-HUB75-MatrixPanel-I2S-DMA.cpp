@@ -729,7 +729,7 @@ bool MatrixPanel_I2S_DMA::begin(int r1, int g1, int b1, int r2, int g2, int b2, 
   // RGB
   m_cfg.gpio.r1 = r1; m_cfg.gpio.g1 = g1; m_cfg.gpio.b1 = b1;
   m_cfg.gpio.r2 = r2; m_cfg.gpio.g2 = g2; m_cfg.gpio.b2 = b2;
-  
+	
   // Line Select
   m_cfg.gpio.a = a; m_cfg.gpio.b = b; m_cfg.gpio.c = c;
   m_cfg.gpio.d = d; m_cfg.gpio.e = e; 
