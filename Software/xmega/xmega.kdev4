@@ -1,4 +1,4 @@
 [Project]
-CreatedFrom=LaLeMa.kdev4
+CreatedFrom=makefile
 Manager=KDevCustomMakeManager
-Name=esp32
+Name=xmega

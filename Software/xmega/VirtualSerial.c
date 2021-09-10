@@ -35,20 +35,10 @@
  */
 
 #include "VirtualSerial.h"
+#include "setup.h"
+#include <stdbool.h>
 
-//#define DO_DEBUG
-/*
-	USARTC1 gets Used for USB debug output
-	PIN C7 = TX
-	BAUDRATE = 115200
-
-	character n means usb not connected
-	character e means usb connected and enumerating
-	character s means usb configuration success
-	character f means usb configuration failure
-	character b means baud rate got changed
-	digets from 0 to 3 mean different states of RTS/DTR lines
-*/
+#include "swRingbuffer.h"
 
 /** Contains the current baud rate and other settings of the virtual serial port. While this demo does not use
  *  the physical USART and thus does not use these settings, they must still be retained and returned to the host
@@ -63,12 +53,6 @@ static CDC_LineEncoding_t LineEncoding = { .BaudRateBPS = 0,
                                            .ParityType  = CDC_PARITY_None,
                                            .DataBits    = 8                            };
 
-
-#define PIN_BOOT_reg PORTC
-#define PIN_BOOT_bit 0
-#define PIN_EN_reg PORTC
-#define PIN_EN_bit 1
-
 #define ENDPOINT_RX_UART_TX_BYTES 128
 
 uint8_t uart_rx_ring_buffer[128];
@@ -80,57 +64,47 @@ volatile uint8_t uart_tx_buffer_dma_pos = 0;
 volatile uint8_t uart_tx_buffer_usb_pos = 0;
 volatile bool dma_ready = true;
 
-/** Main program entry point. This routine contains the overall program flow, including initial
- *  setup of all components and the main program loop.
- */
-int main(void)
-{
-	SetupHardware();
+#define INJECT_MESSAGE_BUFFER_SIZE 1024
+uint8_t inject_message_usb_buffer[INJECT_MESSAGE_BUFFER_SIZE];
+uint8_t inject_message_uart_buffer[INJECT_MESSAGE_BUFFER_SIZE];
+bool injecting_allowed = true; //while flashing esp its not allowed to inject other data
 
+sw_ringbuffer_t inject_message_usb_sw_ringbuffer;
+sw_ringbuffer_t inject_message_uart_sw_ringbuffer;
+
+void inject_message_usb(char* text)
+{
+	size_t textlen = strlen(text);
+	sw_ringbuffer_write(&inject_message_usb_sw_ringbuffer, (uint8_t*)text, textlen);
+}
+
+void inject_message_uart(char* text)
+{
+	size_t textlen = strlen(text);
+	sw_ringbuffer_write(&inject_message_uart_sw_ringbuffer, (uint8_t*)text, textlen);
+}
+
+void SetupVirtualSerial(void) {
+	/* USB Hardware Initialization */
+	USB_Init();
+	
 	SetupUart();
 	SetupAdditionalPins();
 
-#ifdef DO_DEBUG
-	SetupDebugUart();
-#endif
-
 	GlobalInterruptEnable();
-
+	
 	uart_rx_ring_buffer_init();
 	uart_tx_buffer_init();
-
-	for (;;)
-	{
-		CDC_Task();
-		USB_USBTask();
-	}
+	
+	sw_ringbuffer_init(&inject_message_usb_sw_ringbuffer, inject_message_usb_buffer, INJECT_MESSAGE_BUFFER_SIZE);
+	sw_ringbuffer_init(&inject_message_uart_sw_ringbuffer, inject_message_uart_buffer, INJECT_MESSAGE_BUFFER_SIZE);
 }
 
-/** Configures the board hardware and chip peripherals for the demo's functionality. */
-void SetupHardware(void)
-{
-#if (ARCH == ARCH_AVR8)
-	/* Disable watchdog if enabled by bootloader/fuses */
-	MCUSR &= ~(1 << WDRF);
-	wdt_disable();
-
-	/* Disable clock division */
-	clock_prescale_set(clock_div_1);
-#elif (ARCH == ARCH_XMEGA)
-	/* Start the PLL to multiply the 2MHz RC oscillator to 32MHz and switch the CPU core to run from it */
-	XMEGACLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
-	XMEGACLK_SetCPUClockSource(CLOCK_SRC_PLL);
-
-	/* Start the 32MHz internal RC oscillator and start the DFLL to increase it to 48MHz using the USB SOF as a reference */
-	XMEGACLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
-	XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
-
-	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
-#endif
-
-	/* Hardware Initialization */
-	USB_Init();
+void VirtualSerialWorker(void) {
+	CDC_Task();
+	USB_USBTask();
 }
+
 void uart_rx_ring_buffer_init(void)
 {
 	DMA.CH2.CTRLA                         = DMA_CH_BURSTLEN_1BYTE_gc | DMA_CH_SINGLE_bm | DMA_CH_REPEAT_bm;
@@ -206,24 +180,6 @@ void SetupAdditionalPins(){
 	PIN_BOOT_reg.OUTCLR = 1 << PIN_BOOT_bit;
 	PIN_EN_reg.OUTCLR = 1 << PIN_EN_bit;
 }
-#ifdef DO_DEBUG
-void SetupDebugUart(){
-	PORTC.DIRSET = PIN7_bm;    // pin PC7 (TXC1) as output
-	USARTC1.CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_DISABLED_gc;   // 8N1
-
-	uint32_t baud = 115200;
-	uint16_t val = (((uint32_t)F_CPU * 2) + baud*8)/(baud*16) - 1;
-	USARTC1.BAUDCTRLA = val & 0xFF;
-	USARTC1.BAUDCTRLB = val >> 8;
-
-	USARTC1.CTRLA = USART_RXCINTLVL_OFF_gc;
-	USARTC1.CTRLB |= USART_TXEN_bm | USART_CLK2X_bm;   // enable TX and Clock
-}
-void DebugSendChar(char c) {
-	while(!(USARTC1.STATUS & USART_DREIF_bm));
-	USARTC1.DATA = c;
-}
-#endif
 
 /** Event handler for the USB_Connect event. This indicates that the device is enumerating via the status LEDs and
  *  starts the library USB task to begin the enumeration and USB management process.
@@ -231,9 +187,6 @@ void DebugSendChar(char c) {
 void EVENT_USB_Device_Connect(void)
 {
 	/* Indicate USB enumerating */
-	#ifdef DO_DEBUG
-	DebugSendChar('e');
-	#endif
 }
 
 /** Event handler for the USB_Disconnect event. This indicates that the device is no longer connected to a host via
@@ -242,9 +195,6 @@ void EVENT_USB_Device_Connect(void)
 void EVENT_USB_Device_Disconnect(void)
 {
 	/* Indicate USB not ready */
-	#ifdef DO_DEBUG
-	DebugSendChar('n');
-	#endif
 }
 
 /** Event handler for the USB_ConfigurationChanged event. This is fired when the host set the current configuration
@@ -263,14 +213,6 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	LineEncoding.BaudRateBPS = 0;
 
 	/* Indicate endpoint configuration success or failure */
-	#ifdef DO_DEBUG
-	if (ConfigSuccess){
-		DebugSendChar('s');
-	}
-	else {
-		DebugSendChar('f');
-	}
-	#endif
 }
 
 /** Event handler for the USB_ControlRequest event. This is used to catch and process control requests sent to
@@ -306,10 +248,6 @@ void EVENT_USB_Device_ControlRequest(void)
 				uint16_t val = (((uint32_t)F_CPU * 2) + baud*8)/(baud*16) - 1;
 				USARTC1.BAUDCTRLA = val & 0xFF;
 				USARTC1.BAUDCTRLB = val >> 8;
-
-				#ifdef DO_DEBUG
-				DebugSendChar('b');
-				#endif
 			}
 
 			break;
@@ -349,6 +287,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				}
 				if (DTR){
 					PIN_BOOT_reg.DIRSET = 1 << PIN_BOOT_bit; //Boot LOW
+					injecting_allowed = RTS;
 				} else {
 					PIN_BOOT_reg.DIRCLR = 1 << PIN_BOOT_bit; //Boot floating
 				}
@@ -360,6 +299,12 @@ void EVENT_USB_Device_ControlRequest(void)
 /** Function to manage CDC data transmission and reception to and from the host. */
 void CDC_Task(void)
 {
+	if (injecting_allowed && sw_ringbuffer_availabe(&inject_message_uart_sw_ringbuffer)) {
+		uint16_t len = sw_ringbuffer_read(&inject_message_uart_sw_ringbuffer, &uart_tx_buffer[uart_tx_buffer_usb_pos][0], ENDPOINT_RX_UART_TX_BYTES);
+		uart_tx_buffer_trfcnt[uart_tx_buffer_usb_pos] = len;
+		uart_tx_buffer_usb_pos = ((uart_tx_buffer_usb_pos + 1) & 0b11);
+	}
+	
 	/* Device must be connected and configured for the task to run */
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	  return;
@@ -426,6 +371,25 @@ void CDC_Task(void)
 
 		/* Send an empty packet to prevent host buffering */
 		Endpoint_ClearIN();
+	}
+	else {
+		if (injecting_allowed && sw_ringbuffer_availabe(&inject_message_usb_sw_ringbuffer)) {
+			Endpoint_SelectEndpoint(CDC_TX_EPADDR);
+			
+			sw_ringbuffer_external_job_t read = sw_ringbuffer_read_external(&inject_message_usb_sw_ringbuffer, INJECT_MESSAGE_BUFFER_SIZE);
+			if (read.len == 0){
+				Endpoint_Write_Stream_LE("ugaaaa", 6, NULL);
+			}
+			Endpoint_Write_Stream_LE(read.start, read.len, NULL);
+			if (read.more_data_available){
+				read = sw_ringbuffer_read_external(&inject_message_usb_sw_ringbuffer, INJECT_MESSAGE_BUFFER_SIZE);
+				Endpoint_Write_Stream_LE(read.start, read.len, NULL);
+			}
+			
+			Endpoint_ClearIN();
+			Endpoint_WaitUntilReady();
+			Endpoint_ClearIN();
+		}
 	}
 }
 

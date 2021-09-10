@@ -38,7 +38,6 @@
 
 	/* Includes: */
 		#include <avr/io.h>
-		#include <avr/wdt.h>
 		#include <avr/power.h>
 		#include <avr/interrupt.h>
 		#include <string.h>
@@ -49,6 +48,8 @@
 		#include <LUFA/Platform/Platform.h>
 
 	/* Function Prototypes: */
+		void SetupVirtualSerial(void);
+		void VirtualSerialWorker(void);
 		void SetupHardware(void);
 		void SetupUart(void);
 		void SetupAdditionalPins(void);
@@ -57,15 +58,14 @@
 		void uart_rx_ring_buffer_init(void);
 		void uart_tx_buffer_init(void);
 		void uart_tx_dma_transfer_init(void);
+		
+		void inject_message_usb(char* text);
+		void inject_message_uart(char* text);
 
 		void EVENT_USB_Device_Connect(void);
 		void EVENT_USB_Device_Disconnect(void);
 		void EVENT_USB_Device_ConfigurationChanged(void);
 		void EVENT_USB_Device_ControlRequest(void);
-	
-	/* Helpers */
-		#define PASTE3_INNER(x,y,z) x ## y ## z
-		#define PASTE3(x,y,z) PASTE3_INNER(x,y,z)
 
 #endif
 
