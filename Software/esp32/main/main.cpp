@@ -11,7 +11,6 @@
 
 #include "bootlogo.c"
 
-#define NO_GFX
 #include "../ESP32-HUB75-MatrixPanel-I2S-DMA/ESP32-HUB75-MatrixPanel-I2S-DMA.h"
 
 // Change these to whatever suits
@@ -37,6 +36,7 @@ static const char *TAG = "TAGU";
 static QueueHandle_t uart0_queue;
 
 char mtbuffer[128];
+volatile bool msg_recv = false;
 
 extern "C" {
 	void app_main(void);
@@ -76,17 +76,30 @@ void app_main(void)
 	dma_display = new MatrixPanel_I2S_DMA(mxconfig);
 	dma_display->begin();
 	dma_display->setPanelBrightness(20);
+	dma_display->flipDMABuffer();
+	dma_display->clearScreen();
+	for (int i = 0; i < 64 * 32; i++) {
+		dma_display->drawPixel(i % 64, i/64, ((bootlogo[i/8] >> (i%8)) & 1) ? 0xFFFF : 0);
+	}
+	dma_display->showDMABuffer();
 	while(1){
-		dma_display->flipDMABuffer();
-		dma_display->clearScreen();
-		for (int i = 0; i < 64 * 32; i++) {
-			dma_display->drawPixel(i % 64, i/64, ((bootlogo[i/8] >> (i%8)) & 1) ? 0xFFFF : 0);
+		if (msg_recv) {
+			char c = mtbuffer[0];
+			int i = 0;
+			dma_display->flipDMABuffer();
+			dma_display->clearScreen();
+			dma_display->setCursor(0, 0);
+			do {
+				dma_display->write(c);
+				i++;
+				c = mtbuffer[i];
+			} while(c != 0);
+			dma_display->showDMABuffer();
+			msg_recv = false;
 		}
-		
-		dma_display->showDMABuffer();
 		vTaskDelay(50 / portTICK_PERIOD_MS);
 			
-		ESP_LOGI("TAG","ich versuche da was anzuzeigen");
+		//ESP_LOGI("TAG","ich versuche da was anzuzeigen");
 		
 		uart_event_t event;
 
@@ -103,6 +116,7 @@ void app_main(void)
                     ESP_LOGI(TAG, "[UART DATA]: %d", event.size);
                     uart_read_bytes(UART_NUM_0, mtbuffer, event.size, portMAX_DELAY);
 					mtbuffer[event.size] = '\0';
+					msg_recv = true;
 					ESP_LOGI(TAG, "%s", mtbuffer);
                     break;
                 //Event of HW FIFO overflow detected

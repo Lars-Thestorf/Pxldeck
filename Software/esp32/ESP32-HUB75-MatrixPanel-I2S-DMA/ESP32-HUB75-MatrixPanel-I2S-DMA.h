@@ -19,7 +19,7 @@
  * > Provides 24bpp (CRGB) colour support for  Adafruit_GFX functions like drawCircle etc.
  * > Requires FastLED.h
  */
-//#define USE_GFX_ROOT 1
+#define USE_GFX_ROOT 1
 
 
 /* Physical / Chained HUB75(s) RGB pixel WIDTH and HEIGHT. 
@@ -94,10 +94,10 @@
 #include "esp32_i2s_parallel_v2.h"
 
 #ifdef USE_GFX_ROOT
-	#include <FastLED.h>    
+	//#include <FastLED.h>    
 	#include "GFX.h" // Adafruit GFX core class -> https://github.com/mrfaptastic/GFX_Root	
 #elif !defined NO_GFX
-    //#include "Adafruit_GFX.h" // Adafruit class with all the other stuff
+    #include "Adafruit_GFX.h" // Adafruit class with all the other stuff
 #endif
 
 
@@ -311,8 +311,8 @@ struct  HUB75_I2S_CFG {
 /***************************************************************************************/   
 #ifdef USE_GFX_ROOT
 class MatrixPanel_I2S_DMA : public GFX {
-//#elif !defined NO_GFX
-//class MatrixPanel_I2S_DMA : public Adafruit_GFX {
+#elif !defined NO_GFX
+class MatrixPanel_I2S_DMA : public Adafruit_GFX {
 #else
 class MatrixPanel_I2S_DMA {
 #endif
@@ -330,7 +330,7 @@ class MatrixPanel_I2S_DMA {
 #ifdef USE_GFX_ROOT
       : GFX(MATRIX_WIDTH, MATRIX_HEIGHT)
 #elif !defined NO_GFX
-      //: Adafruit_GFX(MATRIX_WIDTH, MATRIX_HEIGHT)
+      : Adafruit_GFX(MATRIX_WIDTH, MATRIX_HEIGHT)
 #endif
     {}
 
@@ -344,7 +344,7 @@ class MatrixPanel_I2S_DMA {
 #ifdef USE_GFX_ROOT 
       GFX(opts.mx_width*opts.chain_length, opts.mx_height),
 #elif !defined NO_GFX
-      //Adafruit_GFX(opts.mx_width*opts.chain_length, opts.mx_height),
+      Adafruit_GFX(opts.mx_width*opts.chain_length, opts.mx_height),
 #endif        
       m_cfg(opts) {}
 
@@ -454,12 +454,6 @@ class MatrixPanel_I2S_DMA {
 
     void fillScreenRGB888(uint8_t r, uint8_t g, uint8_t b);
     void drawPixelRGB888(int16_t x, int16_t y, uint8_t r, uint8_t g, uint8_t b);
-	
-#ifdef USE_GFX_ROOT
-	// 24bpp FASTLED CRGB colour struct support
-	void fillScreen(CRGB color);
-    void drawPixel(int16_t x, int16_t y, CRGB color);
-#endif 
 
     void drawIcon (int *ico, int16_t x, int16_t y, int16_t cols, int16_t rows);
     
@@ -736,21 +730,7 @@ inline void MatrixPanel_I2S_DMA::drawPixelRGB888(int16_t x, int16_t y, uint8_t r
 inline void MatrixPanel_I2S_DMA::fillScreenRGB888(uint8_t r, uint8_t g,uint8_t b)
 {
   updateMatrixDMABuffer(r, g, b); // RGB only (no pixel coordinate) version of 'updateMatrixDMABuffer'
-} 
-
-#ifdef USE_GFX_ROOT
-// Support for CRGB values provided via FastLED
-inline void MatrixPanel_I2S_DMA::drawPixel(int16_t x, int16_t y, CRGB color) 
-{
-  updateMatrixDMABuffer( x, y, color.red, color.green, color.blue);
 }
-
-inline void MatrixPanel_I2S_DMA::fillScreen(CRGB color) 
-{
-  updateMatrixDMABuffer(color.red, color.green, color.blue);
-}
-#endif
-
 
 // Pass 8-bit (each) R,G,B, get back 16-bit packed color
 //https://github.com/squix78/ILI9341Buffer/blob/master/ILI9341_SPI.cpp

@@ -304,6 +304,10 @@ void CDC_Task(void)
 		uart_tx_buffer_trfcnt[uart_tx_buffer_usb_pos] = len;
 		uart_tx_buffer_usb_pos = ((uart_tx_buffer_usb_pos + 1) & 0b11);
 	}
+	if(dma_ready && uart_tx_buffer_dma_pos != uart_tx_buffer_usb_pos) //Ready will be false after the call...
+	{
+		uart_tx_dma_transfer_init();
+	}
 	
 	/* Device must be connected and configured for the task to run */
 	if (USB_DeviceState != DEVICE_STATE_Configured)

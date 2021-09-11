@@ -24,6 +24,7 @@ char logmsg2[] = "[xmega] Hallo ESP, kannst du mich hören?";
 void DebugWorker(void) {
 	static uint16_t supermessage = 0;
 	supermessage++;
+	supermessage &= 0x07FF;
 	if (supermessage == 0) {
 		buttons_t states = getPressedButtons();
 		
@@ -36,7 +37,7 @@ void DebugWorker(void) {
 			states >>= 1;
 		}
 		inject_message_usb(logmsg);
-		inject_message_uart(logmsg2);
+		inject_message_uart(logmsg + 8);
 	}
 }
 
