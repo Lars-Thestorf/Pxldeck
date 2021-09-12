@@ -7,9 +7,6 @@ buttons_t buttons_cache;
 
 void SetupButtonMatrix()
 {
-	ADCA.CTRLA = 0;
-	ADCA.CTRLB = 0;
-	
 	//Inputs
 	PIN_BTNMATRIX_1_reg.DIRCLR = PIN_BTNMATRIX_1_bm;
 	PIN_BTNMATRIX_1_reg.PASTE3(PIN,PIN_BTNMATRIX_1_bit,CTRL) = PORT_OPC_PULLUP_gc;
@@ -20,10 +17,10 @@ void SetupButtonMatrix()
 	PIN_BTNMATRIX_4_reg.DIRCLR = PIN_BTNMATRIX_4_bm;
 	PIN_BTNMATRIX_4_reg.PASTE3(PIN,PIN_BTNMATRIX_4_bit,CTRL) = PORT_OPC_PULLUP_gc;
 	
-	PIN_BTN_JL_reg.DIRCLR = PIN_BTN_JL_bm;
-	PIN_BTN_JL_reg.PASTE3(PIN,PIN_BTN_JL_bit,CTRL) = PORT_OPC_PULLUP_gc;
-	PIN_BTN_JR_reg.DIRCLR = PIN_BTN_JR_bm;
-	PIN_BTN_JR_reg.PASTE3(PIN,PIN_BTN_JR_bit,CTRL) = PORT_OPC_PULLUP_gc;
+	PIN_JOYSTICK_L_BTN_reg.DIRCLR = PIN_JOYSTICK_L_BTN_bm;
+	PIN_JOYSTICK_L_BTN_reg.PASTE3(PIN,PIN_JOYSTICK_L_BTN_bit,CTRL) = PORT_OPC_PULLUP_gc;
+	PIN_JOYSTICK_R_BTN_reg.DIRCLR = PIN_JOYSTICK_R_BTN_bm;
+	PIN_JOYSTICK_R_BTN_reg.PASTE3(PIN,PIN_JOYSTICK_R_BTN_bit,CTRL) = PORT_OPC_PULLUP_gc;
 	
 	PORTC.DIRCLR = PIN3_bm;
 	
@@ -42,44 +39,47 @@ void ButtonMatrixWorker()
 	PIN_BTNMATRIX_A_reg.OUTCLR = PIN_BTNMATRIX_A_bm;
 	_delay_us(10);
 	if ((PIN_BTNMATRIX_1_reg.IN & PIN_BTNMATRIX_1_bm) == 0)
-		buttonstates |= BUTTON_A;
+		buttonstates |= BUTTON_L;
 	if ((PIN_BTNMATRIX_2_reg.IN & PIN_BTNMATRIX_2_bm) == 0)
-		buttonstates |= BUTTON_B;
+		buttonstates |= BUTTON_SELECT;
 	if ((PIN_BTNMATRIX_3_reg.IN & PIN_BTNMATRIX_3_bm) == 0)
-		buttonstates |= BUTTON_X;
+		buttonstates |= BUTTON_START;
 	if ((PIN_BTNMATRIX_4_reg.IN & PIN_BTNMATRIX_4_bm) == 0)
-		buttonstates |= BUTTON_Y;
+		buttonstates |= BUTTON_R;
 	PIN_BTNMATRIX_A_reg.OUTSET = PIN_BTNMATRIX_A_bm;
-	
-	if ((PIN_BTN_JL_reg.IN & PIN_BTN_JL_bm) == 0)
-		buttonstates |= BUTTON_JL;
 	
 	PIN_BTNMATRIX_B_reg.OUTCLR = PIN_BTNMATRIX_B_bm;
 	_delay_us(10);
 	if ((PIN_BTNMATRIX_1_reg.IN & PIN_BTNMATRIX_1_bm) == 0)
-		buttonstates |= BUTTON_L;
+		buttonstates |= BUTTON_DL;
 	if ((PIN_BTNMATRIX_2_reg.IN & PIN_BTNMATRIX_2_bm) == 0)
-		buttonstates |= BUTTON_R;
+		buttonstates |= BUTTON_DD;
 	if ((PIN_BTNMATRIX_3_reg.IN & PIN_BTNMATRIX_3_bm) == 0)
-		buttonstates |= BUTTON_START;
+		buttonstates |= BUTTON_B;
 	if ((PIN_BTNMATRIX_4_reg.IN & PIN_BTNMATRIX_4_bm) == 0)
-		buttonstates |= BUTTON_SELECT;
+		buttonstates |= BUTTON_A;
 	PIN_BTNMATRIX_B_reg.OUTSET = PIN_BTNMATRIX_B_bm;
-	
-	if ((PIN_BTN_JR_reg.IN & PIN_BTN_JR_bm) == 0)
-		buttonstates |= BUTTON_JR;
 	
 	PIN_BTNMATRIX_C_reg.OUTCLR = PIN_BTNMATRIX_C_bm;
 	_delay_us(10);
 	if ((PIN_BTNMATRIX_1_reg.IN & PIN_BTNMATRIX_1_bm) == 0)
-		buttonstates |= BUTTON_DL;
-	if ((PIN_BTNMATRIX_2_reg.IN & PIN_BTNMATRIX_2_bm) == 0)
 		buttonstates |= BUTTON_DU;
-	if ((PIN_BTNMATRIX_3_reg.IN & PIN_BTNMATRIX_3_bm) == 0)
+	if ((PIN_BTNMATRIX_2_reg.IN & PIN_BTNMATRIX_2_bm) == 0)
 		buttonstates |= BUTTON_DR;
+	if ((PIN_BTNMATRIX_3_reg.IN & PIN_BTNMATRIX_3_bm) == 0)
+		buttonstates |= BUTTON_Y;
 	if ((PIN_BTNMATRIX_4_reg.IN & PIN_BTNMATRIX_4_bm) == 0)
-		buttonstates |= BUTTON_DD;
+		buttonstates |= BUTTON_X;
 	PIN_BTNMATRIX_C_reg.OUTSET = PIN_BTNMATRIX_C_bm;
+	
+	if ((PIN_JOYSTICK_L_BTN_reg.IN & PIN_JOYSTICK_L_BTN_bm) == 0)
+		buttonstates |= BUTTON_JL;
+	if ((PIN_JOYSTICK_R_BTN_reg.IN & PIN_JOYSTICK_R_BTN_bm) == 0)
+		buttonstates |= BUTTON_JR;
+	if ((PIN_CRG_reg.IN & PIN_CRG_bm) == 0)
+		buttonstates |= BUTTON_CRG;
+	if ((PIN_PWRBTN_reg.IN & PIN_PWRBTN_bm) == 0)
+		buttonstates |= BUTTON_PWR;
 	
 	buttons_cache = buttonstates;
 }

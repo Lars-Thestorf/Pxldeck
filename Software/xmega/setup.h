@@ -19,6 +19,9 @@
 #define PIN_PWRBTN_reg PORTD
 #define PIN_PWRBTN_bit 4
 #define PIN_PWRBTN_bm (1 << PIN_PWRBTN_bit)
+#define PIN_CRG_reg PORTD
+#define PIN_CRG_bit 5
+#define PIN_CRG_bm (1 << PIN_CRG_bit)
 
 #define PIN_BTNMATRIX_A_reg PORTD
 #define PIN_BTNMATRIX_A_bit 2
@@ -42,11 +45,23 @@
 #define PIN_BTNMATRIX_4_bit 3
 #define PIN_BTNMATRIX_4_bm (1 << PIN_BTNMATRIX_4_bit)
 
-#define PIN_BTN_JL_reg PORTB
-#define PIN_BTN_JL_bit 0
-#define PIN_BTN_JL_bm (1 << PIN_BTN_JL_bit)
-#define PIN_BTN_JR_reg PORTE
-#define PIN_BTN_JR_bit 2
-#define PIN_BTN_JR_bm (1 << PIN_BTN_JR_bit)
+#define PIN_JOYSTICK_L_BTN_reg PORTE
+#define PIN_JOYSTICK_L_BTN_bit 2
+#define PIN_JOYSTICK_L_BTN_bm (1 << PIN_JOYSTICK_L_BTN_bit)
+#define PIN_JOYSTICK_L_XAXIS_reg PORTA
+#define PIN_JOYSTICK_L_XAXIS_bit 0
+#define PIN_JOYSTICK_L_XAXIS_bm (1 << PIN_JOYSTICK_L_XAXIS_bit)
+#define PIN_JOYSTICK_L_YAXIS_reg PORTA
+#define PIN_JOYSTICK_L_YAXIS_bit 1
+#define PIN_JOYSTICK_L_YAXIS_bm (1 << PIN_JOYSTICK_L_YAXIS_bit)
+#define PIN_JOYSTICK_R_BTN_reg PORTB
+#define PIN_JOYSTICK_R_BTN_bit 0
+#define PIN_JOYSTICK_R_BTN_bm (1 << PIN_JOYSTICK_R_BTN_bit)
+#define PIN_JOYSTICK_R_XAXIS_reg PORTA
+#define PIN_JOYSTICK_R_XAXIS_bit 2
+#define PIN_JOYSTICK_R_XAXIS_bm (1 << PIN_JOYSTICK_R_XAXIS_bit)
+#define PIN_JOYSTICK_R_YAXIS_reg PORTA
+#define PIN_JOYSTICK_R_YAXIS_bit 3
+#define PIN_JOYSTICK_R_YAXIS_bm (1 << PIN_JOYSTICK_R_YAXIS_bit)
 
 #endif

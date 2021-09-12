@@ -71,7 +71,7 @@ void app_main(void)
 		_pins // pin mapping
 	);
 	mxconfig.driver = HUB75_I2S_CFG::FM6126A;
-	mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_10M;
+	mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_20M;
 	mxconfig.double_buff = true;
 	dma_display = new MatrixPanel_I2S_DMA(mxconfig);
 	dma_display->begin();

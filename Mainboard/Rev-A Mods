@@ -1,0 +1,6 @@
+Mainboard Rev A Mods
+
+CE von 3v3 LDO nach VCC ziehen mit beliebigem widerstand bis 1M
+bootloaderpin (PC3) an left joystick pressed oder so
+powerbtn debounce
+keepalive hardware pulldown

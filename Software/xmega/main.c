@@ -3,6 +3,8 @@
 #include "buttonMatrix.h"
 
 #include <avr/wdt.h>
+#include <stdio.h>
+#include "joystick.h"
 
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
@@ -18,7 +20,7 @@ void SetupHardware(void)
 	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
 }
 
-char logmsg[] = "[xmega] -------------------\r\n";
+char logmsg[] = "[xmega] ------------------- xxxx yyyy rxrx ryry \r\n";
 char logmsg2[] = "[xmega] Hallo ESP, kannst du mich hören?";
 
 void DebugWorker(void) {
@@ -36,6 +38,13 @@ void DebugWorker(void) {
 			}
 			states >>= 1;
 		}
+		
+		uint8_t joystickX = getJoystickXAxis();
+		uint8_t joystickY = getJoystickYAxis();
+		uint8_t joystickRX = getJoystickRXAxis();
+		uint8_t joystickRY = getJoystickRYAxis();
+		sprintf(logmsg + 28, "x%d y%d\r\nx%d y%d\r\n", joystickX, joystickY, joystickRX, joystickRY);
+		
 		inject_message_usb(logmsg);
 		inject_message_uart(logmsg + 8);
 	}
@@ -53,6 +62,7 @@ int main(void)
 	
 	SetupVirtualSerial();
 	SetupButtonMatrix();
+	SetupJoysticks();
 	
 	wdt_reset();
 	wdt_enable( WDT_PER_1KCLK_gc );
