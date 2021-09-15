@@ -60,7 +60,9 @@
 		void uart_tx_dma_transfer_init(void);
 		
 		void inject_message_usb(char* text);
+		void inject_data_usb(uint8_t* data, uint16_t len);
 		void inject_message_uart(char* text);
+		void inject_data_uart(uint8_t* data, uint16_t len);
 
 		void EVENT_USB_Device_Connect(void);
 		void EVENT_USB_Device_Disconnect(void);

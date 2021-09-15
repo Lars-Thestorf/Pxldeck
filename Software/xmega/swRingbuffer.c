@@ -5,15 +5,15 @@
 
 
 
-void sw_ringbuffer_init(sw_ringbuffer_t *sw_ringbuffer, uint8_t buffer[], uint16_t buffer_len) {
+void sw_ringbuffer_init(sw_ringbuffer_t *sw_ringbuffer, datatype_t buffer[], datalen_t buffer_len) {
 	sw_ringbuffer->buffer = buffer;
 	sw_ringbuffer->buffer_len = buffer_len;
 	sw_ringbuffer->read_pos = 0;
 	sw_ringbuffer->write_pos = 0;
 }
 
-void sw_ringbuffer_write(sw_ringbuffer_t *sw_ringbuffer, uint8_t *data, uint16_t len){
-	size_t copylen = len;
+void sw_ringbuffer_write(sw_ringbuffer_t *sw_ringbuffer, datatype_t *data, datalen_t len){
+	datalen_t copylen = len;
 	if (sw_ringbuffer->write_pos > sw_ringbuffer->buffer_len - len)
 		copylen = sw_ringbuffer->buffer_len - sw_ringbuffer->write_pos;
 	memcpy(&sw_ringbuffer->buffer[sw_ringbuffer->write_pos], data, copylen);
@@ -24,26 +24,26 @@ void sw_ringbuffer_write(sw_ringbuffer_t *sw_ringbuffer, uint8_t *data, uint16_t
 		sw_ringbuffer->write_pos -= sw_ringbuffer->buffer_len;
 }
 
-uint16_t sw_ringbuffer_availabe(sw_ringbuffer_t *sw_ringbuffer) {
+datalen_t sw_ringbuffer_available(sw_ringbuffer_t *sw_ringbuffer) {
 	if (sw_ringbuffer->write_pos >= sw_ringbuffer->read_pos)
 		return sw_ringbuffer->write_pos - sw_ringbuffer->read_pos;
 	else
 		return sw_ringbuffer->buffer_len - sw_ringbuffer->read_pos + sw_ringbuffer->write_pos;
 }
 
-uint16_t sw_ringbuffer_read(sw_ringbuffer_t *sw_ringbuffer, uint8_t *data, uint16_t maxlen){
-	uint16_t total_len;
+datalen_t sw_ringbuffer_read(sw_ringbuffer_t *sw_ringbuffer, datatype_t *data, datalen_t maxlen){
+	datalen_t total_len;
 	if (sw_ringbuffer->write_pos >= sw_ringbuffer->read_pos){
 		total_len = sw_ringbuffer->write_pos - sw_ringbuffer->read_pos;
 		if (total_len > maxlen)
 			total_len = maxlen;
 		memcpy(data, &sw_ringbuffer->buffer[sw_ringbuffer->read_pos], total_len);
 	} else {
-		uint16_t first_len = sw_ringbuffer->buffer_len - sw_ringbuffer->read_pos;
+		datalen_t first_len = sw_ringbuffer->buffer_len - sw_ringbuffer->read_pos;
 		if (first_len > maxlen)
 			first_len = maxlen;
 		memcpy(data, &sw_ringbuffer->buffer[sw_ringbuffer->read_pos], first_len);
-		uint16_t second_len = sw_ringbuffer->write_pos;
+		datalen_t second_len = sw_ringbuffer->write_pos;
 		if (second_len > maxlen - first_len)
 			second_len = maxlen - first_len;
 		memcpy(data + first_len, &sw_ringbuffer->buffer[0], sw_ringbuffer->write_pos);
@@ -55,7 +55,7 @@ uint16_t sw_ringbuffer_read(sw_ringbuffer_t *sw_ringbuffer, uint8_t *data, uint1
 	return total_len;
 }
 
-sw_ringbuffer_external_job_t sw_ringbuffer_read_external(sw_ringbuffer_t* sw_ringbuffer, uint16_t maxlen)
+sw_ringbuffer_external_job_t sw_ringbuffer_read_external(sw_ringbuffer_t* sw_ringbuffer, datalen_t maxlen)
 {
 	sw_ringbuffer_external_job_t job;
 	job.start = &sw_ringbuffer->buffer[sw_ringbuffer->read_pos];
@@ -76,7 +76,7 @@ sw_ringbuffer_external_job_t sw_ringbuffer_read_external(sw_ringbuffer_t* sw_rin
 	return job;
 }
 
-sw_ringbuffer_external_job_t sw_ringbuffer_write_external(sw_ringbuffer_t* sw_ringbuffer, uint16_t len)
+sw_ringbuffer_external_job_t sw_ringbuffer_write_external(sw_ringbuffer_t* sw_ringbuffer, datalen_t len)
 {
 	sw_ringbuffer_external_job_t job;
 	job.start = &sw_ringbuffer->buffer[sw_ringbuffer->write_pos];
@@ -91,3 +91,9 @@ sw_ringbuffer_external_job_t sw_ringbuffer_write_external(sw_ringbuffer_t* sw_ri
 	}
 	return job;
 }
+
+void sw_ringbuffer_flush(sw_ringbuffer_t* sw_ringbuffer)
+{
+	sw_ringbuffer->read_pos = sw_ringbuffer->write_pos;
+}
+

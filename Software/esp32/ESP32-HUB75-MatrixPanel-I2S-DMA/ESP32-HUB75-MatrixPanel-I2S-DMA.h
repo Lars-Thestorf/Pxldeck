@@ -95,7 +95,7 @@
 
 #ifdef USE_GFX_ROOT
 	//#include <FastLED.h>    
-	#include "GFX.h" // Adafruit GFX core class -> https://github.com/mrfaptastic/GFX_Root	
+	#include "../GFX/GFX.h" // Adafruit GFX core class -> https://github.com/mrfaptastic/GFX_Root	
 #elif !defined NO_GFX
     #include "Adafruit_GFX.h" // Adafruit class with all the other stuff
 #endif

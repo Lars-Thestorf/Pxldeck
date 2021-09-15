@@ -17,13 +17,6 @@ void SetupButtonMatrix()
 	PIN_BTNMATRIX_4_reg.DIRCLR = PIN_BTNMATRIX_4_bm;
 	PIN_BTNMATRIX_4_reg.PASTE3(PIN,PIN_BTNMATRIX_4_bit,CTRL) = PORT_OPC_PULLUP_gc;
 	
-	PIN_JOYSTICK_L_BTN_reg.DIRCLR = PIN_JOYSTICK_L_BTN_bm;
-	PIN_JOYSTICK_L_BTN_reg.PASTE3(PIN,PIN_JOYSTICK_L_BTN_bit,CTRL) = PORT_OPC_PULLUP_gc;
-	PIN_JOYSTICK_R_BTN_reg.DIRCLR = PIN_JOYSTICK_R_BTN_bm;
-	PIN_JOYSTICK_R_BTN_reg.PASTE3(PIN,PIN_JOYSTICK_R_BTN_bit,CTRL) = PORT_OPC_PULLUP_gc;
-	
-	PORTC.DIRCLR = PIN3_bm;
-	
 	//Outputs
 	PIN_BTNMATRIX_A_reg.DIRSET = PIN_BTNMATRIX_A_bm;
 	PIN_BTNMATRIX_A_reg.OUTSET = PIN_BTNMATRIX_A_bm;
@@ -71,15 +64,6 @@ void ButtonMatrixWorker()
 	if ((PIN_BTNMATRIX_4_reg.IN & PIN_BTNMATRIX_4_bm) == 0)
 		buttonstates |= BUTTON_X;
 	PIN_BTNMATRIX_C_reg.OUTSET = PIN_BTNMATRIX_C_bm;
-	
-	if ((PIN_JOYSTICK_L_BTN_reg.IN & PIN_JOYSTICK_L_BTN_bm) == 0)
-		buttonstates |= BUTTON_JL;
-	if ((PIN_JOYSTICK_R_BTN_reg.IN & PIN_JOYSTICK_R_BTN_bm) == 0)
-		buttonstates |= BUTTON_JR;
-	if ((PIN_CRG_reg.IN & PIN_CRG_bm) == 0)
-		buttonstates |= BUTTON_CRG;
-	if ((PIN_PWRBTN_reg.IN & PIN_PWRBTN_bm) == 0)
-		buttonstates |= BUTTON_PWR;
 	
 	buttons_cache = buttonstates;
 }

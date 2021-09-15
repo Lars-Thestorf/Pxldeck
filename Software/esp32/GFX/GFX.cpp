@@ -165,8 +165,9 @@ void GFX::fillScreen(uint16_t color)
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, T color)
+//template<typename T>
+//void GFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, T color)
+void GFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
 {
   if (x0 == x1) 
   {
@@ -231,8 +232,7 @@ void GFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, T color)
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawCircle(int16_t x0, int16_t y0, int16_t r, T color)
+void GFX::drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color)
 {
 #if defined(ESP8266)
   yield();
@@ -280,8 +280,7 @@ void GFX::drawCircle(int16_t x0, int16_t y0, int16_t r, T color)
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, T color) 
+void GFX::drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color) 
 {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
@@ -326,8 +325,7 @@ void GFX::drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername
     @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::fillCircle(int16_t x0, int16_t y0, int16_t r, T color) 
+void GFX::fillCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color) 
 {
   fillRect(x0, y0 - r, 1, 2 * r + 1, color);
   fillCircleHelper(x0, y0, r, 3, 0, color);
@@ -344,8 +342,7 @@ void GFX::fillCircle(int16_t x0, int16_t y0, int16_t r, T color)
     @param  color    16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, T color) 
+void GFX::fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, uint16_t color) 
 {
 
   int16_t f = 1 - r;
@@ -396,8 +393,7 @@ void GFX::fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corners, i
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, T color) 
+void GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) 
 {
   fillRect(x, y, w, 1, color);
   fillRect(x, y + h - 1, w, 1, color);
@@ -416,8 +412,7 @@ void GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, T color)
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, T color) 
+void GFX::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color) 
 {
   int16_t max_radius = ((w < h) ? w : h) / 2; // 1/2 minor axis
   if (r > max_radius) r = max_radius;
@@ -444,8 +439,7 @@ void GFX::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, T
     @param    color 16-bit 5-6-5 Color to draw/fill with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, T color) 
+void GFX::fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color) 
 {
   int16_t max_radius = ((w < h) ? w : h) / 2; // 1/2 minor axis
   if (r > max_radius) r = max_radius;
@@ -468,8 +462,7 @@ void GFX::fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, T
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, T color) 
+void GFX::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color) 
 {
   drawLine(x0, y0, x1, y1, color);
   drawLine(x1, y1, x2, y2, color);
@@ -488,8 +481,7 @@ void GFX::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x
     @param    color 16-bit 5-6-5 Color to fill/draw with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, T color) 
+void GFX::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color) 
 {
 
   int16_t a, b, y, last;
@@ -584,8 +576,7 @@ void GFX::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, int16_t h, T color) 
+void GFX::drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, int16_t h, uint16_t color) 
 {
 
   int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
@@ -617,8 +608,7 @@ void GFX::drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, in
     @param    bg 16-bit 5-6-5 Color to draw background with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, int16_t h, T color, T bg) 
+void GFX::drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, int16_t h, uint16_t color, uint16_t bg) 
 {
 
   int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
@@ -647,8 +637,7 @@ void GFX::drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, in
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, T color) 
+void GFX::drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, uint16_t color) 
 {
 
   int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
@@ -680,8 +669,7 @@ void GFX::drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h
     @param    bg 16-bit 5-6-5 Color to draw background with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, T color, T bg) 
+void GFX::drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, uint16_t color, uint16_t bg) 
 {
 
   int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
@@ -713,8 +701,7 @@ void GFX::drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h
     @param    color 16-bit 5-6-5 Color to draw pixels with
 */
 /**************************************************************************/
-template<typename T>
-void GFX::drawXBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, int16_t h, T color) 
+void GFX::drawXBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, int16_t h, uint16_t color) 
 {
 
   int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte

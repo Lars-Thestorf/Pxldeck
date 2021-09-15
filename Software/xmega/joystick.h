@@ -4,14 +4,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-void SetupJoysticks();
+void SetupJoysticks(void);
 
-bool isJoystickPressed();
-bool isJoystickRPressed();
-uint8_t getJoystickXAxis();
-uint8_t getJoystickYAxis();
-uint8_t getJoystickRXAxis();
-uint8_t getJoystickRYAxis();
+bool isJoystickPressed(void);
+bool isJoystickRPressed(void);
+uint8_t getJoystickXAxis(void);
+uint8_t getJoystickYAxis(void);
+uint8_t getJoystickRXAxis(void);
+uint8_t getJoystickRYAxis(void);
 
 #endif
 

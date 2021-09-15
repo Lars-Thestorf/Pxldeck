@@ -77,11 +77,19 @@ void inject_message_usb(char* text)
 	size_t textlen = strlen(text);
 	sw_ringbuffer_write(&inject_message_usb_sw_ringbuffer, (uint8_t*)text, textlen);
 }
+void inject_data_usb(uint8_t* data, uint16_t len)
+{
+	sw_ringbuffer_write(&inject_message_usb_sw_ringbuffer, data, len);
+}
 
 void inject_message_uart(char* text)
 {
 	size_t textlen = strlen(text);
 	sw_ringbuffer_write(&inject_message_uart_sw_ringbuffer, (uint8_t*)text, textlen);
+}
+void inject_data_uart(uint8_t* data, uint16_t len)
+{
+	sw_ringbuffer_write(&inject_message_uart_sw_ringbuffer, data, len);
 }
 
 void SetupVirtualSerial(void) {
@@ -146,6 +154,8 @@ void uart_tx_buffer_init(void)
 	DMA.CH1.DESTADDR0                     = (uint8_t) (uint16_t) dst;
 	DMA.CH1.DESTADDR1                     = (uint8_t)  *(((uint8_t *)&(dst)) + 1);
 	DMA.CH1.DESTADDR2                     = (uint8_t)  *(((uint8_t *)&(dst)) + 2);
+	
+	dma_ready = true;
 }
 
 void uart_tx_dma_transfer_init(void)
@@ -159,16 +169,18 @@ void uart_tx_dma_transfer_init(void)
 	DMA.CH1.SRCADDR2                      = (uint8_t)  *(((uint8_t *)&(src)) + 2); 
 	DMA.CH1.CTRLA                        |= DMA_CH_ENABLE_bm;
 }
-
+void UartSetBaud(uint32_t baud) {
+	uint16_t val = (((uint32_t)F_CPU * 2) + baud*8)/(baud*16) - 1;
+	USARTC1.BAUDCTRLA = val & 0xFF;
+	USARTC1.BAUDCTRLB = val >> 8;
+}
 void SetupUart(){
 	PORTC.DIRCLR = PIN6_bm;    // pin PC2 (RXC1) as input
 	PORTC.DIRSET = PIN7_bm;    // pin PC3 (TXC1) as output
 	USARTC1.CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_DISABLED_gc;   // 8N1
 
 	uint32_t baud = 115200;
-	uint16_t val = (((uint32_t)F_CPU * 2) + baud*8)/(baud*16) - 1;
-	USARTC1.BAUDCTRLA = val & 0xFF;
-	USARTC1.BAUDCTRLB = val >> 8;
+	UartSetBaud(baud);
 
 	USARTC1.CTRLA = USART_RXCINTLVL_OFF_gc;
 
@@ -245,9 +257,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				Endpoint_ClearIN();
 
 				uint32_t baud = LineEncoding.BaudRateBPS;
-				uint16_t val = (((uint32_t)F_CPU * 2) + baud*8)/(baud*16) - 1;
-				USARTC1.BAUDCTRLA = val & 0xFF;
-				USARTC1.BAUDCTRLB = val >> 8;
+				UartSetBaud(baud);
 			}
 
 			break;
@@ -288,6 +298,10 @@ void EVENT_USB_Device_ControlRequest(void)
 				if (DTR){
 					PIN_BOOT_reg.DIRSET = 1 << PIN_BOOT_bit; //Boot LOW
 					injecting_allowed = RTS;
+					if (!injecting_allowed){
+						sw_ringbuffer_flush(&inject_message_uart_sw_ringbuffer);
+						sw_ringbuffer_flush(&inject_message_usb_sw_ringbuffer);
+					}
 				} else {
 					PIN_BOOT_reg.DIRCLR = 1 << PIN_BOOT_bit; //Boot floating
 				}
@@ -299,14 +313,17 @@ void EVENT_USB_Device_ControlRequest(void)
 /** Function to manage CDC data transmission and reception to and from the host. */
 void CDC_Task(void)
 {
-	if (injecting_allowed && sw_ringbuffer_availabe(&inject_message_uart_sw_ringbuffer)) {
-		uint16_t len = sw_ringbuffer_read(&inject_message_uart_sw_ringbuffer, &uart_tx_buffer[uart_tx_buffer_usb_pos][0], ENDPOINT_RX_UART_TX_BYTES);
-		uart_tx_buffer_trfcnt[uart_tx_buffer_usb_pos] = len;
-		uart_tx_buffer_usb_pos = ((uart_tx_buffer_usb_pos + 1) & 0b11);
-	}
-	if(dma_ready && uart_tx_buffer_dma_pos != uart_tx_buffer_usb_pos) //Ready will be false after the call...
-	{
-		uart_tx_dma_transfer_init();
+	uint8_t next_tx_buffer_usb_pos = ((uart_tx_buffer_usb_pos + 1) & 0b11);
+	if(next_tx_buffer_usb_pos != uart_tx_buffer_dma_pos) {
+		if (injecting_allowed && sw_ringbuffer_available(&inject_message_uart_sw_ringbuffer)) {
+			uint16_t len = sw_ringbuffer_read(&inject_message_uart_sw_ringbuffer, &uart_tx_buffer[uart_tx_buffer_usb_pos][0], ENDPOINT_RX_UART_TX_BYTES);
+			uart_tx_buffer_trfcnt[uart_tx_buffer_usb_pos] = len;
+			uart_tx_buffer_usb_pos = next_tx_buffer_usb_pos;
+		}
+		if(dma_ready && uart_tx_buffer_dma_pos != uart_tx_buffer_usb_pos) //Ready will be false after the call...
+		{
+			uart_tx_dma_transfer_init();
+		}
 	}
 	
 	/* Device must be connected and configured for the task to run */
@@ -314,7 +331,7 @@ void CDC_Task(void)
 	  return;
 
 	/* If we have a free buffer receive data from endpoint */
-	uint8_t next_tx_buffer_usb_pos = ((uart_tx_buffer_usb_pos + 1) & 0b11);
+	next_tx_buffer_usb_pos = ((uart_tx_buffer_usb_pos + 1) & 0b11);
 	if(next_tx_buffer_usb_pos != uart_tx_buffer_dma_pos) //If the next buffer still in work we should not use it for new data.
 	{
 		Endpoint_SelectEndpoint(CDC_RX_EPADDR);
@@ -377,13 +394,10 @@ void CDC_Task(void)
 		Endpoint_ClearIN();
 	}
 	else {
-		if (injecting_allowed && sw_ringbuffer_availabe(&inject_message_usb_sw_ringbuffer)) {
+		if (injecting_allowed && sw_ringbuffer_available(&inject_message_usb_sw_ringbuffer)) {
 			Endpoint_SelectEndpoint(CDC_TX_EPADDR);
 			
 			sw_ringbuffer_external_job_t read = sw_ringbuffer_read_external(&inject_message_usb_sw_ringbuffer, INJECT_MESSAGE_BUFFER_SIZE);
-			if (read.len == 0){
-				Endpoint_Write_Stream_LE("ugaaaa", 6, NULL);
-			}
 			Endpoint_Write_Stream_LE(read.start, read.len, NULL);
 			if (read.more_data_available){
 				read = sw_ringbuffer_read_external(&inject_message_usb_sw_ringbuffer, INJECT_MESSAGE_BUFFER_SIZE);
@@ -397,12 +411,7 @@ void CDC_Task(void)
 	}
 }
 
-//DMA Interrupts
-ISR(DMA_CH2_vect)
-{
-	DMA.CH2.CTRLB |= DMA_CH_TRNIF_bm;
-}
-
+//DMA Interrupt
 ISR(DMA_CH1_vect)
 {
 	DMA.CH1.CTRLB |= DMA_CH_TRNIF_bm;

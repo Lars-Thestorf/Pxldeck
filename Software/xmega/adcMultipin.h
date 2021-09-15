@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void SetupAdcMultipin();
+void SetupAdcMultipin(void);
 
 uint16_t getAnalogValue(uint8_t pin);
 

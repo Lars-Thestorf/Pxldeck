@@ -22,6 +22,9 @@
 #define PIN_CRG_reg PORTD
 #define PIN_CRG_bit 5
 #define PIN_CRG_bm (1 << PIN_CRG_bit)
+#define PIN_BATTERYDIV_reg PORTA
+#define PIN_BATTERYDIV_bit 5
+#define PIN_BATTERYDIV_bm (1 << PIN_BATTERYDIV_bit)
 
 #define PIN_BTNMATRIX_A_reg PORTD
 #define PIN_BTNMATRIX_A_bit 2

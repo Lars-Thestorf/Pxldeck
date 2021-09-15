@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include "joystick.h"
 
+#include "espComm.h"
+
+uint8_t statuscache;
+
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
 {
@@ -20,15 +24,18 @@ void SetupHardware(void)
 	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
 }
 
+/*
 char logmsg[] = "[xmega] ------------------- xxxx yyyy rxrx ryry \r\n";
 char logmsg2[] = "[xmega] Hallo ESP, kannst du mich hören?";
-
+char logmsg3[30];
+*/
 void DebugWorker(void) {
 	static uint16_t supermessage = 0;
 	supermessage++;
-	supermessage &= 0x07FF;
+	supermessage &= 0x03FF;
 	if (supermessage == 0) {
-		buttons_t states = getPressedButtons();
+		SendDeviceStatus();
+		/*buttons_t states = getPressedButtons();
 		
 		for (int i = 0; i < 16; i++) {
 			if (states & 1) {
@@ -46,7 +53,9 @@ void DebugWorker(void) {
 		sprintf(logmsg + 28, "x%d y%d\r\nx%d y%d\r\n", joystickX, joystickY, joystickRX, joystickRY);
 		
 		inject_message_usb(logmsg);
-		inject_message_uart(logmsg + 8);
+		sprintf(logmsg3, "[xmega] RST: %d", statuscache);
+		inject_message_usb(logmsg3);
+		inject_message_uart(logmsg + 8);*/
 	}
 }
 
@@ -55,6 +64,8 @@ void DebugWorker(void) {
  */
 int main(void)
 {
+	statuscache = RST.STATUS;
+	
 	wdt_enable( WDT_PER_4KCLK_gc );
 	
 	PowerLatch();
@@ -72,6 +83,7 @@ int main(void)
 		VirtualSerialWorker();
 		ButtonMatrixWorker();
 		DebugWorker();
+		PowerWorker();
 		if(!isPowerButtonPressed()) {
 			wdt_reset();
 		}
