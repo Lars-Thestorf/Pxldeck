@@ -3,6 +3,7 @@
 #include <avr/interrupt.h>
 #include "setup.h"
 #include "adcMultipin.h"
+#include <avr/delay.h>
 
 volatile bool interrupt_happend = false;
 
@@ -56,7 +57,11 @@ bool isDeviceCharging() {
 //Power-BTN
 ISR(PORTD_INT0_vect)
 {
-	PIN_KEEPALIVE_reg.OUTCLR = PIN_KEEPALIVE_bm; //pin PD3 (Keepalive) low
+	if (interrupt_happend == true) {
+		_delay_ms(100);
+		PIN_KEEPALIVE_reg.OUTCLR = PIN_KEEPALIVE_bm; //pin PD3 (Keepalive) low
+	}
 	interrupt_happend = true;
+	PIN_PWRBTN_reg.PIN4CTRL |= PORT_ISC_RISING_gc;
 	//Boot_Key = MAGIC_BOOT_KEY;
 }
