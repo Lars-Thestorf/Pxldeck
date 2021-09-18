@@ -57,7 +57,7 @@ void XmegaCommWorker(void)
 		return;
 	uart_read_bytes(UART_NUM_0, rxbuffer, sizeof(statusReportData_t), 0); //TODO: read all bytes and check for valid packet at end
 	uart_flush_input(UART_NUM_0);
-	//printf("%.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x\r\n", rxbuffer[0], rxbuffer[1], rxbuffer[2], rxbuffer[3], rxbuffer[4], rxbuffer[5], rxbuffer[6], rxbuffer[7], rxbuffer[8], rxbuffer[9]);
+	printf("%.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x\r\n", rxbuffer[0], rxbuffer[1], rxbuffer[2], rxbuffer[3], rxbuffer[4], rxbuffer[5], rxbuffer[6], rxbuffer[7], rxbuffer[8], rxbuffer[9]);
 	uint16_t crc = ~esp_crc16_be(0, rxbuffer, sizeof(statusReportData_t));
 	//printf(" CRC: %.4x\r\n", crc);
 	if (crc == 0) {
@@ -65,6 +65,7 @@ void XmegaCommWorker(void)
 		CommEstablished = true;
 	} else {
 		ESP_LOGI(TAG, "corrupt message");
+		CommEstablished = false;
 	}
 
 	return;

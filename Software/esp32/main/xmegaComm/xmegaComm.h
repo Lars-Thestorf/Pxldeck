@@ -38,7 +38,7 @@ uint8_t xmegaGetJoystickYAxis(void);
 uint8_t xmegaGetJoystickRXAxis(void);
 uint8_t xmegaGetJoystickRYAxis(void);
 
-uint16_t xmegaGetBatteryLevel();
+uint16_t xmegaGetBatteryLevel(void);
 
 #ifdef __cplusplus
 }

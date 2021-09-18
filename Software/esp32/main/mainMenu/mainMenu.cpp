@@ -5,6 +5,8 @@
 #include "../games/gamesApi/gamesApi.h"
 #include "../games/pong/pong.h"
 
+#include "../graphics.h"
+
 LaLeMaGame games[] = {pong_game};
 
 #define LEMAGOS_STATE_MAINMENU 0
@@ -14,8 +16,8 @@ uint8_t state = LEMAGOS_STATE_MAINMENU;
 
 void* gameMem;
 
-void DrawMainMenu ( MatrixPanel_I2S_DMA* gfx )
-{
+void DrawMainMenu() {
+	MatrixPanel_I2S_DMA* gfx = getGraphics();
 	switch(state) {
 		case LEMAGOS_STATE_MAINMENU: {
 			//top bar
@@ -45,11 +47,23 @@ void DrawMainMenu ( MatrixPanel_I2S_DMA* gfx )
 			
 			gfx->drawRect(25, 9, 14, 14, 0x38E7);
 			
+			//Debug sticks
+			gfx->drawLine(6, 15, 6 + getLRInput(1) / 30, 15 + getUDInput(1) / 30, 0xFFFF);
+			gfx->drawLine(57, 15, 57 + getRJoystickXAxis(1) / 30, 15 + getRJoystickYAxis(1) / 30, 0xFFFF);
+			
 			//input handling
 			if (isPrimaryButtonPressed(1)){
 				gfx->clearScreen();
 				state = LEMAGOS_STATE_INGAME;
 				gameMem = games[0].setupFunction();
+			}
+			gfx->setTextColor(GRAPHICS_COLOR_WHITE);
+			if (isShoulderButtonPressed(1)) {
+				char batstring[10];
+				sprintf(batstring, "Bat: %d", getBatteryPercentage());
+				drawString(0,0,batstring);
+			} else {
+				drawString(0,0,games[0].name);
 			}
 		}
 		break;

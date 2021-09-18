@@ -72,6 +72,37 @@ bool injecting_allowed = true; //while flashing esp its not allowed to inject ot
 sw_ringbuffer_t inject_message_usb_sw_ringbuffer;
 sw_ringbuffer_t inject_message_uart_sw_ringbuffer;
 
+bool prev_boot = false;
+bool prev_en = false;
+
+void DebugSendChar(char c) {
+	while(!(USARTE0.STATUS & USART_DREIF_bm));
+	USARTE0.DATA = c;
+}
+void DebugSendText(char* text) {
+	char c = text[0];
+	int i = 0;
+	while (c != '\0') {
+		DebugSendChar(c);
+		i++;
+		c = text[i];
+	}
+}
+void DebugSendHex(uint8_t data) {
+	uint8_t lower = data & 0x0F;
+	uint8_t upper = data >> 4;
+	if (upper >= 10) {
+		DebugSendChar('A' - 10 + upper);
+	} else {
+		DebugSendChar('0' + upper);
+	}
+	if (lower >= 10) {
+		DebugSendChar('A' - 10 + lower);
+	} else {
+		DebugSendChar('0' + lower);
+	}
+}
+
 void inject_message_usb(char* text)
 {
 	size_t textlen = strlen(text);
@@ -92,10 +123,13 @@ void inject_data_uart(uint8_t* data, uint16_t len)
 	sw_ringbuffer_write(&inject_message_uart_sw_ringbuffer, data, len);
 }
 
+void SetupDebugUart(void);
+
 void SetupVirtualSerial(void) {
 	/* USB Hardware Initialization */
 	USB_Init();
 	
+	SetupDebugUart();
 	SetupUart();
 	SetupAdditionalPins();
 
@@ -186,6 +220,24 @@ void SetupUart(){
 
 	USARTC1.CTRLB |= USART_TXEN_bm | USART_RXEN_bm | USART_CLK2X_bm;   // enable TX+RX and Clock
 }
+
+void SetupDebugUart(){
+	PORTE.DIRSET = PIN3_bm;    // pin PE3 (TXC1) as output
+	USARTE0.CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_DISABLED_gc;   // 8N1
+
+	uint32_t baud = 115200;
+	uint16_t val = (((uint32_t)F_CPU * 2) + baud*8)/(baud*16) - 1;
+	USARTE0.BAUDCTRLA = val & 0xFF;
+	USARTE0.BAUDCTRLB = val >> 8;
+
+	USARTE0.CTRLA = USART_RXCINTLVL_OFF_gc;
+
+	USARTE0.CTRLB |= USART_TXEN_bm | USART_CLK2X_bm;   // enable TX and Clock
+	
+	DebugSendText("Xmega boot\r\n");
+}
+
+
 void SetupAdditionalPins(){
 	PIN_BOOT_reg.PASTE3(PIN, PIN_BOOT_bit, CTRL) = PORT_OPC_PULLUP_gc;
 	PIN_EN_reg.PASTE3(PIN, PIN_EN_bit, CTRL) = PORT_OPC_PULLUP_gc;
@@ -199,6 +251,7 @@ void SetupAdditionalPins(){
 void EVENT_USB_Device_Connect(void)
 {
 	/* Indicate USB enumerating */
+	DebugSendText("USB connect\r\n");
 }
 
 /** Event handler for the USB_Disconnect event. This indicates that the device is no longer connected to a host via
@@ -207,6 +260,11 @@ void EVENT_USB_Device_Connect(void)
 void EVENT_USB_Device_Disconnect(void)
 {
 	/* Indicate USB not ready */
+	//ohne USB wollen wir mit dem ESP reden können
+	injecting_allowed = true;
+	uint32_t baud = 115200;
+	UartSetBaud(baud);
+	DebugSendText("USB disconnect\r\n");
 }
 
 /** Event handler for the USB_ConfigurationChanged event. This is fired when the host set the current configuration
@@ -225,6 +283,11 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	LineEncoding.BaudRateBPS = 0;
 
 	/* Indicate endpoint configuration success or failure */
+	if(ConfigSuccess) {
+		DebugSendText("USB config OK\r\n");
+	} else {
+		DebugSendText("USB config fail\r\n");
+	}
 }
 
 /** Event handler for the USB_ControlRequest event. This is used to catch and process control requests sent to
@@ -233,10 +296,12 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  */
 void EVENT_USB_Device_ControlRequest(void)
 {
+	//DebugSendText("USB Control Req\r\n");
 	/* Process CDC specific control requests */
 	switch (USB_ControlRequest.bRequest)
 	{
 		case CDC_REQ_GetLineEncoding:
+			DebugSendText("USB get something\r\n");
 			if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE))
 			{
 				Endpoint_ClearSETUP();
@@ -248,6 +313,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 			break;
 		case CDC_REQ_SetLineEncoding:
+			DebugSendText("USB set something\r\n");
 			if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE))
 			{
 				Endpoint_ClearSETUP();
@@ -257,11 +323,21 @@ void EVENT_USB_Device_ControlRequest(void)
 				Endpoint_ClearIN();
 
 				uint32_t baud = LineEncoding.BaudRateBPS;
-				UartSetBaud(baud);
+				DebugSendHex(baud >> 24);
+				DebugSendHex(baud >> 16);
+				DebugSendHex(baud >> 8);
+				DebugSendHex(baud);
+				if(!injecting_allowed || baud == 115200) {
+					DebugSendText(" Baud changes\r\n");
+					UartSetBaud(baud);
+				} else {
+					DebugSendText(" Resist Baud changes\r\n");
+				}
 			}
 
 			break;
 		case CDC_REQ_SetControlLineState:
+			//DebugSendText("USB set something2\r\n");
 			if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE))
 			{
 				Endpoint_ClearSETUP();
@@ -274,37 +350,41 @@ void EVENT_USB_Device_ControlRequest(void)
 				bool DTR = (USB_ControlRequest.wValue & CDC_CONTROL_LINE_OUT_DTR) != 0;
 				bool RTS = (USB_ControlRequest.wValue & CDC_CONTROL_LINE_OUT_RTS) != 0;
 
-#ifdef DO_DEBUG
+				//DebugSendHex(USB_ControlRequest.wValue >> 8);
+				//DebugSendHex(USB_ControlRequest.wValue);
+				//DebugSendText("\r\n");
+				
+				//High signal -> pin low for esp
+				//Low signal -> pin floating for esp
 				//open serial monitor: 320
 				//RTS: ----------_____
 				//DTR: -----__________
 				//flashing procedure: 32310
 				//RTS: ---------------__________
 				//DTR: -----_____----------_____
-				if (DTR==0 && RTS==0)
-					DebugSendChar('0');
-				if (DTR==1 && RTS==0)
-					DebugSendChar('1');
-				if (DTR==0 && RTS==1)
-					DebugSendChar('2');
-				if (DTR==1 && RTS==1)
-					DebugSendChar('3');
-#endif
 				if (RTS){
 					PIN_EN_reg.DIRSET = 1 << PIN_EN_bit; //Reset LOW
 				} else {
 					PIN_EN_reg.DIRCLR = 1 << PIN_EN_bit; //Reset floating
+					if (prev_en) { // fallende flanke von RTS
+						if (DTR) {
+							injecting_allowed = false;
+							//DebugSendText("ESP flashing\r\n");
+						} else {
+							injecting_allowed = true;
+							//DebugSendText("ESP reset\r\n");
+							sw_ringbuffer_flush(&inject_message_uart_sw_ringbuffer);
+							sw_ringbuffer_flush(&inject_message_usb_sw_ringbuffer);
+						}
+					}
 				}
 				if (DTR){
 					PIN_BOOT_reg.DIRSET = 1 << PIN_BOOT_bit; //Boot LOW
-					injecting_allowed = RTS;
-					if (!injecting_allowed){
-						sw_ringbuffer_flush(&inject_message_uart_sw_ringbuffer);
-						sw_ringbuffer_flush(&inject_message_usb_sw_ringbuffer);
-					}
 				} else {
 					PIN_BOOT_reg.DIRCLR = 1 << PIN_BOOT_bit; //Boot floating
 				}
+				prev_boot = DTR;
+				prev_en = RTS;
 			}
 			break;
 	}
@@ -322,6 +402,7 @@ void CDC_Task(void)
 		}
 		if(dma_ready && uart_tx_buffer_dma_pos != uart_tx_buffer_usb_pos) //Ready will be false after the call...
 		{
+			DebugSendText("DMA\r\n");
 			uart_tx_dma_transfer_init();
 		}
 	}
@@ -334,11 +415,13 @@ void CDC_Task(void)
 	next_tx_buffer_usb_pos = ((uart_tx_buffer_usb_pos + 1) & 0b11);
 	if(next_tx_buffer_usb_pos != uart_tx_buffer_dma_pos) //If the next buffer still in work we should not use it for new data.
 	{
+		//DebugSendText("Doing USB\r\n");
 		Endpoint_SelectEndpoint(CDC_RX_EPADDR);
 
 		/* Check to see if any data has been received */
 		if (Endpoint_IsOUTReceived())
 		{
+			//DebugSendText("erstes if\r\n");
 			//while(!(USARTC0.STATUS & USART_DREIF_bm));
 			//USARTC0.DATA = 'd';
 			/* Create a temp buffer big enough to hold the incoming endpoint packet */
@@ -359,54 +442,62 @@ void CDC_Task(void)
 			/* Finalize the stream transfer to send the last packet */
 			Endpoint_ClearOUT();
 		}
+		//DebugSendText("nach erstem\r\n");
 	}
 	if(dma_ready && uart_tx_buffer_dma_pos != uart_tx_buffer_usb_pos) //Ready will be false after the call...
 	{
 		uart_tx_dma_transfer_init();
 	}
 
+	//if (!usbfreigabe)
+		//return;
+	
 	uint8_t dma_pos = 128 - DMA.CH2.TRFCNTL;
 	if(dma_pos != uart_rx_ring_read_pos)
 	{
-		/* Select the Serial Tx Endpoint */
 		Endpoint_SelectEndpoint(CDC_TX_EPADDR);
+		/* Select the Serial Tx Endpoint */
+		if (Endpoint_IsINReady()) {
+			//DebugSendText("zweites if\r\n");
+			uint8_t bytes_to_transfer;
+			if(uart_rx_ring_read_pos < dma_pos)
+			{
+				bytes_to_transfer = dma_pos - uart_rx_ring_read_pos;
+			}
+			else
+			{
+				bytes_to_transfer = 128 - uart_rx_ring_read_pos;
+			}
+			/* Write the received data to the endpoint */
+			Endpoint_Write_Stream_LE(uart_rx_ring_buffer + uart_rx_ring_read_pos, bytes_to_transfer, NULL);
+			uart_rx_ring_read_pos = (uart_rx_ring_read_pos + bytes_to_transfer) & 0b1111111;
 
-		uint8_t bytes_to_transfer;
-		if(uart_rx_ring_read_pos < dma_pos)
-		{
-			bytes_to_transfer = dma_pos - uart_rx_ring_read_pos;
+			/* Finalize the stream transfer to send the last packet */
+			Endpoint_ClearIN();
+
+			/* Wait until the endpoint is ready for the next packet */
+			Endpoint_WaitUntilReady();
+
+			/* Send an empty packet to prevent host buffering */
+			Endpoint_ClearIN();
 		}
-		else
-		{
-			bytes_to_transfer = 128 - uart_rx_ring_read_pos;
-		}
-		/* Write the received data to the endpoint */
-		Endpoint_Write_Stream_LE(uart_rx_ring_buffer + uart_rx_ring_read_pos, bytes_to_transfer, NULL);
-		uart_rx_ring_read_pos = (uart_rx_ring_read_pos + bytes_to_transfer) & 0b1111111;
-
-		/* Finalize the stream transfer to send the last packet */
-		Endpoint_ClearIN();
-
-		/* Wait until the endpoint is ready for the next packet */
-		Endpoint_WaitUntilReady();
-
-		/* Send an empty packet to prevent host buffering */
-		Endpoint_ClearIN();
 	}
 	else {
 		if (injecting_allowed && sw_ringbuffer_available(&inject_message_usb_sw_ringbuffer)) {
 			Endpoint_SelectEndpoint(CDC_TX_EPADDR);
 			
-			sw_ringbuffer_external_job_t read = sw_ringbuffer_read_external(&inject_message_usb_sw_ringbuffer, INJECT_MESSAGE_BUFFER_SIZE);
-			Endpoint_Write_Stream_LE(read.start, read.len, NULL);
-			if (read.more_data_available){
-				read = sw_ringbuffer_read_external(&inject_message_usb_sw_ringbuffer, INJECT_MESSAGE_BUFFER_SIZE);
+			if (Endpoint_IsINReady()) {
+				sw_ringbuffer_external_job_t read = sw_ringbuffer_read_external(&inject_message_usb_sw_ringbuffer, INJECT_MESSAGE_BUFFER_SIZE);
 				Endpoint_Write_Stream_LE(read.start, read.len, NULL);
+				if (read.more_data_available){
+					read = sw_ringbuffer_read_external(&inject_message_usb_sw_ringbuffer, INJECT_MESSAGE_BUFFER_SIZE);
+					Endpoint_Write_Stream_LE(read.start, read.len, NULL);
+				}
+				
+				Endpoint_ClearIN();
+				Endpoint_WaitUntilReady();
+				Endpoint_ClearIN();
 			}
-			
-			Endpoint_ClearIN();
-			Endpoint_WaitUntilReady();
-			Endpoint_ClearIN();
 		}
 	}
 }
@@ -416,6 +507,7 @@ ISR(DMA_CH1_vect)
 {
 	DMA.CH1.CTRLB |= DMA_CH_TRNIF_bm;
 
+	//dma_ready = true;
 	uart_tx_buffer_dma_pos = (uart_tx_buffer_dma_pos + 1) &0b11;
 	if(uart_tx_buffer_dma_pos != uart_tx_buffer_usb_pos)
 	{

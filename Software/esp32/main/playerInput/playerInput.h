@@ -38,6 +38,7 @@ bool hasRMenuButton(uint8_t playernum);
 bool isRMenuButtonPressed(uint8_t playernum); // Start
 
 //Shoulder Buttons
+bool hasShoulderButton(uint8_t playernum);
 bool isShoulderButtonPressed(uint8_t playernum); //any
 bool hasLShoulderButton(uint8_t playernum);
 bool isLShoulderButtonPressed(uint8_t playernum); // L

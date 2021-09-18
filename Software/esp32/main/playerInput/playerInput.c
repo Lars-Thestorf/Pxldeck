@@ -54,6 +54,44 @@ bool isHomeButtonPressed ( uint8_t playernum )
 	return (xmegaGetPressedButtons() & (BUTTON_START | BUTTON_SELECT)) == (BUTTON_START | BUTTON_SELECT);
 }
 
+//Shoulder buttons
+bool hasShoulderButton( uint8_t playernum ){
+	if (playernum != 1)
+		return false;
+	return true;
+}
+bool isShoulderButtonPressed ( uint8_t playernum )
+{
+	if (playernum != 1)
+		return false;
+	return (xmegaGetPressedButtons() & (BUTTON_L | BUTTON_R)) > 0;
+}
+bool hasLShoulderButton ( uint8_t playernum )
+{
+	if (playernum != 1)
+		return false;
+	return true;
+}
+bool isLShoulderButtonPressed ( uint8_t playernum )
+{
+	if (playernum != 1)
+		return false;
+	return (xmegaGetPressedButtons() & BUTTON_L) > 0;
+}
+bool hasRShoulderButton ( uint8_t playernum )
+{
+	if (playernum != 1)
+		return false;
+	return true;
+}
+bool isRShoulderButtonPressed ( uint8_t playernum )
+{
+	if (playernum != 1)
+		return false;
+	return (xmegaGetPressedButtons() & BUTTON_R) > 0;
+}
+
+
 bool isMenuButtonPressed(uint8_t playernum) {
 	if (playernum != 1)
 		return false;
