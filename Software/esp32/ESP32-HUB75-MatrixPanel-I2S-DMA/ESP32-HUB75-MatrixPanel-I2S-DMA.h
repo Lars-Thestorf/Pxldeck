@@ -92,6 +92,7 @@
 #include <memory>
 #include "esp_heap_caps.h"
 #include "esp32_i2s_parallel_v2.h"
+#include <freertos/task.h>
 
 #ifdef USE_GFX_ROOT
 	//#include <FastLED.h>    

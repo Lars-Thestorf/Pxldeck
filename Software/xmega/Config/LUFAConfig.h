@@ -102,7 +102,7 @@
 		/* General USB Driver Related Tokens: */
 		#define USE_STATIC_OPTIONS               (USB_DEVICE_OPT_FULLSPEED | USB_OPT_RC32MCLKSRC | USB_OPT_BUSEVENT_PRIHIGH)
 //		#define USB_STREAM_TIMEOUT_MS            {Insert Value Here}
-//		#define NO_LIMITED_CONTROLLER_CONNECT
+		#define NO_LIMITED_CONTROLLER_CONNECT
 //		#define NO_SOF_EVENTS
 
 		/* USB Device Mode Driver Related Tokens: */
