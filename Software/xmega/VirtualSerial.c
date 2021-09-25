@@ -75,6 +75,10 @@ sw_ringbuffer_t inject_message_uart_sw_ringbuffer;
 bool prev_boot = false;
 bool prev_en = false;
 
+//#define DO_DEBUG
+
+#ifdef DO_DEBUG
+void SetupDebugUart(void);
 void DebugSendChar(char c) {
 	while(!(USARTE0.STATUS & USART_DREIF_bm));
 	USARTE0.DATA = c;
@@ -102,6 +106,7 @@ void DebugSendHex(uint8_t data) {
 		DebugSendChar('0' + lower);
 	}
 }
+#endif
 
 void inject_message_usb(char* text)
 {
@@ -123,13 +128,13 @@ void inject_data_uart(uint8_t* data, uint16_t len)
 	sw_ringbuffer_write(&inject_message_uart_sw_ringbuffer, data, len);
 }
 
-void SetupDebugUart(void);
-
 void SetupVirtualSerial(void) {
 	/* USB Hardware Initialization */
 	USB_Init();
 	
-	SetupDebugUart();
+	#ifdef DO_DEBUG
+		SetupDebugUart();
+	#endif
 	SetupUart();
 	SetupAdditionalPins();
 
@@ -221,6 +226,7 @@ void SetupUart(){
 	USARTC1.CTRLB |= USART_TXEN_bm | USART_RXEN_bm | USART_CLK2X_bm;   // enable TX+RX and Clock
 }
 
+#ifdef DO_DEBUG
 void SetupDebugUart(){
 	PORTE.DIRSET = PIN3_bm;    // pin PE3 (TXC1) as output
 	USARTE0.CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_DISABLED_gc;   // 8N1
@@ -236,6 +242,7 @@ void SetupDebugUart(){
 	
 	DebugSendText("Xmega boot\r\n");
 }
+#endif
 
 
 void SetupAdditionalPins(){
@@ -251,7 +258,9 @@ void SetupAdditionalPins(){
 void EVENT_USB_Device_Connect(void)
 {
 	/* Indicate USB enumerating */
-	DebugSendText("USB connect\r\n");
+	#ifdef DO_DEBUG
+		DebugSendText("USB connect\r\n");
+	#endif
 }
 
 /** Event handler for the USB_Disconnect event. This indicates that the device is no longer connected to a host via
@@ -264,7 +273,9 @@ void EVENT_USB_Device_Disconnect(void)
 	injecting_allowed = true;
 	uint32_t baud = 115200;
 	UartSetBaud(baud);
-	DebugSendText("USB disconnect\r\n");
+	#ifdef DO_DEBUG
+		DebugSendText("USB disconnect\r\n");
+	#endif
 }
 
 /** Event handler for the USB_ConfigurationChanged event. This is fired when the host set the current configuration
@@ -283,11 +294,13 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	LineEncoding.BaudRateBPS = 0;
 
 	/* Indicate endpoint configuration success or failure */
-	if(ConfigSuccess) {
-		DebugSendText("USB config OK\r\n");
-	} else {
-		DebugSendText("USB config fail\r\n");
-	}
+	#ifdef DO_DEBUG
+		if(ConfigSuccess) {
+			DebugSendText("USB config OK\r\n");
+		} else {
+			DebugSendText("USB config fail\r\n");
+		}
+	#endif
 }
 
 /** Event handler for the USB_ControlRequest event. This is used to catch and process control requests sent to
@@ -301,7 +314,9 @@ void EVENT_USB_Device_ControlRequest(void)
 	switch (USB_ControlRequest.bRequest)
 	{
 		case CDC_REQ_GetLineEncoding:
-			DebugSendText("USB get something\r\n");
+			#ifdef DO_DEBUG
+				DebugSendText("USB get something\r\n");
+			#endif
 			if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE))
 			{
 				Endpoint_ClearSETUP();
@@ -313,7 +328,9 @@ void EVENT_USB_Device_ControlRequest(void)
 
 			break;
 		case CDC_REQ_SetLineEncoding:
-			DebugSendText("USB set something\r\n");
+			#ifdef DO_DEBUG
+				DebugSendText("USB set something\r\n");
+			#endif
 			if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE))
 			{
 				Endpoint_ClearSETUP();
@@ -323,15 +340,21 @@ void EVENT_USB_Device_ControlRequest(void)
 				Endpoint_ClearIN();
 
 				uint32_t baud = LineEncoding.BaudRateBPS;
-				DebugSendHex(baud >> 24);
-				DebugSendHex(baud >> 16);
-				DebugSendHex(baud >> 8);
-				DebugSendHex(baud);
+				#ifdef DO_DEBUG
+					DebugSendHex(baud >> 24);
+					DebugSendHex(baud >> 16);
+					DebugSendHex(baud >> 8);
+					DebugSendHex(baud);
+				#endif
 				if(!injecting_allowed || baud == 115200) {
-					DebugSendText(" Baud changes\r\n");
+					#ifdef DO_DEBUG
+						DebugSendText(" Baud changes\r\n");
+					#endif
 					UartSetBaud(baud);
 				} else {
-					DebugSendText(" Resist Baud changes\r\n");
+					#ifdef DO_DEBUG
+						DebugSendText(" Resist Baud changes\r\n");
+					#endif
 				}
 			}
 
@@ -402,7 +425,9 @@ void CDC_Task(void)
 		}
 		if(dma_ready && uart_tx_buffer_dma_pos != uart_tx_buffer_usb_pos) //Ready will be false after the call...
 		{
-			DebugSendText("DMA\r\n");
+			#ifdef DO_DEBUG
+				DebugSendText("DMA\r\n");
+			#endif
 			uart_tx_dma_transfer_init();
 		}
 	}
