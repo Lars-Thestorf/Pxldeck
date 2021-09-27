@@ -45,6 +45,7 @@ void* ponggame_setup() {
 }
 void ponggame_loop(void* gamemem) {
 	//ESP_LOGI(TAG, "PongLoop");
+	
 	MatrixPanel_I2S_DMA *gfx = getGraphics();
 	
 	//score

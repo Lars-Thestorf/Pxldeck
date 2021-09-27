@@ -42,15 +42,19 @@ void SetupGraphics() {
 	dma_display->setPanelBrightness(20);
 	dma_display->flipDMABuffer();
 	dma_display->clearScreen();
-	for (int i = 0; i < 64 * 32; i++) {
-		dma_display->drawPixel(i % 64, i/64, ((bootlogo[i/8] >> (i%8)) & 1) ? 0xFFFF : 0);
-	}
+	drawImage1bit(0, 0, bootlogo, 64, 32, 0x0000, 0xFFFF);
 	dma_display->showDMABuffer();
 	ESP_LOGI(TAG,"Showing boot image");	
 }
 
 MatrixPanel_I2S_DMA* getGraphics() {
 	return dma_display;
+}
+
+void drawImage1bit(const uint8_t x, const uint8_t y, const uint8_t* img_data, uint8_t w, const uint8_t h, const uint16_t color0, const uint16_t color1) {
+	for (int i = 0; i < w * h; i++) {
+		dma_display->drawPixel(x + i % w, y + i/w, ((img_data[i/8] >> (i%8)) & 1) ? color1 : color0);
+	}
 }
 
 void drawString(uint8_t x, uint8_t y, char* text) {
