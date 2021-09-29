@@ -636,9 +636,9 @@ void MatrixPanel_I2S_DMA::clearFrameBuffer(bool _buff_id){
       row = dma_buff.rowBits[row_idx]->getDataPtr(coloridx, _buff_id);
 
       // drive latch while shifting out last bit of RGB data
-	  row[dma_buff.rowBits[row_idx]->width - 4] |= BIT_LAT;
 	  row[dma_buff.rowBits[row_idx]->width - 3] |= BIT_LAT;
-      row[dma_buff.rowBits[row_idx]->width - 2] |= BIT_LAT;   // -1 pixel to compensate array index starting at 0
+	  row[dma_buff.rowBits[row_idx]->width - 2] |= BIT_LAT;
+      row[dma_buff.rowBits[row_idx]->width - 1] |= BIT_LAT;   // -1 pixel to compensate array index starting at 0
       //row[dma_buff.rowBits[row_idx]->width - 1] |= BIT_LAT;   // -1 pixel to compensate array index starting at 0
 
       // need to disable OE before/after latch to hide row transition
@@ -682,7 +682,7 @@ void MatrixPanel_I2S_DMA::brtCtrlOE(int brt, const bool _buff_id){
 
       // switch pointer to a row for a specific color index
       ESP32_I2S_DMA_STORAGE_TYPE* row = dma_buff.rowBits[row_idx]->getDataPtr(coloridx, _buff_id);
-
+	  
       int x_coord = dma_buff.rowBits[row_idx]->width;
       do {
         --x_coord;
@@ -934,3 +934,10 @@ void MatrixPanel_I2S_DMA::fillRectDMA(int16_t x, int16_t y, int16_t w, int16_t h
 }
 
 #endif  // NO_FAST_FUNCTIONS
+
+
+/*
+void fm6124config(uint16_t value) { //write value to REG2 (Brightness)
+	auto data = (ESP32_I2S_DMA_STORAGE_TYPE *)heap_caps_malloc(2*MATRIX_WIDTH/16*CHAIN_LENGTH, MALLOC_CAP_DMA);
+	i2s_parallel_send_dma();
+}*/

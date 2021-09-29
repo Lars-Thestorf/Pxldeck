@@ -34,9 +34,11 @@ void SetupGraphics() {
 		_pins // pin mapping
 	);
 	mxconfig.driver = HUB75_I2S_CFG::FM6126A;
-	mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_10M;
-	//mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_20M;
+	//mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_10M;
+	mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_20M;
 	mxconfig.double_buff = true;
+	//mxconfig.latch_blanking = 3;
+	mxconfig.clkphase = false;
 	dma_display = new MatrixPanel_I2S_DMA(mxconfig);
 	dma_display->begin();
 	dma_display->setPanelBrightness(20);

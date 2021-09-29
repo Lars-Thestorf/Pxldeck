@@ -36,12 +36,22 @@ void* ponggame_setup() {
 	pointer->p1pos = GAMEHEIGHT / 2;
 	pointer->p2pos = GAMEHEIGHT / 2;
 	pointer->bxspeed = 30;
-	pointer->byspeed = 15;
+	pointer->byspeed = 10;
 	pointer->p1score = 0;
 	pointer->p2score = 0;
 	pointer->bxpos = GAMEWIDTH / 2;
 	pointer->bypos = GAMEHEIGHT / 2;
 	return pointer;
+}
+int8_t pongGameInput(uint8_t playernum) {
+	switch(getControllerType(playernum)){
+		case CONTROLLERTYPE_LEFT:
+			return getLRInput(playernum);
+		case CONTROLLERTYPE_RIGHT:
+			return -getLRInput(playernum);
+		default:
+			return getUDInput(playernum);
+	}
 }
 void ponggame_loop(void* gamemem) {
 	//ESP_LOGI(TAG, "PongLoop");
@@ -62,7 +72,7 @@ void ponggame_loop(void* gamemem) {
 	gfx->drawFastVLine(GAMEWIDTH/100/2 - 1, 0, GAMEHEIGHT/100, gray);
 	
 	//left player
-	int8_t delta = getUDInput(1) / 3;
+	int8_t delta = pongGameInput(1) / 3;
 	if (PONGMEM->p1pos + delta < PLAYERHEIGHT / 2)
 		PONGMEM->p1pos = PLAYERHEIGHT / 2;
 	else if (PONGMEM->p1pos + delta > GAMEHEIGHT - PLAYERHEIGHT / 2)
@@ -72,13 +82,21 @@ void ponggame_loop(void* gamemem) {
 	gfx->drawFastVLine(0, (PONGMEM->p1pos - PLAYERHEIGHT / 2) / 100, PLAYERHEIGHT / 100, GRAPHICS_COLOR_WHITE);
 	
 	//right player
-	delta = getRJoystickYAxis(1) / 3;
-	if (PONGMEM->p2pos + delta < PLAYERHEIGHT / 2)
-		PONGMEM->p2pos = PLAYERHEIGHT / 2;
-	else if (PONGMEM->p2pos + delta > GAMEHEIGHT - PLAYERHEIGHT / 2)
-		PONGMEM->p2pos = GAMEHEIGHT - PLAYERHEIGHT / 2;
-	else
-		PONGMEM->p2pos += delta;
+	if (getPlayerCount() > 1) {
+		delta = pongGameInput(2) / 3;
+		if (PONGMEM->p2pos + delta < PLAYERHEIGHT / 2)
+			PONGMEM->p2pos = PLAYERHEIGHT / 2;
+		else if (PONGMEM->p2pos + delta > GAMEHEIGHT - PLAYERHEIGHT / 2)
+			PONGMEM->p2pos = GAMEHEIGHT - PLAYERHEIGHT / 2;
+		else
+			PONGMEM->p2pos += delta;
+	} else {
+		//CPU enemy
+		if (PONGMEM->bypos > PONGMEM->p2pos)
+			PONGMEM->p2pos += 20;
+		if (PONGMEM->bypos < PONGMEM->p2pos)
+			PONGMEM->p2pos -= 20;
+	}
 	gfx->drawFastVLine(GAMEWIDTH / 100 - 1, (PONGMEM->p2pos - PLAYERHEIGHT / 2) / 100, PLAYERHEIGHT / 100, GRAPHICS_COLOR_WHITE);
 	
 	//ball
@@ -98,7 +116,7 @@ void ponggame_loop(void* gamemem) {
 			PONGMEM->bxpos = GAMEWIDTH / 2;
 			PONGMEM->bypos = GAMEHEIGHT / 2;
 			PONGMEM->bxspeed = 30;
-			PONGMEM->byspeed = -15;
+			PONGMEM->byspeed = -10;
 		}
 	}
 	if (PONGMEM->bxpos >= GAMEWIDTH - 100) {
@@ -111,7 +129,7 @@ void ponggame_loop(void* gamemem) {
 			PONGMEM->bxpos = GAMEWIDTH / 2;
 			PONGMEM->bypos = GAMEHEIGHT / 2;
 			PONGMEM->bxspeed = -30;
-			PONGMEM->byspeed = 15;
+			PONGMEM->byspeed = 10;
 		}
 	}
 	gfx->drawPixel(PONGMEM->bxpos/100, PONGMEM->bypos/100, GRAPHICS_COLOR_WHITE);

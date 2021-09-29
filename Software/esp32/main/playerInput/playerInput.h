@@ -16,6 +16,7 @@ typedef enum controllerType_e {
 	CONTROLLERTYPE_EXT, // externally connected controller such as a phone
 } controllerType_e;
 
+void cycleInputMethods(void); //This Method is not here to stay
 
 uint8_t getPlayerCount(void);
 bool isConnected(uint8_t playernum);
@@ -24,8 +25,8 @@ controllerType_e getControllerType(uint8_t);
 //Action Buttons
 bool isPrimaryButtonPressed(uint8_t playernum); // A
 bool isSecondaryButtonPressed(uint8_t playernum); // B
-bool isPrimaryCoButtonPressed(uint8_t playernum); // X
-bool isSecondaryCoButtonPressed(uint8_t playernum); // Y
+bool isCoPrimaryButtonPressed(uint8_t playernum); // X
+bool isCoSecondaryButtonPressed(uint8_t playernum); // Y
 
 bool hasDedicatedHomeButton(uint8_t playernum);
 bool isHomeButtonPressed(uint8_t playernum);
