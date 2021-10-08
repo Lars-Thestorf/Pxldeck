@@ -4,14 +4,13 @@
 #include "../playerInput/playerInput.h"
 #include "../games/gamesApi/gamesApi.h"
 #include "../games/pong/pong.h"
-
-#include "../xmegaComm/xmegaComm.h" //not here to stay
+#include "../games/tetris/tetris.h"
 
 #include "../graphics.h"
 
 #include "../playerIcons.c"
 
-LaLeMaGame games[] = {pong_game};
+LaLeMaGame games[] = {pong_game, tetris_gamedesc};
 
 #define LEMAGOS_STATE_MAINMENU 0
 #define LEMAGOS_STATE_INGAME 1
@@ -25,6 +24,7 @@ bool prevPressLeft[8] = {0,0,0,0,0,0,0,0};
 bool prevPressRight[8] = {0,0,0,0,0,0,0,0};
 
 uint8_t current_brightness = 20;
+uint8_t current_sel_game = 0;
 
 void* gameMem;
 
@@ -88,22 +88,37 @@ void DrawMainMenu() {
 					gfx->clearScreen();
 					if (state != LEMAGOS_STATE_INGAME) { //two players starting the game in the same time would be an issue
 						state = LEMAGOS_STATE_INGAME;
-						gameMem = games[0].setupFunction();
+						gameMem = games[current_sel_game].setupFunction();
 					}
 				}
 				if (isCoSecondaryButtonPressed(i+1) && !prevPressCoSecondary[i]) {
 					cycleInputMethods();
 				}
 				gfx->setTextColor(GRAPHICS_COLOR_WHITE);
-				if (isShoulderButtonPressed(i+1)) {
-					if (getLRInput(i+1) < -0x40 && !prevPressLeft[i]) {
-						gfx->setPanelBrightness(--current_brightness);
-					}
-					if (getLRInput(i+1) > 0x40 && !prevPressRight[i]) {
-						gfx->setPanelBrightness(++current_brightness);
-					}
+				
+				if (isShoulderButtonPressed(i+1))
 					draw_special_menu = true;
-				} 
+				if (getLRInput(i+1) < -0x40 && !prevPressLeft[i]) { //left
+					if (isShoulderButtonPressed(i+1))
+						gfx->setPanelBrightness(--current_brightness);
+					else {
+						if (current_sel_game != 0)
+							current_sel_game--;
+						else
+							current_sel_game = sizeof(games)/sizeof(games[0]) - 1;
+					}
+				}
+				if (getLRInput(i+1) > 0x40 && !prevPressRight[i]) { //right
+					if (isShoulderButtonPressed(i+1))
+						gfx->setPanelBrightness(++current_brightness);
+					else {
+						if (current_sel_game < sizeof(games)/sizeof(games[0]) - 1)
+							current_sel_game++;
+						else
+							current_sel_game = 0;
+					}
+				}
+				 
 				prevPressPrimary[i] = isPrimaryButtonPressed(i+1);
 				prevPressCoSecondary[i] = isCoPrimaryButtonPressed(i+1);
 				prevPressLeft[i] = getLRInput(i+1) < -0x40;
@@ -116,7 +131,7 @@ void DrawMainMenu() {
 				sprintf(batstring, "%d", getBatteryPercentage());
 				drawString(32,0,batstring);
 			} else {
-				drawString(0,0,games[0].name);
+				drawString(0,0,games[current_sel_game].name);
 			}
 		}
 		break;
@@ -124,9 +139,9 @@ void DrawMainMenu() {
 			if (isHomeButtonPressed(1)){
 				gfx->clearScreen();
 				state = LEMAGOS_STATE_MAINMENU;
-				games[0].freeFunction(gameMem);
+				games[current_sel_game].freeFunction(gameMem);
 			} else {
-				games[0].loopFunction(gameMem);
+				games[current_sel_game].loopFunction(gameMem);
 			}
 		}
 		break;
