@@ -53,47 +53,51 @@ void tetrisgame_loop(void* gamemem){
 
 	//Draw
 	TETRISMEM->drawFuncHUD(TETRISMEM->gameplay, TETRISMEM->gfx);
-	for(uint8_t y = 0; y < 16; y++) {
-		TETRISMEM->drawFuncField(0,y, 0x2222, TETRISMEM->gfx);
-		TETRISMEM->drawFuncField(11,y, 0x2222, TETRISMEM->gfx);
-	}
-	for(uint8_t x = 0; x < 10; x++) {
-		for (uint8_t y = 0; y < 16; y++) {
-			switch(TETRISMEM->gameplay->field[x][y]) {
-				case 1: TETRISMEM->drawFuncField(1+x, y, 0xF800, TETRISMEM->gfx); break;
-				case 2: TETRISMEM->drawFuncField(1+x, y, 0x07E0, TETRISMEM->gfx); break;
-				case 3: TETRISMEM->drawFuncField(1+x, y, 0x001F, TETRISMEM->gfx); break;
-				case 4: TETRISMEM->drawFuncField(1+x, y, 0xFFE0, TETRISMEM->gfx); break;
-				case 5: TETRISMEM->drawFuncField(1+x, y, 0xF81F, TETRISMEM->gfx); break;
-				case 6: TETRISMEM->drawFuncField(1+x, y, 0x07FF, TETRISMEM->gfx); break;
-				case 7: TETRISMEM->drawFuncField(1+x, y, 0xFFFF, TETRISMEM->gfx); break;
+	if (TETRISMEM->gameplay->game_state == GAME_STATE_PLAY) {
+		for(uint8_t y = 0; y < 16; y++) {
+			TETRISMEM->drawFuncField(0,y, 0x2222, TETRISMEM->gfx);
+			TETRISMEM->drawFuncField(11,y, 0x2222, TETRISMEM->gfx);
+		}
+		for(uint8_t x = 0; x < 10; x++) {
+			for (uint8_t y = 0; y < 16; y++) {
+				switch(TETRISMEM->gameplay->field[x][y]) {
+					case 1: TETRISMEM->drawFuncField(1+x, y, 0xF800, TETRISMEM->gfx); break;
+					case 2: TETRISMEM->drawFuncField(1+x, y, 0x07E0, TETRISMEM->gfx); break;
+					case 3: TETRISMEM->drawFuncField(1+x, y, 0x001F, TETRISMEM->gfx); break;
+					case 4: TETRISMEM->drawFuncField(1+x, y, 0xFFE0, TETRISMEM->gfx); break;
+					case 5: TETRISMEM->drawFuncField(1+x, y, 0xF81F, TETRISMEM->gfx); break;
+					case 6: TETRISMEM->drawFuncField(1+x, y, 0x07FF, TETRISMEM->gfx); break;
+					case 7: TETRISMEM->drawFuncField(1+x, y, 0xFFFF, TETRISMEM->gfx); break;
+					case 0x80: TETRISMEM->drawFuncField(1+x, y, 0x8710, TETRISMEM->gfx); break;
+				}
 			}
 		}
-	}
-	for (uint8_t _y = 0; _y < 4; _y++) {
-		for (uint8_t _x = 0; _x < 4; _x++) {
-			//TODO: out of scope testing
-			switch((*TETRISMEM->gameplay->currentblock)[_y][_x]) {
-				case 1: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0xF800, TETRISMEM->gfx); break;
-				case 2: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0x07E0, TETRISMEM->gfx); break;
-				case 3: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0x001F, TETRISMEM->gfx); break;
-				case 4: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0xFFE0, TETRISMEM->gfx); break;
-				case 5: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0xF81F, TETRISMEM->gfx); break;
-				case 6: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0x07FF, TETRISMEM->gfx); break;
-				case 7: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0xFFFF, TETRISMEM->gfx); break;
+		for (uint8_t _y = 0; _y < 4; _y++) {
+			for (uint8_t _x = 0; _x < 4; _x++) {
+				if (TETRISMEM->gameplay->currenty+_y < 0)
+					continue;
+				switch((*TETRISMEM->gameplay->currentblock)[_y][_x]) {
+					case 1: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0xF800, TETRISMEM->gfx); break;
+					case 2: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0x07E0, TETRISMEM->gfx); break;
+					case 3: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0x001F, TETRISMEM->gfx); break;
+					case 4: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0xFFE0, TETRISMEM->gfx); break;
+					case 5: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0xF81F, TETRISMEM->gfx); break;
+					case 6: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0x07FF, TETRISMEM->gfx); break;
+					case 7: TETRISMEM->drawFuncField(1+TETRISMEM->gameplay->currentx+_x,TETRISMEM->gameplay->currenty+_y, 0xFFFF, TETRISMEM->gfx); break;
+				}
 			}
 		}
-	}
-	for (uint8_t _y = 0; _y < 4; _y++) {
-		for (uint8_t _x = 0; _x < 4; _x++) {
-			switch((*TETRISMEM->gameplay->nextblock)[_y][_x]) {
-				case 1: TETRISMEM->drawFuncField(12+_x, _y, 0xF800, TETRISMEM->gfx); break;
-				case 2: TETRISMEM->drawFuncField(12+_x, _y, 0x07E0, TETRISMEM->gfx); break;
-				case 3: TETRISMEM->drawFuncField(12+_x, _y, 0x001F, TETRISMEM->gfx); break;
-				case 4: TETRISMEM->drawFuncField(12+_x, _y, 0xFFE0, TETRISMEM->gfx); break;
-				case 5: TETRISMEM->drawFuncField(12+_x, _y, 0xF81F, TETRISMEM->gfx); break;
-				case 6: TETRISMEM->drawFuncField(12+_x, _y, 0x07FF, TETRISMEM->gfx); break;
-				case 7: TETRISMEM->drawFuncField(12+_x, _y, 0xFFFF, TETRISMEM->gfx); break;
+		for (uint8_t _y = 0; _y < 4; _y++) {
+			for (uint8_t _x = 0; _x < 4; _x++) {
+				switch((*TETRISMEM->gameplay->nextblock)[_y][_x]) {
+					case 1: TETRISMEM->drawFuncField(12+_x, _y, 0xF800, TETRISMEM->gfx); break;
+					case 2: TETRISMEM->drawFuncField(12+_x, _y, 0x07E0, TETRISMEM->gfx); break;
+					case 3: TETRISMEM->drawFuncField(12+_x, _y, 0x001F, TETRISMEM->gfx); break;
+					case 4: TETRISMEM->drawFuncField(12+_x, _y, 0xFFE0, TETRISMEM->gfx); break;
+					case 5: TETRISMEM->drawFuncField(12+_x, _y, 0xF81F, TETRISMEM->gfx); break;
+					case 6: TETRISMEM->drawFuncField(12+_x, _y, 0x07FF, TETRISMEM->gfx); break;
+					case 7: TETRISMEM->drawFuncField(12+_x, _y, 0xFFFF, TETRISMEM->gfx); break;
+				}
 			}
 		}
 	}

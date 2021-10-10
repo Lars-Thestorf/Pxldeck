@@ -45,7 +45,7 @@ void app_main(void)
 		} else {
 			gfx->drawPixel(0, 31, GRAPHICS_COLOR_RED);
 		}
-		vTaskDelay(20 / portTICK_PERIOD_MS);
+		vTaskDelay(16 / portTICK_PERIOD_MS);
 			
 		//ESP_LOGI("TAG","ich versuche da was anzuzeigen");
 		

@@ -67,7 +67,7 @@ bool isCoPrimaryButtonPressed ( uint8_t playernum )
 		case CONTROLLERTYPE_FULL:
 			return (xmegaGetPressedButtons() & BUTTON_X) > 0;
 		case CONTROLLERTYPE_LEFT:
-			return (xmegaGetPressedButtons() & BUTTON_DU) > 0;
+			return (xmegaGetPressedButtons() & BUTTON_DR) > 0;
 		case CONTROLLERTYPE_RIGHT: 
 			return (xmegaGetPressedButtons() & BUTTON_Y) > 0;
 		default:
@@ -80,7 +80,7 @@ bool isCoSecondaryButtonPressed ( uint8_t playernum )
 		case CONTROLLERTYPE_FULL:
 			return (xmegaGetPressedButtons() & BUTTON_Y) > 0;
 		case CONTROLLERTYPE_LEFT:
-			return (xmegaGetPressedButtons() & BUTTON_DR) > 0;
+			return (xmegaGetPressedButtons() & BUTTON_DU) > 0;
 		case CONTROLLERTYPE_RIGHT: 
 			return (xmegaGetPressedButtons() & BUTTON_B) > 0;
 		default:
