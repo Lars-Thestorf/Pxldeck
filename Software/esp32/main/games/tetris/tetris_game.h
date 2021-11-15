@@ -33,6 +33,8 @@ class tetris_game
 		uint8_t level;
 		uint32_t score;
 		uint16_t lines;
+		void (* saveHighscoreFunc)(uint8_t index, char name[10], uint32_t score);
+		void (* readHighscoreFunc)(uint8_t index, char name[10], uint32_t score);
     private:
 		uint8_t ingame_state;
 		bool game_paused;

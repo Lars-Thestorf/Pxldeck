@@ -345,7 +345,7 @@ void tetris_game::tick()
 								score += (level+1)*1200;
 								break;
 						}
-						if (level <= lines/10)
+						if (level < lines/10)
 							level++;
 						ingame_state = INGAME_STATE_ARE;
 					}

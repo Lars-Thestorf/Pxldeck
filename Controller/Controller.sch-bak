@@ -1,0 +1,323 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Connector_Generic:Conn_02x06_Odd_Even J1
+U 1 1 617D6046
+P 5200 3300
+F 0 "J1" H 5250 3717 50  0000 C CNN
+F 1 "Conn_02x06_Odd_Even" H 5250 3626 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x06_P2.54mm_Horizontal" H 5200 3300 50  0001 C CNN
+F 3 "~" H 5200 3300 50  0001 C CNN
+	1    5200 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x05_Female J2
+U 1 1 6187D441
+P 5950 4850
+F 0 "J2" H 5978 4876 50  0000 L CNN
+F 1 "Conn_01x05_Female" H 5978 4785 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Horizontal" H 5950 4850 50  0001 C CNN
+F 3 "~" H 5950 4850 50  0001 C CNN
+	1    5950 4850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J3
+U 1 1 6187E172
+P 7050 3050
+F 0 "J3" H 7158 3231 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 7158 3140 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 7050 3050 50  0001 C CNN
+F 3 "~" H 7050 3050 50  0001 C CNN
+	1    7050 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push_Dual_x2 SW1
+U 1 1 6187EFB1
+P 7600 4100
+F 0 "SW1" H 7600 4385 50  0000 C CNN
+F 1 "SW_Push_Dual_x2" H 7600 4294 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_SPST_Omron_B3FS-100xP" H 7600 4300 50  0001 C CNN
+F 3 "~" H 7600 4300 50  0001 C CNN
+	1    7600 4100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push_Dual_x2 SW?
+U 1 1 618822C9
+P 7600 4500
+F 0 "SW?" H 7600 4785 50  0000 C CNN
+F 1 "SW_Push_Dual_x2" H 7600 4694 50  0000 C CNN
+F 2 "" H 7600 4700 50  0001 C CNN
+F 3 "~" H 7600 4700 50  0001 C CNN
+	1    7600 4500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push_Dual_x2 SW?
+U 1 1 61882950
+P 7600 4900
+F 0 "SW?" H 7600 5185 50  0000 C CNN
+F 1 "SW_Push_Dual_x2" H 7600 5094 50  0000 C CNN
+F 2 "" H 7600 5100 50  0001 C CNN
+F 3 "~" H 7600 5100 50  0001 C CNN
+	1    7600 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push_Dual_x2 SW?
+U 1 1 61883035
+P 8850 4100
+F 0 "SW?" H 8850 4385 50  0000 C CNN
+F 1 "SW_Push_Dual_x2" H 8850 4294 50  0000 C CNN
+F 2 "" H 8850 4300 50  0001 C CNN
+F 3 "~" H 8850 4300 50  0001 C CNN
+	1    8850 4100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push_Dual_x2 SW?
+U 1 1 61883696
+P 8850 4500
+F 0 "SW?" H 8850 4785 50  0000 C CNN
+F 1 "SW_Push_Dual_x2" H 8850 4694 50  0000 C CNN
+F 2 "" H 8850 4700 50  0001 C CNN
+F 3 "~" H 8850 4700 50  0001 C CNN
+	1    8850 4500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push_Dual_x2 SW?
+U 1 1 61883BD6
+P 8850 4900
+F 0 "SW?" H 8850 5185 50  0000 C CNN
+F 1 "SW_Push_Dual_x2" H 8850 5094 50  0000 C CNN
+F 2 "" H 8850 5100 50  0001 C CNN
+F 3 "~" H 8850 5100 50  0001 C CNN
+	1    8850 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 61885933
+P 5200 4950
+F 0 "R?" V 4993 4950 50  0000 C CNN
+F 1 "R" V 5084 4950 50  0000 C CNN
+F 2 "" V 5130 4950 50  0001 C CNN
+F 3 "~" H 5200 4950 50  0001 C CNN
+	1    5200 4950
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:D D?
+U 1 1 6188683C
+P 7100 4900
+F 0 "D?" H 7100 5117 50  0000 C CNN
+F 1 "D" H 7100 5026 50  0000 C CNN
+F 2 "" H 7100 4900 50  0001 C CNN
+F 3 "~" H 7100 4900 50  0001 C CNN
+	1    7100 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:D D?
+U 1 1 618871EB
+P 7100 4500
+F 0 "D?" H 7100 4717 50  0000 C CNN
+F 1 "D" H 7100 4626 50  0000 C CNN
+F 2 "" H 7100 4500 50  0001 C CNN
+F 3 "~" H 7100 4500 50  0001 C CNN
+	1    7100 4500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:D D?
+U 1 1 61887768
+P 7100 4100
+F 0 "D?" H 7100 4317 50  0000 C CNN
+F 1 "D" H 7100 4226 50  0000 C CNN
+F 2 "" H 7100 4100 50  0001 C CNN
+F 3 "~" H 7100 4100 50  0001 C CNN
+	1    7100 4100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:D D?
+U 1 1 61887D12
+P 9450 4100
+F 0 "D?" H 9450 3883 50  0000 C CNN
+F 1 "D" H 9450 3974 50  0000 C CNN
+F 2 "" H 9450 4100 50  0001 C CNN
+F 3 "~" H 9450 4100 50  0001 C CNN
+	1    9450 4100
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:D D?
+U 1 1 618880CF
+P 9450 4500
+F 0 "D?" H 9450 4283 50  0000 C CNN
+F 1 "D" H 9450 4374 50  0000 C CNN
+F 2 "" H 9450 4500 50  0001 C CNN
+F 3 "~" H 9450 4500 50  0001 C CNN
+	1    9450 4500
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:D D?
+U 1 1 618885C7
+P 9450 4900
+F 0 "D?" H 9450 4683 50  0000 C CNN
+F 1 "D" H 9450 4774 50  0000 C CNN
+F 2 "" H 9450 4900 50  0001 C CNN
+F 3 "~" H 9450 4900 50  0001 C CNN
+	1    9450 4900
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9300 4100 9050 4100
+Wire Wire Line
+	9050 4500 9300 4500
+Wire Wire Line
+	9300 4900 9050 4900
+Wire Wire Line
+	7250 4900 7400 4900
+Wire Wire Line
+	7250 4500 7400 4500
+Wire Wire Line
+	7250 4100 7400 4100
+Wire Wire Line
+	6950 4100 6950 4500
+Wire Wire Line
+	6950 4500 6950 4900
+Connection ~ 6950 4500
+Wire Wire Line
+	9600 4900 9600 4500
+Wire Wire Line
+	9600 4500 9600 4100
+Connection ~ 9600 4500
+Wire Wire Line
+	7800 4500 8650 4500
+Wire Wire Line
+	7800 4100 8650 4100
+Wire Wire Line
+	7800 4900 8650 4900
+$Comp
+L power:GND #PWR?
+U 1 1 61893683
+P 5500 3600
+F 0 "#PWR?" H 5500 3350 50  0001 C CNN
+F 1 "GND" V 5505 3472 50  0000 R CNN
+F 2 "" H 5500 3600 50  0001 C CNN
+F 3 "" H 5500 3600 50  0001 C CNN
+	1    5500 3600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 61895F8B
+P 7400 3150
+F 0 "#PWR?" H 7400 2900 50  0001 C CNN
+F 1 "GND" V 7405 3022 50  0000 R CNN
+F 2 "" H 7400 3150 50  0001 C CNN
+F 3 "" H 7400 3150 50  0001 C CNN
+	1    7400 3150
+	0    -1   -1   0   
+$EndComp
+Text Label 5500 3100 0    50   ~ 0
+CON_AUD
+Text Label 5500 3200 0    50   ~ 0
+CON_SPEZ
+Text Label 5500 3300 0    50   ~ 0
+CON_JB
+Text Label 5500 3400 0    50   ~ 0
+CON_BM1
+Text Label 5500 3500 0    50   ~ 0
+CON_BM2
+$Comp
+L power:+3V3 #PWR?
+U 1 1 6189E750
+P 4800 3100
+F 0 "#PWR?" H 4800 2950 50  0001 C CNN
+F 1 "+3V3" V 4815 3228 50  0000 L CNN
+F 2 "" H 4800 3100 50  0001 C CNN
+F 3 "" H 4800 3100 50  0001 C CNN
+	1    4800 3100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+3V3 #PWR?
+U 1 1 618A0529
+P 4800 4950
+F 0 "#PWR?" H 4800 4800 50  0001 C CNN
+F 1 "+3V3" V 4815 5078 50  0000 L CNN
+F 2 "" H 4800 4950 50  0001 C CNN
+F 3 "" H 4800 4950 50  0001 C CNN
+	1    4800 4950
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4800 4950 5050 4950
+Wire Wire Line
+	4800 3100 5000 3100
+Text Label 5000 3200 2    50   ~ 0
+CON_X
+Text Label 5000 3300 2    50   ~ 0
+CON_Y
+Text Label 5000 3400 2    50   ~ 0
+CON_BMA
+Text Label 5000 3500 2    50   ~ 0
+CON_BMB
+Text Label 5000 3600 2    50   ~ 0
+CON_BMC
+Wire Wire Line
+	7400 3150 7250 3150
+Text Label 7250 3050 0    50   ~ 0
+CON_AUD
+$Comp
+L power:GND #PWR?
+U 1 1 61894B37
+P 5000 5050
+F 0 "#PWR?" H 5000 4800 50  0001 C CNN
+F 1 "GND" V 5005 4922 50  0000 R CNN
+F 2 "" H 5000 5050 50  0001 C CNN
+F 3 "" H 5000 5050 50  0001 C CNN
+	1    5000 5050
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5350 4950 5750 4950
+Wire Wire Line
+	5000 5050 5750 5050
+Text Label 5750 4650 2    50   ~ 0
+CON_JB
+Text Label 5750 4850 2    50   ~ 0
+CON_X
+Text Label 5750 4750 2    50   ~ 0
+CON_Y
+Text Label 8350 4100 2    50   ~ 0
+CON_BMA
+Text Label 8350 4500 2    50   ~ 0
+CON_BMB
+Text Label 8350 4900 2    50   ~ 0
+CON_BMC
+Text Label 6950 4500 2    50   ~ 0
+CON_BM1
+Text Label 9600 4500 0    50   ~ 0
+CON_BM2
+$EndSCHEMATC

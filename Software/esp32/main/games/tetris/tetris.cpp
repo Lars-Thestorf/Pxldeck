@@ -23,12 +23,21 @@ const LaLeMaGame tetris_gamedesc = {
 	*tetrisgame_free
 };
 
+void tetrisgame_saveHighscore(uint8_t index, char name[10], uint32_t score){
+	
+}
+void tetrisgame_readHighscore(uint8_t index, char name[10], uint32_t score){
+	
+}
+
 void* tetrisgame_setup(){
 	tetrismem_t *pointer = (tetrismem_t*)malloc(sizeof(tetrismem_t));
 	pointer->gfx = getGraphics();
 	pointer->drawFuncField = drawFuncField1p1;
 	pointer->drawFuncHUD = drawFuncHUD1p1;
 	pointer->gameplay = new class tetris_game();
+	pointer->gameplay->saveHighscoreFunc = tetrisgame_saveHighscore;
+	pointer->gameplay->readHighscoreFunc = tetrisgame_readHighscore;
 	pointer->gameplay->init();
 	return pointer;
 }
