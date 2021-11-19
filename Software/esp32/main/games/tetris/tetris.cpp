@@ -23,11 +23,14 @@ const LaLeMaGame tetris_gamedesc = {
 	*tetrisgame_free
 };
 
-void tetrisgame_saveHighscore(uint8_t index, char name[10], uint32_t score){
+void tetrisgame_saveHighscore(uint8_t index, tetris_highscore_entry_t highscore_entry){
 	
 }
-void tetrisgame_readHighscore(uint8_t index, char name[10], uint32_t score){
-	
+tetris_highscore_entry_t tetrisgame_readHighscore(uint8_t index){
+	tetris_highscore_entry_t ret;
+	ret.name[0] = '\0';
+	ret.score = 0;
+	return ret;
 }
 
 void* tetrisgame_setup(){

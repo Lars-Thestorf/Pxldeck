@@ -484,6 +484,35 @@ uint64_t tetris_game::getSystemTime()
 	return esp_timer_get_time();
 }
 
+bool tetris_game::isScoreHighscore ( uint32_t score )
+{
+	return score > highscores[9].highscore_entry.score;
+}
+bool tetris_game::addToHighscoreList (tetris_highscore_entry_t highscore_entry)
+{
+	if (!isScoreHighscore(highscore_entry.score))
+		return false;
+	saveHighscoreFunc(highscores[9].list_slot, highscore_entry); // Overwrite the worst highscore with the new one
+	buildHighscoreList(); // Rebuild highscore list (sorting)
+	return true;
+}
+void tetris_game::buildHighscoreList()
+{
+	for (int i = 0; i < 10; i++) {
+		tetris_highscore_entry_t newscore = readHighscoreFunc(i);
+		uint8_t pos = 0;
+		while (newscore.score < highscores[pos].highscore_entry.score) {
+			pos++;
+		}
+		for (int j = 10; j > pos; j--){
+			highscores[j] = highscores[j - 1];
+		}
+		highscores[pos].highscore_entry = newscore;
+	}
+}
+
+
+
 void tetris_game::free()
 {
 	
