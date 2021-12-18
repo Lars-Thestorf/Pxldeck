@@ -1,0 +1,9 @@
+/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build/CMakeFiles/rebuild_cache.dir
+/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build/CMakeFiles/edit_cache.dir
+/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build/CMakeFiles/HHTVemulator.dir
+/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build/HLM-os/CMakeFiles/rebuild_cache.dir
+/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build/HLM-os/CMakeFiles/edit_cache.dir
+/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build/HLM-os/HLM-games/CMakeFiles/rebuild_cache.dir
+/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build/HLM-os/HLM-games/CMakeFiles/edit_cache.dir
+/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build/HLM-api/CMakeFiles/rebuild_cache.dir
+/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build/HLM-api/CMakeFiles/edit_cache.dir

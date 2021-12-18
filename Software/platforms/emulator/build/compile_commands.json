@@ -1,0 +1,27 @@
+[
+{
+  "directory": "/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build",
+  "command": "/usr/bin/c++ -DBAR -DPLATFORM_PC=1 -I/usr/include/SDL2 -I/home/lars/htvgit/larsledmatrix/Software/os -I/home/lars/htvgit/larsledmatrix/Software/os/HLM-games -I/home/lars/htvgit/larsledmatrix/Software/games -I/home/lars/htvgit/larsledmatrix/Software/api/include -std=gnu++14 -o CMakeFiles/HHTVemulator.dir/main.cpp.o -c /home/lars/htvgit/larsledmatrix/Software/platforms/emulator/main.cpp",
+  "file": "/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/main.cpp"
+},
+{
+  "directory": "/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build",
+  "command": "/usr/bin/c++ -DBAR -DPLATFORM_PC=1 -I/usr/include/SDL2 -I/home/lars/htvgit/larsledmatrix/Software/os -I/home/lars/htvgit/larsledmatrix/Software/os/HLM-games -I/home/lars/htvgit/larsledmatrix/Software/games -I/home/lars/htvgit/larsledmatrix/Software/api/include -std=gnu++14 -o CMakeFiles/HHTVemulator.dir/graphics.cpp.o -c /home/lars/htvgit/larsledmatrix/Software/platforms/emulator/graphics.cpp",
+  "file": "/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/graphics.cpp"
+},
+{
+  "directory": "/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build",
+  "command": "/usr/bin/c++ -DBAR -DPLATFORM_PC=1 -I/usr/include/SDL2 -I/home/lars/htvgit/larsledmatrix/Software/os -I/home/lars/htvgit/larsledmatrix/Software/os/HLM-games -I/home/lars/htvgit/larsledmatrix/Software/games -I/home/lars/htvgit/larsledmatrix/Software/api/include -std=gnu++14 -o CMakeFiles/HHTVemulator.dir/pcrandom.cpp.o -c /home/lars/htvgit/larsledmatrix/Software/platforms/emulator/pcrandom.cpp",
+  "file": "/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/pcrandom.cpp"
+},
+{
+  "directory": "/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build",
+  "command": "/usr/bin/c++ -DBAR -DPLATFORM_PC=1 -I/usr/include/SDL2 -I/home/lars/htvgit/larsledmatrix/Software/os -I/home/lars/htvgit/larsledmatrix/Software/os/HLM-games -I/home/lars/htvgit/larsledmatrix/Software/games -I/home/lars/htvgit/larsledmatrix/Software/api/include -std=gnu++14 -o CMakeFiles/HHTVemulator.dir/home/lars/htvgit/larsledmatrix/Software/os/HLM_os.cpp.o -c /home/lars/htvgit/larsledmatrix/Software/os/HLM_os.cpp",
+  "file": "/home/lars/htvgit/larsledmatrix/Software/os/HLM_os.cpp"
+},
+{
+  "directory": "/home/lars/htvgit/larsledmatrix/Software/platforms/emulator/build",
+  "command": "/usr/bin/c++ -DBAR -DPLATFORM_PC=1 -I/usr/include/SDL2 -I/home/lars/htvgit/larsledmatrix/Software/os -I/home/lars/htvgit/larsledmatrix/Software/os/HLM-games -I/home/lars/htvgit/larsledmatrix/Software/games -I/home/lars/htvgit/larsledmatrix/Software/api/include -std=gnu++14 -o CMakeFiles/HHTVemulator.dir/home/lars/htvgit/larsledmatrix/Software/games/pong/pong.cpp.o -c /home/lars/htvgit/larsledmatrix/Software/games/pong/pong.cpp",
+  "file": "/home/lars/htvgit/larsledmatrix/Software/games/pong/pong.cpp"
+}
+]

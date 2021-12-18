@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/HHTVemulator.dir/main.cpp.o CMakeFiles/HHTVemulator.dir/graphics.cpp.o CMakeFiles/HHTVemulator.dir/pcrandom.cpp.o CMakeFiles/HHTVemulator.dir/home/lars/htvgit/larsledmatrix/Software/os/HLM_os.cpp.o CMakeFiles/HHTVemulator.dir/home/lars/htvgit/larsledmatrix/Software/games/pong/pong.cpp.o -o HHTVemulator  -lSDL2 
