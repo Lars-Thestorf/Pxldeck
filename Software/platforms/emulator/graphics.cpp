@@ -10,7 +10,6 @@
 SDL_Texture* displaysurface;
 SDL_Renderer* renderer;
 SDL_Window* win;
-//bool horizontal = false;
 
 HLM_graphics* instanz = NULL;
 
@@ -19,9 +18,8 @@ HLM_graphics* get_graphics() {
 }
 
 void HLM_graphics::init(){
-	printf("Hallo Finn\n");
+	printf("Hallo Finn\r\n");
 };
-
 void HLM_graphics::drawPixel(uint8_t x, u_int8_t y, uint16_t color) {
 	graphics_drawpixel(x,y,color);
 };
@@ -33,6 +31,33 @@ void HLM_graphics::drawVLine(uint8_t x, uint8_t y, uint8_t height, uint16_t colo
 		graphics_drawpixel(x,y+ypos,color);
 	}
 }
+void HLM_graphics::drawHLine(uint8_t x, uint8_t y, uint8_t width, uint16_t color){
+	for (uint8_t xpos = 0; xpos < width; xpos++) {
+		graphics_drawpixel(x+xpos,y,color);
+	}
+}
+void HLM_graphics::drawRect ( uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint16_t color )
+{
+	drawHLine(x, y, width, color);
+	drawVLine(x, y, height, color);
+	drawHLine(x, y + height - 1, width, color);
+	drawVLine(x + width - 1, y, height, color);
+}
+void HLM_graphics::fillRect ( uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint16_t color )
+{
+	for (uint8_t xpos = 0; xpos < width; xpos++) {
+		for (uint8_t ypos = 0; ypos < height; ypos++) {
+			graphics_drawpixel(x + xpos, y + ypos, color);
+		}
+	}
+}
+
+void HLM_graphics::setBrightness ( uint8_t percent )
+{
+	printf("Screen Brightness %d unimplemented\r\n", percent);
+}
+
+
 void HLM_graphics::clear()
 {
 	for (uint8_t x = 0; x < DISPLAY_WIDTH; x++) {
@@ -147,7 +172,7 @@ void graphics_drawpixel(uint8_t x, uint8_t y, uint16_t color) {
 	SDL_UpdateTexture(displaysurface, &targetrect, &color, 2);
 }
 
-void graphics_drawImage1Bit(const uint8_t x, const uint8_t y, const uint8_t* img_data, uint8_t w, const uint8_t h, const uint16_t color0, const uint16_t color1) {
+void HLM_graphics::drawImage1Bit(const uint8_t x, const uint8_t y, const uint8_t* img_data, uint8_t w, const uint8_t h, const uint16_t color0, const uint16_t color1) {
 	for (int i = 0; i < w * h; i++) {
 		graphics_drawpixel(x + i % w, y + i/w, ((img_data[i/8] >> (i%8)) & 1) ? color1 : color0);
 	}

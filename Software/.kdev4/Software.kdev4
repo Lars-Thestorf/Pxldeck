@@ -10,9 +10,7 @@ parserArgumentsOpenCL=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunuse
 Name=GCC
 
 [CustomDefinesAndIncludes][ProjectPath0][Includes]
-1=/home/lars/htvgit/larsledmatrix/Software/os
-2=/home/lars/htvgit/larsledmatrix/Software/games
-3=/home/lars/htvgit/larsledmatrix/Software/api/include
+1=/home/lars/Documents/larsledmatrix/Software/api/include
 
 [Project]
 VersionControlSupport=kdevgit

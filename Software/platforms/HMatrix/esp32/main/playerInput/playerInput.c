@@ -1,4 +1,4 @@
-#include "playerInput.h"
+#include <HLM_playerInput.h>
 #include "../xmegaComm/xmegaComm.h"
 
 controllerType_e controllers[8] = {CONTROLLERTYPE_FULL, CONTROLLERTYPE_NONE, CONTROLLERTYPE_NONE, CONTROLLERTYPE_NONE, CONTROLLERTYPE_NONE, CONTROLLERTYPE_NONE, CONTROLLERTYPE_NONE, CONTROLLERTYPE_NONE};

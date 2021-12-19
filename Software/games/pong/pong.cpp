@@ -4,7 +4,6 @@
 //#include "../../graphics.h"
 #include <HLM_graphics.h>
 #include <HLM_playerInput.h>
-//#include "../../playerInput/playerInput.h"
 #include <cstdlib>
 
 #include <HLM_random.h>
@@ -53,14 +52,14 @@ void* ponggame_setup() {
 	return pointer;
 }
 int8_t pongGameInput(uint8_t playernum) {
-	/*switch(getControllerType(playernum)){
+	switch(getControllerType(playernum)){
 		case CONTROLLERTYPE_LEFT:
 			return getLRInput(playernum);
 		case CONTROLLERTYPE_RIGHT:
 			return -getLRInput(playernum);
 		default:
 			return getUDInput(playernum);
-	}*/
+	}
 	return 0;
 }
 void ponggame_loop(void* gamemem) {

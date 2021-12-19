@@ -1,7 +1,7 @@
 #ifndef _LALEMA_GAME_TETRIS_H_
 #define _LALEMA_GAME_TETRIS_H_
 
-#include <api/include/HLM_game.h>
+#include <HLM_game.h>
 
 #ifdef __cplusplus
 extern "C" {

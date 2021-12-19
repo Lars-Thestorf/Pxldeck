@@ -2,13 +2,13 @@
 #include "tetris_game.h"
 #include "tetris_draw.h"
 #include <stdlib.h>
-#include "../../graphics.h"
-#include "../../playerInput/playerInput.h"
+#include <HLM_graphics.h>
+#include <HLM_playerInput.h>
 
 typedef struct tetrismem_t {
-	MatrixPanel_I2S_DMA* gfx;
-	void (* drawFuncField)(uint8_t x, uint8_t y, uint16_t color, MatrixPanel_I2S_DMA* gfx);
-	void (* drawFuncHUD)(class tetris_game *gameplay, MatrixPanel_I2S_DMA* gfx);
+	HLM_graphics* gfx;
+	void (* drawFuncField)(uint8_t x, uint8_t y, uint16_t color, HLM_graphics* gfx);
+	void (* drawFuncHUD)(class tetris_game *gameplay, HLM_graphics* gfx);
 	class tetris_game *gameplay;
 } pongmem_t;
 
@@ -35,7 +35,7 @@ tetris_highscore_entry_t tetrisgame_readHighscore(uint8_t index){
 
 void* tetrisgame_setup(){
 	tetrismem_t *pointer = (tetrismem_t*)malloc(sizeof(tetrismem_t));
-	pointer->gfx = getGraphics();
+	pointer->gfx = get_graphics();
 	pointer->drawFuncField = drawFuncField1p1;
 	pointer->drawFuncHUD = drawFuncHUD1p1;
 	pointer->gameplay = new class tetris_game();

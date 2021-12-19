@@ -11,8 +11,6 @@
 
 #include "powerControl/powerControl.h"
 
-#include "playerInput/playerInput.h"
-
 #include "mainMenu/mainMenu.h"
 
 #include "graphics.h"

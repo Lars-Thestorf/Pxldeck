@@ -1,6 +1,6 @@
 #include "tetris_game.h"
-#include <esp_system.h>
-#include <esp_timer.h>
+#include <HLM_random.h>
+#include <HLM_time.h>
 
 //All values in Frames
 #define DAS_DELAY     12 //Delayed Auto Shift initial Delay
@@ -230,7 +230,7 @@ void tetris_game::init()
 void tetris_game::tick()
 {
 	if (game_state == GAME_STATE_PLAY && !game_paused) {
-		if (getSystemTime() > lastFrameTime + 16 * 1000) {
+		if (getSystemTime() > lastFrameTime + 16) {
 			lastFrameTime = getSystemTime();
 			switch(ingame_state) {
 				case INGAME_STATE_ARE:
@@ -477,11 +477,11 @@ bool tetris_game::checkLineFull(uint8_t line)
 
 uint16_t tetris_game::getRandomNumber(uint16_t max)
 {
-	return esp_random() % max;
+	return HLM_random(max);
 }
 uint64_t tetris_game::getSystemTime()
 {
-	return esp_timer_get_time();
+	return get_ms_since_boot() * 1000;
 }
 
 bool tetris_game::isScoreHighscore ( uint32_t score )
