@@ -10,21 +10,21 @@ void drawFuncHUD1p1(class tetris_game *gameplay, HLM_graphics* gfx) {
 		char tempstr[12];
 		case GAME_STATE_MENU:
 			sprintf(tempstr, "Level: %d", gameplay->level);
-			//drawString(8, 12, tempstr);
+			gfx->drawText(8, 12, tempstr, 0xFFFF);
 			break;
 		case GAME_STATE_PLAY:
 			sprintf(tempstr, "%d", gameplay->score);
-			//drawString(25, 8, tempstr);
+			gfx->drawText(25, 8, tempstr, 0xFFFF);
 			sprintf(tempstr, "%d", gameplay->level);
-			//drawString(25, 16, tempstr);
+			gfx->drawText(25, 16, tempstr, 0xFFFF);
 			sprintf(tempstr, "%d", gameplay->lines);
-			//drawString(25, 24, tempstr);
+			gfx->drawText(25, 24, tempstr, 0xFFFF);
 			break;
 		case GAME_STATE_OVER:
-			//drawString(6, 4, "Game Over");
-			//drawString(6, 12, "Score:");
+			gfx->drawText(6, 4, "Game Over", 0xFFFF);
+			gfx->drawText(6, 12, "Score:", 0xFFFF);
 			sprintf(tempstr, "%d", gameplay->score);
-			//drawString(6, 21, tempstr);
+			gfx->drawText(6, 21, tempstr, 0xFFFF);
 			break;
 	}
 }

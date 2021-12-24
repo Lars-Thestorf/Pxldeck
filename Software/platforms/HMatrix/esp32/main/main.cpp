@@ -9,10 +9,6 @@
 
 #include "xmegaComm/xmegaComm.h"
 
-#include "powerControl/powerControl.h"
-
-#include "mainMenu/mainMenu.h"
-
 #include "graphics.h"
 
 #include <HLM_os.h>
@@ -35,6 +31,7 @@ void app_main(void)
 	os_init();
 	
 	MatrixPanel_I2S_DMA* gfx = getGraphics();
+	gfx->setPanelBrightness(10);
 	
 	while(1){
 		if (isXmegaCommEstablished()) {

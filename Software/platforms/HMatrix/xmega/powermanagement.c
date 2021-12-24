@@ -10,6 +10,12 @@ volatile bool interrupt_happend = false;
 //volatile uint32_t Boot_Key __attribute__ ((section (".noinit")));
 //#define MAGIC_BOOT_KEY            0xDC42ACCA
 
+#define BATTERYLEVELHISTORYSIZE 64
+uint16_t batteryLevelHistory[BATTERYLEVELHISTORYSIZE];
+uint32_t batteryLevelSum = 0;
+uint8_t batteryLevelIdx = 0;
+bool batteryLevelSumReady = false;
+
 void PowerLatch(void) {
 	PIN_KEEPALIVE_reg.DIRSET = PIN_KEEPALIVE_bm; //pin PD3 (Keepalive) as output
 	//if (Boot_Key != MAGIC_BOOT_KEY)
@@ -31,6 +37,11 @@ void PowerLatch(void) {
 	PORTC.DIRCLR = PIN3_bm; // Bootloader seems to do strage stuff with its pin
 	
 	SetupAdcMultipin();
+	
+	for(uint8_t idx = 0; idx < BATTERYLEVELHISTORYSIZE; idx++) {
+		batteryLevelHistory[idx] = getAnalogValue(PIN_BATTERYDIV_bit);
+		batteryLevelSum += batteryLevelHistory[idx];
+	}
 }
 
 void PowerWorker()
@@ -41,7 +52,19 @@ void PowerWorker()
 
 uint16_t getBatteryLevel()
 {
-	return getAnalogValue(PIN_BATTERYDIV_bit);
+	//TODO: once timing is possible move sampling to worker
+
+	uint16_t reading = getAnalogValue(PIN_BATTERYDIV_bit);
+	batteryLevelSum = batteryLevelSum - batteryLevelHistory[batteryLevelIdx] + reading;
+	batteryLevelHistory[batteryLevelIdx] = reading;
+	batteryLevelIdx++;
+	batteryLevelIdx %= BATTERYLEVELHISTORYSIZE;
+	if (batteryLevelIdx == 0)
+		batteryLevelSumReady = true;
+	
+	if (batteryLevelSumReady)
+		return batteryLevelSum / BATTERYLEVELHISTORYSIZE;
+	return reading;
 }
 
 bool isPowerButtonPressed()

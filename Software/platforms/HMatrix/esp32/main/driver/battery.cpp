@@ -1,4 +1,4 @@
-#include "powerControl.h"
+#include <HLM_battery.h>
 #include "../xmegaComm/xmegaComm.h"
 
 void SetupPowerControl()
@@ -21,7 +21,7 @@ uint8_t getBatteryPercentage()
 }
 
 
-bool isDeviceCharging()
+bool isBatteryCharging()
 {
 	return (xmegaGetPressedButtons() & BUTTON_CRG) > 0;
 }

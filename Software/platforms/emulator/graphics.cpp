@@ -3,6 +3,8 @@
 #include <SDL2/SDL_timer.h>
 #include <HLM_graphics.h>
 
+#include "font.c"
+
 #define DISPLAY_WIDTH 64
 #define DISPLAY_HEIGHT 32
 #define DISPLAY_ZOOM 16
@@ -55,6 +57,28 @@ void HLM_graphics::fillRect ( uint8_t x, uint8_t y, uint8_t width, uint8_t heigh
 void HLM_graphics::setBrightness ( uint8_t percent )
 {
 	printf("Screen Brightness %d unimplemented\r\n", percent);
+}
+
+void HLM_graphics::drawText(uint8_t x, uint8_t y, char* str, uint16_t color)
+{
+	int pos = 0;
+	char c = str[pos];
+	while(c != '\0') {
+		uint16_t addr = c * 5;
+		for (uint8_t col = 0; col < 5; col++) {
+			if (font[addr + col] & 0x01) graphics_drawpixel(x + col, y + 0, color);
+			if (font[addr + col] & 0x02) graphics_drawpixel(x + col, y + 1, color);
+			if (font[addr + col] & 0x04) graphics_drawpixel(x + col, y + 2, color);
+			if (font[addr + col] & 0x08) graphics_drawpixel(x + col, y + 3, color);
+			if (font[addr + col] & 0x10) graphics_drawpixel(x + col, y + 4, color);
+			if (font[addr + col] & 0x20) graphics_drawpixel(x + col, y + 5, color);
+			if (font[addr + col] & 0x40) graphics_drawpixel(x + col, y + 6, color);
+			if (font[addr + col] & 0x80) graphics_drawpixel(x + col, y + 7, color);
+		}
+		x+=6;
+		pos++;
+		c = str[pos];
+	}
 }
 
 
@@ -119,8 +143,8 @@ void graphics_render() {
 	// for multiple rendering
 	SDL_RenderPresent(renderer);
 
-	// calculates to 60 fps
-	SDL_Delay(1000 / 60);
+	// calculates to 120 fps
+	SDL_Delay(1000 / 120);
 }
 
 //Rotating the emulator might get usefull when games have got actual multiplayer capabilitys

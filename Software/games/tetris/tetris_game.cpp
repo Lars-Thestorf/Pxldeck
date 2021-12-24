@@ -481,7 +481,7 @@ uint16_t tetris_game::getRandomNumber(uint16_t max)
 }
 uint64_t tetris_game::getSystemTime()
 {
-	return get_ms_since_boot() * 1000;
+	return get_ms_since_boot();
 }
 
 bool tetris_game::isScoreHighscore ( uint32_t score )

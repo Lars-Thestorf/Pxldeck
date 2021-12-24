@@ -59,8 +59,9 @@ void drawImage1bit(const uint8_t x, const uint8_t y, const uint8_t* img_data, ui
 	}
 }
 
-void drawString(uint8_t x, uint8_t y, char* text) {
+void drawString(uint8_t x, uint8_t y, char* text, uint16_t color) {
 	dma_display->setCursor(x, y);
+	dma_display->setTextColor(color);
 	char c = text[0];
 	int i = 0;
 	while (c != '\0') {

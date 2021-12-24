@@ -132,11 +132,11 @@ void DrawMainMenu() {
 			if (draw_special_menu) {
 				char batstring[10];
 				sprintf(batstring, "*%d", current_brightness);
-				//drawString(0,0,batstring);
+				gfx->drawText(0, 0, batstring, 0xFFFF);
 				sprintf(batstring, "%d", getBatteryPercentage());
-				//drawString(32,0,batstring);
+				gfx->drawText(32, 0, batstring, 0xFFFF);
 			} else {
-				//drawString(0,0,games[current_sel_game].name);
+				gfx->drawText(0, 0, games[current_sel_game].name, 0xFFFF);
 			}
 		}
 		break;

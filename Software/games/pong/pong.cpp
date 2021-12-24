@@ -5,6 +5,7 @@
 #include <HLM_graphics.h>
 #include <HLM_playerInput.h>
 #include <cstdlib>
+#include <cstdio>
 
 #include <HLM_random.h>
 
@@ -72,12 +73,11 @@ void ponggame_loop(void* gamemem) {
 	
 	//score
 	uint16_t gray = 0x3333; //GRAPHICS_COLOR_RED1 | GRAPHICS_COLOR_RED2 | GRAPHICS_COLOR_RED3 | GRAPHICS_COLOR_GREEN1 | GRAPHICS_COLOR_GREEN2 | GRAPHICS_COLOR_GREEN3 | GRAPHICS_COLOR_BLUE1 | GRAPHICS_COLOR_BLUE2 | GRAPHICS_COLOR_BLUE3;
-	//gfx->setTextColor(gray);
 	char score[4];
-	//sprintf(score, "%d", PONGMEM->p1score);
-	//drawString(13,0, score);
-	//sprintf(score, "%d", PONGMEM->p2score);
-	//drawString(45,0, score);
+	sprintf(score, "%d", PONGMEM->p1score);
+	gfx->drawText(13,0, score, gray);
+	sprintf(score, "%d", PONGMEM->p2score);
+	gfx->drawText(45,0, score, gray);
 	
 	//middle
 	gfx->drawVLine(GAMEWIDTH/100/2, 0, GAMEHEIGHT/100, gray);
@@ -94,7 +94,7 @@ void ponggame_loop(void* gamemem) {
 	gfx->drawVLine(0, (PONGMEM->p1pos - PLAYERHEIGHT / 2) / 100, PLAYERHEIGHT / 100, GRAPHICS_COLOR_WHITE);
 	
 	//right player
-	/*if (getPlayerCount() > 1) {
+	if (getPlayerCount() > 1) {
 		delta = pongGameInput(2) / 3;
 		if (PONGMEM->p2pos + delta < PLAYERHEIGHT / 2)
 			PONGMEM->p2pos = PLAYERHEIGHT / 2;
@@ -102,13 +102,13 @@ void ponggame_loop(void* gamemem) {
 			PONGMEM->p2pos = GAMEHEIGHT - PLAYERHEIGHT / 2;
 		else
 			PONGMEM->p2pos += delta;
-	} else {*/
+	} else {
 		//CPU enemy
 		if (PONGMEM->bypos > PONGMEM->p2pos)
 			PONGMEM->p2pos += 20;
 		if (PONGMEM->bypos < PONGMEM->p2pos)
 			PONGMEM->p2pos -= 20;
-	//}
+	}
 	gfx->drawVLine(GAMEWIDTH / 100 - 1, (PONGMEM->p2pos - PLAYERHEIGHT / 2) / 100, PLAYERHEIGHT / 100, white);
 	
 	//ball
