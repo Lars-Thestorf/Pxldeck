@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 
-bool HLM_storage_write32(char name[16], uint32_t value) {
+bool HLM_storage_write32(const char name[16], uint32_t value) {
 	char path[32];
 	snprintf(path, 32, "./.storage/%s", name);
 	SDL_RWops *io = SDL_RWFromFile(path, "wb");
@@ -16,7 +16,7 @@ bool HLM_storage_write32(char name[16], uint32_t value) {
 	return false;
 }
 
-bool HLM_storage_exists32(char name[16])
+bool HLM_storage_exists32(const char name[16])
 {
 	char path[32];
 	snprintf(path, 32, "./.storage/%s", name);
@@ -28,7 +28,7 @@ bool HLM_storage_exists32(char name[16])
 	return false;
 }
 
-uint32_t HLM_storage_read32(char name[16]) {
+uint32_t HLM_storage_read32(const char name[16]) {
 	char path[32];
 	snprintf(path, 32, "./.storage/%s", name);
 	SDL_RWops *io = SDL_RWFromFile(path, "rb");

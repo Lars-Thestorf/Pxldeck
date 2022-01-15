@@ -22,6 +22,7 @@ typedef struct sokobanmem_t {
 	bool last_down;
 	bool last_undo;
 	bool last_menu;
+	bool last_primary;
 } sokobanmem_t;
 
 #define SOKOMEM ((sokobanmem_t*)gamemem)
@@ -30,9 +31,9 @@ typedef struct sokobanmem_t {
 #define GAMEHEIGHT 3200
 #define GAMEWIDTH 6400
 
-#define SOKOBAN_STORAGE_KEY "SokobanProgress"
-
-static const char *TAG = "Pong";
+//#define SOKOBAN_STORAGE_KEY "SokobanProgress"
+static const char *SOKOBAN_STORAGE_KEY = "SokobanProgress";
+//static const char *TAG = "Sokoban";
 
 const HLM_game sokoban_game = {
 	"Sokoban",
@@ -105,13 +106,21 @@ void sokoban_loop(void* gamemem) {
 	} else {
 		SOKOMEM->last_down = false;
 	}
-	if (isPrimaryButtonPressed(1)) {
+	if (isPrimaryButtonPressed(1) || isSecondaryButtonPressed(1)) {
+		if (!SOKOMEM->last_primary){
+			if (!SOKOMEM->ingame) {
+				SOKOMEM->level.init(levels[SOKOMEM->levelnum]);
+				SOKOMEM->ingame = true;
+			}
+		}
+		SOKOMEM->last_primary = true;
+	} else {
+		SOKOMEM->last_primary = false;
+	}
+	if (isCoPrimaryButtonPressed(1) || isCoSecondaryButtonPressed(1)) {
 		if (!SOKOMEM->last_undo){
 			if (SOKOMEM->ingame) {
 				SOKOMEM->level.undo();
-			} else {
-				SOKOMEM->level.init(levels[SOKOMEM->levelnum]);
-				SOKOMEM->ingame = true;
 			}
 		}
 		SOKOMEM->last_undo = true;
@@ -132,7 +141,7 @@ void sokoban_loop(void* gamemem) {
 		SOKOMEM->level.draw();
 		if (SOKOMEM->level.isWon()) {
 			if (SOKOMEM->levelnum == SOKOMEM->levelprogress) {
-				if (SOKOMEM->levelprogress < LEVELCOUNT) {
+				if (SOKOMEM->levelprogress < LEVELCOUNT - 1) {
 					SOKOMEM->levelprogress++;
 					SOKOMEM->levelnum++;
 					bool ret = HLM_storage_write32(SOKOBAN_STORAGE_KEY, (uint32_t)SOKOMEM->levelprogress);
