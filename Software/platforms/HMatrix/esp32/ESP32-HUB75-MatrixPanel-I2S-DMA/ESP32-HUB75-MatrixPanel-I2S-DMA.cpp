@@ -636,7 +636,7 @@ void MatrixPanel_I2S_DMA::clearFrameBuffer(bool _buff_id){
       row = dma_buff.rowBits[row_idx]->getDataPtr(coloridx, _buff_id);
 
       // drive latch while shifting out last bit of RGB data
-	  row[dma_buff.rowBits[row_idx]->width - 3] |= BIT_LAT;
+	  row[dma_buff.rowBits[row_idx]->width - 4] |= BIT_LAT;
 	  row[dma_buff.rowBits[row_idx]->width - 2] |= BIT_LAT;
       row[dma_buff.rowBits[row_idx]->width - 1] |= BIT_LAT;   // -1 pixel to compensate array index starting at 0
       //row[dma_buff.rowBits[row_idx]->width - 1] |= BIT_LAT;   // -1 pixel to compensate array index starting at 0
@@ -646,7 +646,7 @@ void MatrixPanel_I2S_DMA::clearFrameBuffer(bool _buff_id){
       uint8_t _blank = m_cfg.latch_blanking;
       do {
         --_blank;
-        row[0 + _blank] |= BIT_OE;
+        //row[0 + _blank] |= BIT_OE;
         row[dma_buff.rowBits[row_idx]->width - _blank - 3 ] |= BIT_OE;    // (LAT pulse is (width-2) -1 pixel to compensate array index starting at 0
       } while (_blank);
 
@@ -711,7 +711,7 @@ void MatrixPanel_I2S_DMA::brtCtrlOE(int brt, const bool _buff_id){
       uint8_t _blank = m_cfg.latch_blanking;
       do {
         --_blank;
-        row[0 + _blank] |= BIT_OE;
+        row[1 + _blank] |= BIT_OE;
         // no need, has been done already
         //row[dma_buff.rowBits[row_idx]->width - _blank - 3 ] |= BIT_OE;    // (LAT pulse is (width-2) -1 pixel to compensate array index starting at 0
       } while (_blank);

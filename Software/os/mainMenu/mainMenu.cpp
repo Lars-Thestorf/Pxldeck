@@ -9,12 +9,13 @@
 
 #include <pong/pong.h>
 #include <tetris/tetris.h>
+#include <sokoban/sokoban.h>
 
 #include <HLM_graphics.h>
 
 #include "playerIcons.c"
 
-HLM_game games[] = {pong_game, tetris_gamedesc};
+HLM_game games[] = {pong_game, tetris_gamedesc, sokoban_game};
 //HLM_game games[] = {pong_game};
 
 #define LEMAGOS_STATE_MAINMENU 0
@@ -28,7 +29,7 @@ bool prevPressCoSecondary[8] = {0,0,0,0,0,0,0,0};
 bool prevPressLeft[8] = {0,0,0,0,0,0,0,0};
 bool prevPressRight[8] = {0,0,0,0,0,0,0,0};
 
-uint8_t current_brightness = 20;
+uint8_t current_brightness = 10;
 uint8_t current_sel_game = 0;
 
 void* gameMem;
@@ -104,9 +105,13 @@ void DrawMainMenu() {
 				if (isShoulderButtonPressed(i+1))
 					draw_special_menu = true;
 				if (getLRInput(i+1) < -0x40 && !prevPressLeft[i]) { //left
-					if (isShoulderButtonPressed(i+1))
-						gfx->setBrightness(--current_brightness);
-					else {
+					if (isShoulderButtonPressed(i+1)) {
+						if (current_brightness > 0)
+							current_brightness--;
+						gfx->setBrightness(current_brightness);
+					}
+					else
+					{
 						if (current_sel_game != 0)
 							current_sel_game--;
 						else
@@ -114,8 +119,12 @@ void DrawMainMenu() {
 					}
 				}
 				if (getLRInput(i+1) > 0x40 && !prevPressRight[i]) { //right
-					if (isShoulderButtonPressed(i+1))
-						gfx->setBrightness(++current_brightness);
+					if (isShoulderButtonPressed(i+1)) {
+						if (current_brightness < 100) {
+							current_brightness++;
+						}
+						gfx->setBrightness(current_brightness);
+					}
 					else {
 						if (current_sel_game < sizeof(games)/sizeof(games[0]) - 1)
 							current_sel_game++;

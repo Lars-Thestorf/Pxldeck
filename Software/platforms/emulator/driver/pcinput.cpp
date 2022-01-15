@@ -123,7 +123,7 @@ bool isHomeButtonPressed ( uint8_t playernum )
 }
 bool isMenuButtonPressed ( uint8_t playernum )
 {
-	return isRMenuButtonPressed(playernum) || isLShoulderButtonPressed(playernum);
+	return isLMenuButtonPressed(playernum) || isRMenuButtonPressed(playernum);
 }
 bool isLMenuButtonPressed ( uint8_t playernum )
 {
