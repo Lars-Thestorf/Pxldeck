@@ -58,7 +58,6 @@ void* sokoban_setup() {
 	SOKOMEM->last_up = getUDInput(1) < -60;
 	SOKOMEM->last_down = getUDInput(1) > 60;
 	SOKOMEM->last_menu = isMenuButtonPressed(1);
-	//SOKOMEM->level.init(levels[2]);
 	return gamemem;
 }
 void sokoban_loop(void* gamemem) {
@@ -80,7 +79,7 @@ void sokoban_loop(void* gamemem) {
 			if (SOKOMEM->ingame) {
 			SOKOMEM->level.go_right();
 			} else {
-				if (SOKOMEM->levelnum < SOKOMEM->levelprogress)
+				if (SOKOMEM->levelnum < SOKOMEM->levelprogress && SOKOMEM->levelnum < LEVELCOUNT - 1)
 					SOKOMEM->levelnum++;
 			}
 		}
@@ -141,12 +140,12 @@ void sokoban_loop(void* gamemem) {
 		SOKOMEM->level.draw();
 		if (SOKOMEM->level.isWon()) {
 			if (SOKOMEM->levelnum == SOKOMEM->levelprogress) {
-				if (SOKOMEM->levelprogress < LEVELCOUNT - 1) {
 					SOKOMEM->levelprogress++;
-					SOKOMEM->levelnum++;
 					bool ret = HLM_storage_write32(SOKOBAN_STORAGE_KEY, (uint32_t)SOKOMEM->levelprogress);
 					printf("write ret: %d\n", ret);
 				}
+			if (SOKOMEM->levelprogress < LEVELCOUNT - 1) {
+				SOKOMEM->levelnum++;
 			}
 			SOKOMEM->ingame = false;
 		}
@@ -154,7 +153,7 @@ void sokoban_loop(void* gamemem) {
 	else
 	{
 		char leveltext[12];
-		uint8_t pixels = snprintf(leveltext, 10, "Level: %d", SOKOMEM->levelnum + 1) * 6;
+		uint8_t pixels = snprintf(leveltext, 11, "Level: %d", SOKOMEM->levelnum + 1) * 6;
 		get_graphics()->drawText((64 - pixels) / 2, 12, leveltext, 0xFFFF);
 	}
 }

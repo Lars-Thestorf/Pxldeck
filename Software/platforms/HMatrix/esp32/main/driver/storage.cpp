@@ -27,7 +27,7 @@ bool HLM_storage_write32(const char name[16], uint32_t value)
 	esp_err_t err = nvs_set_i32(my_handle, name, value);
 	nvs_close(my_handle);
 	nvs_commit(my_handle);
-    return (err != ESP_OK);
+    return (err == ESP_OK);
 }
 
 
