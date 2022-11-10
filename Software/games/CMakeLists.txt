@@ -4,9 +4,6 @@ if(${ESP_PLATFORM})
                     REQUIRES api
                     INCLUDE_DIRS "." "../api/include/")
 
-	#TODO: fix ugly solution:
-	target_link_libraries(${COMPONENT_LIB} INTERFACE idf::main)
-
 else()
 
 	add_library(HLM-games INTERFACE)

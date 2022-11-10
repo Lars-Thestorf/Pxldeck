@@ -9,9 +9,9 @@
 
 #include <nvs_flash.h>
 
-#include "xmegaComm/xmegaComm.h"
+#include <xmegaComm/xmegaComm.h>
 
-#include "graphics.h"
+#include <graphics.h>
 
 #include <HLM_os.h>
 

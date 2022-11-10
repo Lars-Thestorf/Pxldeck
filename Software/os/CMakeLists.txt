@@ -2,10 +2,11 @@ if(${ESP_PLATFORM})
 
 	set(EXTRA_COMPONENT_DIRS "../games/")
 	
-	#TODO: fix hacky solution (why does requiring main here fix issue of games not being found?)
 	idf_component_register(SRCS "HLM_os.cpp" "mainMenu/mainMenu.cpp"
-                    REQUIRES main games
+                    REQUIRES api games
                     INCLUDE_DIRS "../games/")
+
+	target_link_libraries(${COMPONENT_LIB} INTERFACE idf::main)
 
 else()
 	

@@ -6,6 +6,7 @@
 #include <HLM_graphics.h>
 #include <HLM_playerInput.h>
 #include <HLM_storage.h>
+#include <HLM_time.h>
 #include <cstdlib>
 #include <cstdio>
 
@@ -16,6 +17,8 @@ typedef struct sokobanmem_t {
 	uint8_t levelnum;
 	uint8_t levelprogress;
 	class sokoban_level level;
+	int16_t next_hold_auto_input_ms;
+	int64_t last_frame_time;
 	bool last_left;
 	bool last_right;
 	bool last_up;
@@ -58,9 +61,18 @@ void* sokoban_setup() {
 	SOKOMEM->last_up = getUDInput(1) < -60;
 	SOKOMEM->last_down = getUDInput(1) > 60;
 	SOKOMEM->last_menu = isMenuButtonPressed(1);
+	SOKOMEM->last_primary = isPrimaryButtonPressed(1) || isSecondaryButtonPressed(1);
+
 	return gamemem;
 }
 void sokoban_loop(void* gamemem) {
+	uint16_t delta = get_ms_since_boot() - SOKOMEM->last_frame_time;
+	if (SOKOMEM->next_hold_auto_input_ms != 0) {
+		SOKOMEM->next_hold_auto_input_ms -= delta;
+		if (SOKOMEM->next_hold_auto_input_ms == 0) {
+			SOKOMEM->next_hold_auto_input_ms = -1;
+		}
+	}
 	if (getLRInput(1) < -60) {
 		if (!SOKOMEM->last_left) {
 			if (SOKOMEM->ingame) {
@@ -68,23 +80,39 @@ void sokoban_loop(void* gamemem) {
 			} else {
 				if (SOKOMEM->levelnum > 0)
 					SOKOMEM->levelnum--;
+				SOKOMEM->next_hold_auto_input_ms = 500;
 			}
+		}
+		if (!SOKOMEM->ingame && SOKOMEM->next_hold_auto_input_ms < 0) {
+			SOKOMEM->next_hold_auto_input_ms = 50;
+			if (SOKOMEM->levelnum > 0)
+				SOKOMEM->levelnum--;
 		}
 		SOKOMEM->last_left = true;
 	} else {
+		if (SOKOMEM->last_left)
+			SOKOMEM->next_hold_auto_input_ms = 0;
 		SOKOMEM->last_left = false;
 	}
 	if (getLRInput(1) > 60) {
 		if (!SOKOMEM->last_right) {
 			if (SOKOMEM->ingame) {
-			SOKOMEM->level.go_right();
+				SOKOMEM->level.go_right();
 			} else {
 				if (SOKOMEM->levelnum < SOKOMEM->levelprogress && SOKOMEM->levelnum < LEVELCOUNT - 1)
 					SOKOMEM->levelnum++;
+				SOKOMEM->next_hold_auto_input_ms = 500;
 			}
+		}
+		if (!SOKOMEM->ingame && SOKOMEM->next_hold_auto_input_ms < 0) {
+			SOKOMEM->next_hold_auto_input_ms = 50;
+			if (SOKOMEM->levelnum < SOKOMEM->levelprogress)
+				SOKOMEM->levelnum++;
 		}
 		SOKOMEM->last_right = true;
 	} else {
+		if (SOKOMEM->last_right)
+			SOKOMEM->next_hold_auto_input_ms = 0;
 		SOKOMEM->last_right = false;
 	}
 	if (getUDInput(1) < -60) {
@@ -156,6 +184,7 @@ void sokoban_loop(void* gamemem) {
 		uint8_t pixels = snprintf(leveltext, 11, "Level: %d", SOKOMEM->levelnum + 1) * 6;
 		get_graphics()->drawText((64 - pixels) / 2, 12, leveltext, 0xFFFF);
 	}
+	SOKOMEM->last_frame_time = get_ms_since_boot();
 }
 void sokoban_free(void* gamemem) {
 	SOKOMEM->level.free();

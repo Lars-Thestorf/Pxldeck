@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "graphics.h"
 #include <HLM_graphics.h>
-#include "../HMatrix/esp32/main/bootlogo.c"
+//#include "../HMatrix/esp32/main/bootlogo.c"
 #include <HLM_os.h>
 #include <HLM_random.h>
 #include "input.h"

@@ -5,11 +5,10 @@ cmake_minimum_required(VERSION 3.5)
 
 #set(EXTRA_COMPONENT_DIRS "../../../")
 list(APPEND EXTRA_COMPONENT_DIRS "../../../")
-#list(APPEND EXTRA_COMPONENT_DIRS "./impl/")
+list(APPEND EXTRA_COMPONENT_DIRS "./impl")
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 
-#target_compile_options(${COMPONENT_TARGET} PUBLIC -DYOUR_LOVELY_DEFINITIONS)
 #target_compile_definitions(${COMPONENT_TARGET} INTERFACE BAR)
 add_compile_definitions(FOO)
 
