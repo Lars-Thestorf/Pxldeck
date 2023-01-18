@@ -8,6 +8,7 @@
 #include <cstdio>
 
 #include <pong/pong.h>
+#include <Snake/snake_game.h>
 #include <tetris/tetris.h>
 #include <sokoban/sokoban.h>
 
@@ -15,7 +16,7 @@
 
 #include "playerIcons.c"
 
-HLM_game games[] = {pong_game, tetris_gamedesc, sokoban_game};
+HLM_game games[] = {pong_game, snake_game, tetris_gamedesc, sokoban_game};
 //HLM_game games[] = {pong_game};
 
 #define LEMAGOS_STATE_MAINMENU 0
