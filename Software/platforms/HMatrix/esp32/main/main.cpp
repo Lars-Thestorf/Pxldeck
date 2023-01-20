@@ -14,6 +14,7 @@
 #include <graphics.h>
 
 #include <HLM_os.h>
+#include <server.h>
 
 char mtbuffer[128];
 
@@ -40,6 +41,10 @@ void app_main(void)
 	SetupGraphics();
 	
 	os_init();
+
+	wifi_setup();
+  	xTaskCreate(&server_task,"server_task",3000,NULL,9,NULL);
+  	xTaskCreate(&server_handle_task,"server_handle_task",4000,NULL,6,NULL);
 	
 	MatrixPanel_I2S_DMA* gfx = getGraphics();
 	gfx->setPanelBrightness(10);
