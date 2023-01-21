@@ -14,7 +14,8 @@
 #include <graphics.h>
 
 #include <HLM_os.h>
-#include <server.h>
+#include "../Websocketserver/server.h"
+#include "../Websocketserver/websocket/include/websocket_server.h"
 
 char mtbuffer[128];
 

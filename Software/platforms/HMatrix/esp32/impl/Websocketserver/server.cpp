@@ -6,23 +6,22 @@
 
 #include "esp_wifi.h"
 #include "esp_log.h"
-#include "esp_event_loop.h"
+#include "esp_event.h"
 #include "driver/ledc.h"
 
 #include "string.h"
 
 #include "websocket/include/websocket_server.h"
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+
 
 /*
 192.168.4.1
 */
-#define LED_PIN CONFIG_LED_PIN
-#define AP_SSID CONFIG_AP_SSID
-#define AP_PSSWD CONFIG_AP_PSSWD
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 static QueueHandle_t client_queue;
 const static int client_queue_size = 10;
@@ -100,8 +99,8 @@ static esp_err_t event_handler(void* ctx, system_event_t* event) {
 
   wifi_config_t wifi_config = {
     .ap = {
-      AP_SSID,
-      AP_PSSWD,
+      "lol",
+      "123456789",
       .channel = 0,
       WIFI_AUTH_WPA2_PSK,
       .ssid_hidden = 0,
@@ -184,8 +183,8 @@ static void http_serve(struct netconn *conn) {
   static err_t err;
 
   // default page
-  extern const uint8_t root_html_start[] asm("_binary_root_html_start");
-  extern const uint8_t root_html_end[] asm("_binary_root_html_end");
+  extern const uint8_t root_html_start[] asm("_binary_index_html_start");
+  extern const uint8_t root_html_end[] asm("_binary_index_html_end");
   const uint32_t root_html_len = root_html_end - root_html_start;
 
   // test.js
@@ -194,14 +193,9 @@ static void http_serve(struct netconn *conn) {
   const uint32_t test_js_len = test_js_end - test_js_start;
 
   // test.css
-  extern const uint8_t test_css_start[] asm("_binary_test_css_start");
-  extern const uint8_t test_css_end[] asm("_binary_test_css_end");
+  extern const uint8_t test_css_start[] asm("_binary_style_css_start");
+  extern const uint8_t test_css_end[] asm("_binary_style_css_end");
   const uint32_t test_css_len = test_css_end - test_css_start;
-
-  // favicon.ico
-  extern const uint8_t favicon_ico_start[] asm("_binary_favicon_ico_start");
-  extern const uint8_t favicon_ico_end[] asm("_binary_favicon_ico_end");
-  const uint32_t favicon_ico_len = favicon_ico_end - favicon_ico_start;
 
   // error page
   extern const uint8_t error_html_start[] asm("_binary_error_html_start");

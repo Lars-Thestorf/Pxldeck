@@ -17,14 +17,16 @@ This program is free software: you can redistribute it and/or modify
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 
 #ifndef WEBSOCKET_H
 #define WEBSOCKET_H
 
 #include "lwip/api.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // the different codes for the callbacks
 typedef enum {
