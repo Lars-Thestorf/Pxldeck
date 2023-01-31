@@ -112,7 +112,7 @@ void sokoban_loop(void* gamemem) {
 		}
 		if (!SOKOMEM->ingame && SOKOMEM->next_hold_auto_input_ms < 0) {
 			SOKOMEM->next_hold_auto_input_ms = 50;
-			if (SOKOMEM->levelnum < SOKOMEM->levelprogress - 1)
+			if (SOKOMEM->levelnum < SOKOMEM->levelprogress)
 				SOKOMEM->levelnum++;
 		}
 		SOKOMEM->last_right = true;
