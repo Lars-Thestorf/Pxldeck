@@ -10,6 +10,7 @@ extern "C" {
 
 typedef struct {
   char name[20];
+  const uint8_t* image;
   void* (*setupFunction)(void);
   void (*loopFunction)(void*);
   void (*freeFunction)(void*);

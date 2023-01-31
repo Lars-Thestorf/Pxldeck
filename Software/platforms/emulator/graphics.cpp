@@ -201,3 +201,17 @@ void HLM_graphics::drawImage1Bit(const uint8_t x, const uint8_t y, const uint8_t
 		graphics_drawpixel(x + i % w, y + i/w, ((img_data[i/8] >> (i%8)) & 1) ? color1 : color0);
 	}
 }
+
+void HLM_graphics::drawImageRaw(const uint8_t x, const uint8_t y, const uint8_t* img_data)
+{
+	uint16_t image_width = (img_data[4] << 8) | img_data[5];
+	uint16_t image_height = (img_data[6] << 8) | img_data[7];
+	uint16_t pos = 8;
+	for (uint16_t i = 0;i < image_height;i++){
+		for (uint16_t j = 0; j < image_width; j++){
+			graphics_drawpixel(x + j, y + i, (img_data[pos] << 8) | img_data[pos + 1]);
+			pos+=2;
+		}	
+	}
+}
+

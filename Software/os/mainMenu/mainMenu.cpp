@@ -80,7 +80,7 @@ void DrawMainMenu() {
 			//selected game
 			gfx->drawVLine(23, 8, 16, 0x38E7);
 			gfx->drawVLine(40, 8, 16, 0x38E7);
-			gfx->drawRect(25, 9, 14, 14, 0x38E7);
+			gfx->drawImageRaw(26,10,games[current_sel_game].image);
 		
 			
 			//input handling

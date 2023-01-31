@@ -42,6 +42,10 @@ void HLM_graphics::drawImage1Bit(const uint8_t x, const uint8_t y, const uint8_t
 {
 	drawImage1bit(x, y, img_data, w, h, color0, color1);
 }
+void HLM_graphics::drawImageRaw(const uint8_t x, const uint8_t y, const uint8_t* img_data)
+{
+	drawImageraw(x,y,img_data);
+}
 void HLM_graphics::drawText(uint8_t x, uint8_t y, char* str, uint16_t color)
 {
 	drawString(x, y, str, color);

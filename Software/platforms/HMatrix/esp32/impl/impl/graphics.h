@@ -39,6 +39,7 @@ MatrixPanel_I2S_DMA* getGraphics(void);
 
 void drawString(uint8_t x, uint8_t y, char* text, uint16_t color);
 void drawImage1bit(const uint8_t x, const uint8_t y, const uint8_t* img_data, uint8_t w, const uint8_t h, const uint16_t color0, const uint16_t color1);
+void drawImageraw(const uint8_t x, const uint8_t y, const uint8_t* img_data);
 
 #ifdef __cplusplus
 }

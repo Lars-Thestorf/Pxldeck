@@ -58,6 +58,17 @@ void drawImage1bit(const uint8_t x, const uint8_t y, const uint8_t* img_data, ui
 		dma_display->drawPixel(x + i % w, y + i/w, ((img_data[i/8] >> (i%8)) & 1) ? color1 : color0);
 	}
 }
+void drawImageraw(const uint8_t x, const uint8_t y, const uint8_t* img_data){
+	uint16_t image_width = (img_data[4] << 8) | img_data[5];
+	uint16_t image_height = (img_data[6] << 8) | img_data[7];
+	uint16_t pos = 8;
+	for (uint16_t i = 0;i < image_height;i++){
+		for (uint16_t j = 0; j < image_width; j++){
+			dma_display->drawPixel(x + j, y + i, (img_data[pos] << 8) | img_data[pos + 1]);
+			pos+=2;
+		}	
+	}
+}
 
 void drawString(uint8_t x, uint8_t y, char* text, uint16_t color) {
 	dma_display->setCursor(x, y);
