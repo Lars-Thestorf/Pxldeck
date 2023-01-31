@@ -219,7 +219,7 @@ void sokoban_loop(void* gamemem) {
 	else
 	{
 		char leveltext[12];
-		uint8_t pixels = snprintf(leveltext, 11, "World: %d", SOKOMEM->worldnum) * 6;
+		uint8_t pixels = snprintf(leveltext, 11, "World: %d", SOKOMEM->worldnum + 1) * 6;
 		get_graphics()->drawText((64 - pixels) / 2, 8, leveltext, 0xFFFF);
 		pixels = snprintf(leveltext, 13, "%d/%d", SOKOMEM->levelnum + 1, worlds[SOKOMEM->worldnum].levelnum) * 6;
 		get_graphics()->drawText((64 - pixels) / 2, 17, leveltext, 0xFFFF);

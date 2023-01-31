@@ -90,6 +90,7 @@ void sokoban_level::init(const char* level)
 	
 	printf("Loaded: w: %d h: %d z: %d xo: %d yo: %d\n", width, height, zoom, xoffset, yoffset);
 }
+
 void sokoban_level::go_left()
 {
 	if (player_x == 0)
