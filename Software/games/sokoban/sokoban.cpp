@@ -15,6 +15,7 @@
 typedef struct sokobanmem_t {
 	bool ingame;
 	uint8_t levelnum;
+	uint8_t worldnum;
 	uint8_t levelprogress;
 	class sokoban_level level;
 	int16_t next_hold_auto_input_ms;
@@ -35,7 +36,7 @@ typedef struct sokobanmem_t {
 #define GAMEWIDTH 6400
 
 //#define SOKOBAN_STORAGE_KEY "SokobanProgress"
-static const char *SOKOBAN_STORAGE_KEY = "SokobanProgress";
+static const char *SOKOBAN_STORAGE_KEYS[WORLDCOUNT] = {"World0","World1","World2","World3","World4","World5","World6"};
 //static const char *TAG = "Sokoban";
 
 const HLM_game sokoban_game = {
@@ -45,15 +46,20 @@ const HLM_game sokoban_game = {
 	*sokoban_free
 };
 
-void* sokoban_setup() {
-	void* gamemem = malloc(sizeof(sokobanmem_t));
-	SOKOMEM->ingame = false;
+void get_level_progress(void* gamemem){
 	SOKOMEM->levelprogress = 0;
-	if (HLM_storage_exists32(SOKOBAN_STORAGE_KEY)) {
-		SOKOMEM->levelprogress = HLM_storage_read32(SOKOBAN_STORAGE_KEY);
+	if (HLM_storage_exists32(SOKOBAN_STORAGE_KEYS[SOKOMEM->worldnum])) {
+		SOKOMEM->levelprogress = HLM_storage_read32(SOKOBAN_STORAGE_KEYS[SOKOMEM->worldnum]);
 		printf("read ret: %d\n", SOKOMEM->levelprogress);
 	}
 	SOKOMEM->levelnum = SOKOMEM->levelprogress;
+}
+
+void* sokoban_setup() {
+	void* gamemem = malloc(sizeof(sokobanmem_t));
+	SOKOMEM->ingame = false;
+	SOKOMEM->worldnum = 0;
+	get_level_progress(gamemem);	
 	printf("init\n");
 	SOKOMEM->last_undo = isPrimaryButtonPressed(1);
 	SOKOMEM->last_left = getLRInput(1) < -60;
@@ -99,14 +105,14 @@ void sokoban_loop(void* gamemem) {
 			if (SOKOMEM->ingame) {
 				SOKOMEM->level.go_right();
 			} else {
-				if (SOKOMEM->levelnum < SOKOMEM->levelprogress && SOKOMEM->levelnum < LEVELCOUNT - 1)
+				if (SOKOMEM->levelnum < SOKOMEM->levelprogress && SOKOMEM->levelnum < worlds[SOKOMEM->worldnum].levelnum - 1)
 					SOKOMEM->levelnum++;
 				SOKOMEM->next_hold_auto_input_ms = 500;
 			}
 		}
 		if (!SOKOMEM->ingame && SOKOMEM->next_hold_auto_input_ms < 0) {
 			SOKOMEM->next_hold_auto_input_ms = 50;
-			if (SOKOMEM->levelnum < SOKOMEM->levelprogress)
+			if (SOKOMEM->levelnum < SOKOMEM->levelprogress - 1)
 				SOKOMEM->levelnum++;
 		}
 		SOKOMEM->last_right = true;
@@ -116,27 +122,59 @@ void sokoban_loop(void* gamemem) {
 		SOKOMEM->last_right = false;
 	}
 	if (getUDInput(1) < -60) {
-		if(!SOKOMEM->last_up) {
-			if (SOKOMEM->ingame)
+		if (!SOKOMEM->last_up) {
+			if (SOKOMEM->ingame) {
 				SOKOMEM->level.go_up();
+			} else {
+				if (SOKOMEM->worldnum < WORLDCOUNT - 1){
+					SOKOMEM->worldnum++;
+					get_level_progress(gamemem);
+				}
+				SOKOMEM->next_hold_auto_input_ms = 500;
+			}
+		}
+		if (!SOKOMEM->ingame && SOKOMEM->next_hold_auto_input_ms < 0) {
+			SOKOMEM->next_hold_auto_input_ms = 50;
+			if (SOKOMEM->worldnum < WORLDCOUNT - 1){
+				SOKOMEM->worldnum++;
+				get_level_progress(gamemem);
+			}
 		}
 		SOKOMEM->last_up = true;
 	} else {
+		if (SOKOMEM->last_up)
+			SOKOMEM->next_hold_auto_input_ms = 0;
 		SOKOMEM->last_up = false;
 	}
 	if (getUDInput(1) > 60) {
 		if (!SOKOMEM->last_down) {
-			if (SOKOMEM->ingame)
+			if (SOKOMEM->ingame) {
 				SOKOMEM->level.go_down();
+			} else {
+				if (SOKOMEM->worldnum > 0){
+					SOKOMEM->worldnum--;
+					get_level_progress(gamemem);
+				}
+				SOKOMEM->next_hold_auto_input_ms = 500;
+			}
+		}
+		if (!SOKOMEM->ingame && SOKOMEM->next_hold_auto_input_ms < 0) {
+			SOKOMEM->next_hold_auto_input_ms = 50;
+			if (SOKOMEM->worldnum > 0){
+				SOKOMEM->worldnum--;
+				get_level_progress(gamemem);
+			}				
 		}
 		SOKOMEM->last_down = true;
 	} else {
+		if (SOKOMEM->last_down)
+			SOKOMEM->next_hold_auto_input_ms = 0;
 		SOKOMEM->last_down = false;
 	}
 	if (isPrimaryButtonPressed(1) || isSecondaryButtonPressed(1)) {
 		if (!SOKOMEM->last_primary){
 			if (!SOKOMEM->ingame) {
-				SOKOMEM->level.init(levels[SOKOMEM->levelnum]);
+				SOKOMEM->level.init(worlds[SOKOMEM->worldnum].levels[SOKOMEM->levelnum]);
 				SOKOMEM->ingame = true;
 			}
 		}
@@ -169,10 +207,10 @@ void sokoban_loop(void* gamemem) {
 		if (SOKOMEM->level.isWon()) {
 			if (SOKOMEM->levelnum == SOKOMEM->levelprogress) {
 					SOKOMEM->levelprogress++;
-					bool ret = HLM_storage_write32(SOKOBAN_STORAGE_KEY, (uint32_t)SOKOMEM->levelprogress);
+					bool ret = HLM_storage_write32(SOKOBAN_STORAGE_KEYS[SOKOMEM->worldnum], (uint32_t)SOKOMEM->levelprogress);
 					printf("write ret: %d\n", ret);
 				}
-			if (SOKOMEM->levelprogress < LEVELCOUNT - 1) {
+			if (SOKOMEM->levelprogress < worlds[SOKOMEM->worldnum].levelnum - 1) {
 				SOKOMEM->levelnum++;
 			}
 			SOKOMEM->ingame = false;
@@ -181,8 +219,10 @@ void sokoban_loop(void* gamemem) {
 	else
 	{
 		char leveltext[12];
-		uint8_t pixels = snprintf(leveltext, 11, "Level: %d", SOKOMEM->levelnum + 1) * 6;
-		get_graphics()->drawText((64 - pixels) / 2, 12, leveltext, 0xFFFF);
+		uint8_t pixels = snprintf(leveltext, 11, "World: %d", SOKOMEM->worldnum) * 6;
+		get_graphics()->drawText((64 - pixels) / 2, 8, leveltext, 0xFFFF);
+		pixels = snprintf(leveltext, 13, "%d/%d", SOKOMEM->levelnum + 1, worlds[SOKOMEM->worldnum].levelnum) * 6;
+		get_graphics()->drawText((64 - pixels) / 2, 17, leveltext, 0xFFFF);
 	}
 	SOKOMEM->last_frame_time = get_ms_since_boot();
 }
