@@ -36,7 +36,7 @@ typedef struct sokobanmem_t {
 #define GAMEWIDTH 6400
 
 //#define SOKOBAN_STORAGE_KEY "SokobanProgress"
-static const char *SOKOBAN_STORAGE_KEYS[WORLDCOUNT] = {"World0","World1","World2","World3","World4","World5","World6"};
+static const char *SOKOBAN_STORAGE_KEYS[WORLDCOUNT] = {"SokobanProgress","SokobanW1","SokobanW2","SokobanW3","SokobanW4","SokobanW5","SokobanW6"};
 //static const char *TAG = "Sokoban";
 
 const HLM_game sokoban_game = {
@@ -219,7 +219,7 @@ void sokoban_loop(void* gamemem) {
 	else
 	{
 		char leveltext[12];
-		uint8_t pixels = snprintf(leveltext, 11, "World: %d", SOKOMEM->worldnum + 1) * 6;
+		uint8_t pixels = snprintf(leveltext, 11, "%s", worlds[SOKOMEM->worldnum].name) * 6;
 		get_graphics()->drawText((64 - pixels) / 2, 8, leveltext, 0xFFFF);
 		pixels = snprintf(leveltext, 13, "%d/%d", SOKOMEM->levelnum + 1, worlds[SOKOMEM->worldnum].levelnum) * 6;
 		get_graphics()->drawText((64 - pixels) / 2, 17, leveltext, 0xFFFF);

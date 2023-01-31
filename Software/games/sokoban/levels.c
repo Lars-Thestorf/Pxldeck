@@ -5,6 +5,7 @@ typedef struct worlds_t
 {
     const char** levels;
     uint8_t levelnum;
+    const char* name;
 }worlds_t;
 
 const char* world1[] =
@@ -10109,4 +10110,4 @@ const char* world7[] =
 };
 
 
-worlds_t worlds[WORLDCOUNT] = {{world1,153},{world2,32},{world3,201},{world4,169},{world5,99},{world6,129},{world7,100}};
+worlds_t worlds[WORLDCOUNT] = {{world1,153,"microban 1"},{world6,129,"microban 2"},{world7,100,"microban 3"},{world5,99,"microban 4"},{world2,32,"AKK"},{world3,201,"Smileys"},{world4,169,"SokHard"}};
