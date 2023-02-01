@@ -54,6 +54,9 @@ void get_level_progress(void* gamemem){
 		printf("read ret: %d\n", SOKOMEM->levelprogress);
 	}
 	SOKOMEM->levelnum = SOKOMEM->levelprogress;
+	if(SOKOMEM->levelprogress == worlds[SOKOMEM->worldnum].levelnum){
+		SOKOMEM->levelnum = SOKOMEM->levelprogress - 1;
+	}	
 }
 
 void* sokoban_setup() {
@@ -207,10 +210,10 @@ void sokoban_loop(void* gamemem) {
 		SOKOMEM->level.draw();
 		if (SOKOMEM->level.isWon()) {
 			if (SOKOMEM->levelnum == SOKOMEM->levelprogress) {
-					SOKOMEM->levelprogress++;
-					bool ret = HLM_storage_write32(SOKOBAN_STORAGE_KEYS[SOKOMEM->worldnum], (uint32_t)SOKOMEM->levelprogress);
-					printf("write ret: %d\n", ret);
-				}
+				SOKOMEM->levelprogress++;
+				bool ret = HLM_storage_write32(SOKOBAN_STORAGE_KEYS[SOKOMEM->worldnum], (uint32_t)SOKOMEM->levelprogress);
+				printf("write ret: %d\n", ret);
+			}
 			if (SOKOMEM->levelprogress < worlds[SOKOMEM->worldnum].levelnum - 1) {
 				SOKOMEM->levelnum++;
 			}
@@ -224,6 +227,9 @@ void sokoban_loop(void* gamemem) {
 		get_graphics()->drawText((64 - pixels) / 2, 8, leveltext, 0xFFFF);
 		pixels = snprintf(leveltext, 13, "%d/%d", SOKOMEM->levelnum + 1, worlds[SOKOMEM->worldnum].levelnum) * 6;
 		get_graphics()->drawText((64 - pixels) / 2, 17, leveltext, 0xFFFF);
+		if(SOKOMEM->levelprogress == worlds[SOKOMEM->worldnum].levelnum){
+			get_graphics()->drawRect(0,0,64,32,0x07E0);
+		}
 	}
 	SOKOMEM->last_frame_time = get_ms_since_boot();
 }
