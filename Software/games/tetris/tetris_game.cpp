@@ -214,6 +214,7 @@ void tetris_game::init()
 	score = 0;
 	lines = 0;
 	level = 9;
+	highscoreIndex = 0;
 	for (uint8_t line = 0; line < FIELD_HEIGHT; line++) {
 		for (uint8_t x=0; x < FIELD_WIDTH; x++) {
 			field[x][line] = 0;
@@ -359,6 +360,7 @@ void tetris_game::tick()
 					flashAnimation--;
 					if (!flashAnimation) {
 						game_state = GAME_STATE_OVER;
+						addToHighscoreList(tetris_highscore_entry_t{score,""});
 					}
 					break;
 			}
@@ -385,6 +387,25 @@ void tetris_game::right(bool pressed)
 	}
 	holdingRightPrev = pressed;
 }
+void tetris_game::down(bool pressed)
+{
+	holdingDown = pressed;
+	if (game_state == GAME_STATE_MENU){
+		if (pressed && !holdingDownPrev)
+			if (highscoreIndex > 0)
+				highscoreIndex--;
+	}
+	holdingDownPrev = pressed;
+}
+void tetris_game::up(bool pressed){
+	holdingUp = pressed;
+	if (game_state == GAME_STATE_MENU){
+		if (pressed && !holdingUpPrev)
+			if (highscoreIndex < SCORE_LENGTH - 1)
+				highscoreIndex++;
+	}
+	holdingUpPrev = pressed;
+}
 void tetris_game::rotateR(bool pressed)
 {
 	if (game_state == GAME_STATE_PLAY && !game_paused) {
@@ -408,10 +429,7 @@ void tetris_game::rotate(uint8_t dir)
 		currentblock = &(tetronimos[currentBlockId][rotation]);
 	}
 }
-void tetris_game::down(bool pressed)
-{
-	holdingDown = pressed;
-}
+
 void tetris_game::pause(bool pressed)
 {
 	if (pressed && !holdingPausePrev) {
@@ -486,31 +504,40 @@ uint64_t tetris_game::getSystemTime()
 
 bool tetris_game::isScoreHighscore ( uint32_t score )
 {
-	return score > highscores[9].highscore_entry.score;
+	return score > highscores[SCORE_LENGTH - 1].highscore_entry.score;
 }
 bool tetris_game::addToHighscoreList (tetris_highscore_entry_t highscore_entry)
 {
 	if (!isScoreHighscore(highscore_entry.score))
 		return false;
-	saveHighscoreFunc(highscores[9].list_slot, highscore_entry); // Overwrite the worst highscore with the new one
+
+	highscores[SCORE_LENGTH - 1].highscore_entry = highscore_entry; 
+
 	buildHighscoreList(); // Rebuild highscore list (sorting)
 	return true;
 }
+
 void tetris_game::buildHighscoreList()
 {
-	for (int i = 0; i < 10; i++) {
-		tetris_highscore_entry_t newscore = readHighscoreFunc(i);
-		uint8_t pos = 0;
-		while (newscore.score < highscores[pos].highscore_entry.score) {
-			pos++;
-		}
-		for (int j = 10; j > pos; j--){
-			highscores[j] = highscores[j - 1];
-		}
-		highscores[pos].highscore_entry = newscore;
-	}
-}
+	uint8_t i, j, max_idx;
+ 
+    for (i = 0; i < SCORE_LENGTH - 1; i++) {
+ 
+        max_idx = i;
+        for (j = i + 1; j < SCORE_LENGTH; j++)
+            if (highscores[j].highscore_entry.score > highscores[max_idx].highscore_entry.score){
+				 max_idx = j;
+			}
+		uint32_t temp = highscores[max_idx].highscore_entry.score;
+		highscores[max_idx].highscore_entry.score = highscores[i].highscore_entry.score;
+		highscores[i].highscore_entry.score = temp;
+    }
 
+	for(uint8_t i = 0;i < SCORE_LENGTH;i++){
+		saveHighscoreFunc(i,highscores[i].highscore_entry);
+	}
+	
+}
 
 
 void tetris_game::free()

@@ -3,6 +3,7 @@
 
 #define FIELD_HEIGHT 16
 #define FIELD_WIDTH 10
+#define SCORE_LENGTH 10
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -31,6 +32,7 @@ class tetris_game
 		void left(bool pressed);
 		void right(bool pressed);
 		void down(bool pressed);
+		void up(bool pressed);
 		void pause(bool pressed);
 		void rotateL(bool pressed);
 		void rotateR(bool pressed);
@@ -43,7 +45,8 @@ class tetris_game
 		uint8_t level;
 		uint32_t score;
 		uint16_t lines;
-		tetris_highscore_reference_t highscores[10];
+		uint8_t highscoreIndex;
+		tetris_highscore_reference_t highscores[SCORE_LENGTH];
 		void (* saveHighscoreFunc)(uint8_t index, tetris_highscore_entry_t highscore_entry);
 		tetris_highscore_entry_t (* readHighscoreFunc)(uint8_t index);
     private:
@@ -56,10 +59,13 @@ class tetris_game
 		uint8_t nextBlockId;
 		uint8_t framesToDrop;
 		bool holdingDown;
+		bool holdingUp;
 		bool holdingLeft;
 		bool holdingRight;
 		bool holdingLeftPrev;
 		bool holdingRightPrev;
+		bool holdingDownPrev;
+		bool holdingUpPrev;
 		bool holdingRotateRPrev;
 		bool holdingRotateLPrev;
 		bool holdingPausePrev;

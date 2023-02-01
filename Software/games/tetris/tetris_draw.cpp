@@ -7,10 +7,14 @@ void drawFuncField1p1(uint8_t x, uint8_t y, uint16_t color, HLM_graphics* gfx) {
 }
 void drawFuncHUD1p1(class tetris_game *gameplay, HLM_graphics* gfx) {
 	char tempstr[12];
+	uint8_t pixel;
 	switch(gameplay->game_state) {
 		case GAME_STATE_MENU:
 			snprintf(tempstr, 11, "Level: %d", gameplay->level);
-			gfx->drawText(8, 12, tempstr, 0xFFFF);
+			gfx->drawText(8, 1, tempstr, 0xFFFF);
+			gfx->drawText(2, 14, "Highscores", 0xFFFF);
+			pixel = snprintf(tempstr, 11, "%d. %d", gameplay->highscoreIndex + 1, gameplay->highscores[gameplay->highscoreIndex].highscore_entry.score) * 6;
+			gfx->drawText((64 - pixel) / 2, 24, tempstr, 0xFFFF);
 			break;
 		case GAME_STATE_PLAY:
 			snprintf(tempstr, 11, "%d", gameplay->score);

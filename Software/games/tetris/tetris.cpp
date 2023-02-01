@@ -2,8 +2,10 @@
 #include "tetris_game.h"
 #include "tetris_draw.h"
 #include <stdlib.h>
+#include <cstdio>
 #include <HLM_graphics.h>
 #include <HLM_playerInput.h>
+#include <HLM_storage.h>
 
 typedef struct tetrismem_t {
 	HLM_graphics* gfx;
@@ -26,12 +28,21 @@ const HLM_game tetris_gamedesc = {
 };
 
 void tetrisgame_saveHighscore(uint8_t index, tetris_highscore_entry_t highscore_entry){
-	
+	char tetris_storage_key[12];
+	snprintf(tetris_storage_key, 12, "TetrisS%d", index) ;
+	HLM_storage_write32(tetris_storage_key, highscore_entry.score);
+	printf("write tetris Score: %d\n", highscore_entry.score);	
 }
 tetris_highscore_entry_t tetrisgame_readHighscore(uint8_t index){
 	tetris_highscore_entry_t ret;
 	ret.name[0] = '\0';
 	ret.score = 0;
+	char tetris_storage_key[12];
+	snprintf(tetris_storage_key, 12, "TetrisS%d", index) ;
+	if (HLM_storage_exists32(tetris_storage_key)) {
+		ret.score = HLM_storage_read32(tetris_storage_key);
+		printf("read tetris Score: %d\n", ret.score);
+	}
 	return ret;
 }
 
@@ -43,6 +54,9 @@ void* tetrisgame_setup(){
 	pointer->gameplay = new class tetris_game();
 	pointer->gameplay->saveHighscoreFunc = tetrisgame_saveHighscore;
 	pointer->gameplay->readHighscoreFunc = tetrisgame_readHighscore;
+	for(int i = 0;i < SCORE_LENGTH;i++){
+		pointer->gameplay->highscores[i].highscore_entry = tetrisgame_readHighscore(i);
+	}
 	pointer->gameplay->init();
 	return pointer;
 }
@@ -53,6 +67,7 @@ void tetrisgame_loop(void* gamemem){
 	TETRISMEM->gameplay->left(getLRInput(1) < -60);
 	TETRISMEM->gameplay->right(getLRInput(1) > 60);
 	TETRISMEM->gameplay->down(getUDInput(1) > 60);
+	TETRISMEM->gameplay->up(getUDInput(1) < -60);
 	TETRISMEM->gameplay->pause(isMenuButtonPressed(1));
 	TETRISMEM->gameplay->rotateR(isPrimaryButtonPressed(1));
 	TETRISMEM->gameplay->rotateL(isSecondaryButtonPressed(1));
