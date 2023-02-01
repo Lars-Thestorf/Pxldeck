@@ -13,7 +13,6 @@
 #include <sokoban/sokoban.h>
 #include "../../platforms/HMatrix/esp32/impl/Websocketserver/server.h"
 #include <HLM_graphics.h>
-
 #include "playerIcons.c"
 
 HLM_game games[] = {pong_game, snake_game, tetris_gamedesc, sokoban_game};
@@ -36,6 +35,7 @@ void* gameMem;
 
 void DrawMainMenu() {
 	HLM_graphics* gfx = get_graphics();
+	//server_init();
 	switch(state) {
 		case LEMAGOS_STATE_MAINMENU: {
 			//top bar

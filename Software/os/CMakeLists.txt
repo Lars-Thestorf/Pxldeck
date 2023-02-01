@@ -4,7 +4,7 @@ if(${ESP_PLATFORM})
 	
 	idf_component_register(SRCS "HLM_os.cpp" "mainMenu/mainMenu.cpp"
                     REQUIRES api games
-                    INCLUDE_DIRS "../games/")
+                    INCLUDE_DIRS "../games/" "../platforms/HMatrix/esp32/impl/")
 
 	target_link_libraries(${COMPONENT_LIB} INTERFACE idf::main)
 
