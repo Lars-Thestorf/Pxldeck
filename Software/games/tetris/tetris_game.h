@@ -17,11 +17,6 @@ typedef struct tetris_highscore_entry_t {
 	char name[10];
 } tetris_highscore_entry_t;
 
-typedef struct tetris_highscore_reference_t {
-	uint8_t list_slot; // Not Sorted!
-	tetris_highscore_entry_t highscore_entry;
-} tetris_highscore_reference_t;
-
 class tetris_game
     {
     public:
@@ -33,6 +28,7 @@ class tetris_game
 		void right(bool pressed);
 		void down(bool pressed);
 		void up(bool pressed);
+		void start(bool pressed);
 		void pause(bool pressed);
 		void rotateL(bool pressed);
 		void rotateR(bool pressed);
@@ -46,7 +42,7 @@ class tetris_game
 		uint32_t score;
 		uint16_t lines;
 		uint8_t highscoreIndex;
-		tetris_highscore_reference_t highscores[SCORE_LENGTH];
+		tetris_highscore_entry_t highscores[SCORE_LENGTH];
 		void (* saveHighscoreFunc)(uint8_t index, tetris_highscore_entry_t highscore_entry);
 		tetris_highscore_entry_t (* readHighscoreFunc)(uint8_t index);
     private:
@@ -63,6 +59,7 @@ class tetris_game
 		bool holdingLeft;
 		bool holdingRight;
 		bool holdingLeftPrev;
+		bool holdingStartPrev;
 		bool holdingRightPrev;
 		bool holdingDownPrev;
 		bool holdingUpPrev;

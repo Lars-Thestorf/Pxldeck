@@ -227,6 +227,7 @@ void tetris_game::init()
 	rotation = 0;
 	currentblock = &empty_tetronimo;
 	nextblock = &(tetronimos[nextBlockId][rotation]);
+	holdingStartPrev = true;
 }
 void tetris_game::tick()
 {
@@ -392,8 +393,8 @@ void tetris_game::down(bool pressed)
 	holdingDown = pressed;
 	if (game_state == GAME_STATE_MENU){
 		if (pressed && !holdingDownPrev)
-			if (highscoreIndex > 0)
-				highscoreIndex--;
+			if (highscoreIndex < SCORE_LENGTH - 1)
+				highscoreIndex++;
 	}
 	holdingDownPrev = pressed;
 }
@@ -401,8 +402,8 @@ void tetris_game::up(bool pressed){
 	holdingUp = pressed;
 	if (game_state == GAME_STATE_MENU){
 		if (pressed && !holdingUpPrev)
-			if (highscoreIndex < SCORE_LENGTH - 1)
-				highscoreIndex++;
+			if (highscoreIndex > 0)
+				highscoreIndex--;
 	}
 	holdingUpPrev = pressed;
 }
@@ -428,6 +429,13 @@ void tetris_game::rotate(uint8_t dir)
 		rotation = dir%4;
 		currentblock = &(tetronimos[currentBlockId][rotation]);
 	}
+}
+
+void tetris_game::start(bool pressed){
+	if ((game_state == GAME_STATE_MENU || game_state == GAME_STATE_OVER) && !holdingStartPrev && pressed){
+		pause(true);
+	}
+	holdingStartPrev = pressed;
 }
 
 void tetris_game::pause(bool pressed)
@@ -504,14 +512,14 @@ uint64_t tetris_game::getSystemTime()
 
 bool tetris_game::isScoreHighscore ( uint32_t score )
 {
-	return score > highscores[SCORE_LENGTH - 1].highscore_entry.score;
+	return score > highscores[SCORE_LENGTH - 1].score;
 }
 bool tetris_game::addToHighscoreList (tetris_highscore_entry_t highscore_entry)
 {
 	if (!isScoreHighscore(highscore_entry.score))
 		return false;
 
-	highscores[SCORE_LENGTH - 1].highscore_entry = highscore_entry; 
+	highscores[SCORE_LENGTH - 1] = highscore_entry; 
 
 	buildHighscoreList(); // Rebuild highscore list (sorting)
 	return true;
@@ -525,16 +533,16 @@ void tetris_game::buildHighscoreList()
  
         max_idx = i;
         for (j = i + 1; j < SCORE_LENGTH; j++)
-            if (highscores[j].highscore_entry.score > highscores[max_idx].highscore_entry.score){
+            if (highscores[j].score > highscores[max_idx].score){
 				 max_idx = j;
 			}
-		uint32_t temp = highscores[max_idx].highscore_entry.score;
-		highscores[max_idx].highscore_entry.score = highscores[i].highscore_entry.score;
-		highscores[i].highscore_entry.score = temp;
+		uint32_t temp = highscores[max_idx].score;
+		highscores[max_idx].score = highscores[i].score;
+		highscores[i].score = temp;
     }
 
 	for(uint8_t i = 0;i < SCORE_LENGTH;i++){
-		saveHighscoreFunc(i,highscores[i].highscore_entry);
+		saveHighscoreFunc(i,highscores[i]);
 	}
 	
 }

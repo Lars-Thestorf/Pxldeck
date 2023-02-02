@@ -28,7 +28,7 @@ bool prevPressCoSecondary[8] = {0,0,0,0,0,0,0,0};
 bool prevPressLeft[8] = {0,0,0,0,0,0,0,0};
 bool prevPressRight[8] = {0,0,0,0,0,0,0,0};
 
-uint8_t current_brightness = 10;
+uint8_t current_brightness = 5;
 uint8_t current_sel_game = 0;
 
 void* gameMem;

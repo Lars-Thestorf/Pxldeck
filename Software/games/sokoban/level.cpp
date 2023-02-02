@@ -3,11 +3,6 @@
 
 #include <cstdio>
 
-//#define COLOR_BOX 0xD621
-//#define COLOR_WALL 0xAB69
-//#define COLOR_PLAYER 0x45E9
-//#define COLOR_GOAL 0xF801
-//#define COLOR_GOALWITHBOX 0xFBE0
 #define COLOR_WALL 0x93AA
 #define COLOR_BOX 0xD523
 #define COLOR_GOAL 0xD0E3
@@ -27,7 +22,6 @@ void sokoban_level::init(const char* level)
 	bool level_has_been_loaded = false;
 	for(uint8_t y = 0; y < 32; y++) {
 		for(uint8_t x = 0; x < 32; x++) {
-			//printf("C: %c at %d %d\n", *level, x, y);
 			switch(*level) {
 				case ' ':
 					break;
@@ -234,7 +228,6 @@ void sokoban_level::go_down()
 
 void sokoban_level::draw()
 {
-	uint8_t zoom = 32/height;
 	for(uint8_t x = 0; x < 32; x++) {
 		for(uint8_t y = 0; y < 32; y++) {
 			switch(field[x][y]) {

@@ -30,8 +30,6 @@ typedef struct pongmem_t {
 #define GAMEHEIGHT 3200
 #define GAMEWIDTH 6400
 
-static const char *TAG = "Pong";
-
 const HLM_game pong_game = {
 	"Pong",
 	icon,
