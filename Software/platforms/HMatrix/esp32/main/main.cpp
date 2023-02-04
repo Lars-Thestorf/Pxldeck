@@ -43,14 +43,12 @@ void app_main(void)
 
 	
 	MatrixPanel_I2S_DMA* gfx = getGraphics();
-	gfx->setPanelBrightness(10);
 	
 	while(1){
 		if (isXmegaCommEstablished()) {
 			gfx->flipDMABuffer();
 			gfx->clearScreen();
 			
-			//DrawMainMenu();
 			os_loop();
 			
 			gfx->showDMABuffer();

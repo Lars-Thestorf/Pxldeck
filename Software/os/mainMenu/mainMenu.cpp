@@ -23,7 +23,6 @@ HLM_game games[] = {pong_game, snake_game, tetris_gamedesc, sokoban_game};
 #define LEMAGOS_STATE_SETTINGSMENU 2
 uint8_t state = LEMAGOS_STATE_MAINMENU;
 
-uint8_t current_brightness = 5;
 uint8_t current_sel_game = 0;
 
 void* gameMem;
@@ -76,10 +75,9 @@ void DrawMainMenu() {
 			gfx->drawVLine(23, 8, 16, 0x38E7);
 			gfx->drawVLine(40, 8, 16, 0x38E7);
 			gfx->drawImageRaw(26,10,games[current_sel_game].image);
+			gfx->drawText(0, 0, games[current_sel_game].name, 0xFFFF);
 		
 			
-			
-			bool draw_special_menu = false;
 			for (uint8_t i = 0; i < 8; i++) {
 	
 				if (isPrimaryButtonPressed(i+1,true)) {
@@ -87,57 +85,23 @@ void DrawMainMenu() {
 					state = LEMAGOS_STATE_INGAME;
 					gameMem = games[current_sel_game].setupFunction();
 				}
-				if (isCoSecondaryButtonPressed(i+1,true)) {
-					//cycleInputMethods();
-				}
-				//gfx->setTextColor(GRAPHICS_COLOR_WHITE);
 				
-				if (isShoulderButtonPressed(i+1,false)){
-					draw_special_menu = true;
-				}
-				if (getLInput(i+1,true)) { //left
-					if (isShoulderButtonPressed(i+1,false)) {
-						if (current_brightness > 1)
-							current_brightness--;
-						gfx->setBrightness(current_brightness);
-					}
+				if (getLInput(i+1,true)) { //left	
+					if (current_sel_game != 0)
+						current_sel_game--;
 					else
-					{
-						if (current_sel_game != 0)
-							current_sel_game--;
-						else
-							current_sel_game = sizeof(games)/sizeof(games[0]) - 1;
-					}
+						current_sel_game = sizeof(games)/sizeof(games[0]) - 1;
 				}
 				if (getRInput(i+1,true)) { //right
-					if (isShoulderButtonPressed(i+1,false)) {
-						if (current_brightness < 100) {
-							current_brightness++;
-						}
-						gfx->setBrightness(current_brightness);
-					}
-					else {
-						if (current_sel_game < sizeof(games)/sizeof(games[0]) - 1)
-							current_sel_game++;
-						else
-							current_sel_game = 0;
-					}
+					if (current_sel_game < sizeof(games)/sizeof(games[0]) - 1)
+						current_sel_game++;
+					else
+						current_sel_game = 0;
 				}
 				if(isMenuButtonPressed(i+1,true)){
 					gfx->clear();
 					state = LEMAGOS_STATE_SETTINGSMENU;
 				}
-			}
-			
-
-			if (draw_special_menu) {
-				char batstring[10];
-				sprintf(batstring, "*%d", current_brightness);
-				gfx->drawText(0, 0, batstring, 0xFFFF);
-				sprintf(batstring, "%d", getBatteryPercentage());
-				gfx->drawText(32, 0, batstring, 0xFFFF);
-			} else {
-				gfx->drawText(0, 0, games[current_sel_game].name, 0xFFFF);
 			}
 		}
 		break;
