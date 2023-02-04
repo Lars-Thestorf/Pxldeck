@@ -2,7 +2,6 @@
 
 #include <HLM_battery.h>
 #include <HLM_playerInput.h>
-//#include "../games/gamesApi/gamesApi.h"
 #include <HLM_game.h>
 
 #include <cstdio>
@@ -11,7 +10,9 @@
 #include <Snake/snake_game.h>
 #include <tetris/tetris.h>
 #include <sokoban/sokoban.h>
-#include "../../platforms/HMatrix/esp32/impl/Websocketserver/server.h"
+
+#include "../settingsMenu/settingsMenu.h"
+
 #include <HLM_graphics.h>
 #include "playerIcons.c"
 
@@ -19,14 +20,8 @@ HLM_game games[] = {pong_game, snake_game, tetris_gamedesc, sokoban_game};
 
 #define LEMAGOS_STATE_MAINMENU 0
 #define LEMAGOS_STATE_INGAME 1
-#define LEMAGOS_STATE_PAUSED 2
-#define LEMAGOS_STATE_PLAYERMENU 3
+#define LEMAGOS_STATE_SETTINGSMENU 2
 uint8_t state = LEMAGOS_STATE_MAINMENU;
-
-bool prevPressPrimary[8] = {0,0,0,0,0,0,0,0};
-bool prevPressCoSecondary[8] = {0,0,0,0,0,0,0,0};
-bool prevPressLeft[8] = {0,0,0,0,0,0,0,0};
-bool prevPressRight[8] = {0,0,0,0,0,0,0,0};
 
 uint8_t current_brightness = 5;
 uint8_t current_sel_game = 0;
@@ -35,7 +30,7 @@ void* gameMem;
 
 void DrawMainMenu() {
 	HLM_graphics* gfx = get_graphics();
-	//server_init();
+	
 	switch(state) {
 		case LEMAGOS_STATE_MAINMENU: {
 			//top bar
@@ -83,25 +78,25 @@ void DrawMainMenu() {
 			gfx->drawImageRaw(26,10,games[current_sel_game].image);
 		
 			
-			//input handling
+			
 			bool draw_special_menu = false;
 			for (uint8_t i = 0; i < 8; i++) {
-				if (isPrimaryButtonPressed(i+1) && !prevPressPrimary[i]) {
+	
+				if (isPrimaryButtonPressed(i+1,true)) {
 					gfx->clear();
-					if (state != LEMAGOS_STATE_INGAME) { //two players starting the game in the same time would be an issue
-						state = LEMAGOS_STATE_INGAME;
-						gameMem = games[current_sel_game].setupFunction();
-					}
+					state = LEMAGOS_STATE_INGAME;
+					gameMem = games[current_sel_game].setupFunction();
 				}
-				if (isCoSecondaryButtonPressed(i+1) && !prevPressCoSecondary[i]) {
+				if (isCoSecondaryButtonPressed(i+1,true)) {
 					//cycleInputMethods();
 				}
 				//gfx->setTextColor(GRAPHICS_COLOR_WHITE);
 				
-				if (isShoulderButtonPressed(i+1))
+				if (isShoulderButtonPressed(i+1,false)){
 					draw_special_menu = true;
-				if (getLRInput(i+1) < -0x40 && !prevPressLeft[i]) { //left
-					if (isShoulderButtonPressed(i+1)) {
+				}
+				if (getLInput(i+1,true)) { //left
+					if (isShoulderButtonPressed(i+1,false)) {
 						if (current_brightness > 1)
 							current_brightness--;
 						gfx->setBrightness(current_brightness);
@@ -114,8 +109,8 @@ void DrawMainMenu() {
 							current_sel_game = sizeof(games)/sizeof(games[0]) - 1;
 					}
 				}
-				if (getLRInput(i+1) > 0x40 && !prevPressRight[i]) { //right
-					if (isShoulderButtonPressed(i+1)) {
+				if (getRInput(i+1,true)) { //right
+					if (isShoulderButtonPressed(i+1,false)) {
 						if (current_brightness < 100) {
 							current_brightness++;
 						}
@@ -128,12 +123,13 @@ void DrawMainMenu() {
 							current_sel_game = 0;
 					}
 				}
-				 
-				prevPressPrimary[i] = isPrimaryButtonPressed(i+1);
-				prevPressCoSecondary[i] = isCoPrimaryButtonPressed(i+1);
-				prevPressLeft[i] = getLRInput(i+1) < -0x40;
-				prevPressRight[i] = getLRInput(i+1) > 0x40;
+				if(isMenuButtonPressed(i+1,true)){
+					gfx->clear();
+					state = LEMAGOS_STATE_SETTINGSMENU;
+				}
 			}
+			
+
 			if (draw_special_menu) {
 				char batstring[10];
 				sprintf(batstring, "*%d", current_brightness);
@@ -146,7 +142,7 @@ void DrawMainMenu() {
 		}
 		break;
 		case LEMAGOS_STATE_INGAME: {
-			if (isHomeButtonPressed(1)){
+			if (isHomeButtonPressed(1,true)){
 				gfx->clear();
 				state = LEMAGOS_STATE_MAINMENU;
 				games[current_sel_game].freeFunction(gameMem);
@@ -155,8 +151,14 @@ void DrawMainMenu() {
 			}
 		}
 		break;
-		case LEMAGOS_STATE_PLAYERMENU: {
-			
+		case LEMAGOS_STATE_SETTINGSMENU: {
+			DrawSettingsMenu();
+			for (uint8_t i = 0; i < 8; i++) {
+				if(isMenuButtonPressed(i+1,true)){
+					gfx->clear();
+					state = LEMAGOS_STATE_MAINMENU;
+				}
+			}
 		}
 		break;
 	}

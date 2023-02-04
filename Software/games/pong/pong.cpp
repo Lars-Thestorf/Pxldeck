@@ -39,7 +39,6 @@ const HLM_game pong_game = {
 };
 
 void* ponggame_setup() {
-	//ESP_LOGI(TAG, "PongStart");
 	pongmem_t *pointer = (pongmem_t*)malloc(sizeof(pongmem_t));
 	pointer->p1pos = GAMEHEIGHT / 2;
 	pointer->p2pos = GAMEHEIGHT / 2;
@@ -65,9 +64,6 @@ int8_t pongGameInput(uint8_t playernum) {
 	return 0;
 }
 void ponggame_loop(void* gamemem) {
-	//ESP_LOGI(TAG, "PongLoop");
-	
-	//MatrixPanel_I2S_DMA *gfx = getGraphics();
 	HLM_graphics *gfx = get_graphics();
 	
 	uint16_t white = 0xFFFF;
@@ -97,19 +93,20 @@ void ponggame_loop(void* gamemem) {
 	//right player
 	if (getPlayerCount() > 1) {
 		delta = pongGameInput(2) / 3;
-		if (PONGMEM->p2pos + delta < PLAYERHEIGHT / 2)
-			PONGMEM->p2pos = PLAYERHEIGHT / 2;
-		else if (PONGMEM->p2pos + delta > GAMEHEIGHT - PLAYERHEIGHT / 2)
-			PONGMEM->p2pos = GAMEHEIGHT - PLAYERHEIGHT / 2;
-		else
-			PONGMEM->p2pos += delta;
 	} else {
 		//CPU enemy
 		if (PONGMEM->bypos > PONGMEM->p2pos)
-			PONGMEM->p2pos += 20;
+			delta = 20;
 		if (PONGMEM->bypos < PONGMEM->p2pos)
-			PONGMEM->p2pos -= 20;
+			delta = -20;
 	}
+	if (PONGMEM->p2pos + delta < PLAYERHEIGHT / 2)
+		PONGMEM->p2pos = PLAYERHEIGHT / 2;
+	else if (PONGMEM->p2pos + delta > GAMEHEIGHT - PLAYERHEIGHT / 2)
+		PONGMEM->p2pos = GAMEHEIGHT - PLAYERHEIGHT / 2;
+	else
+		PONGMEM->p2pos += delta;
+		
 	gfx->drawVLine(GAMEWIDTH / 100 - 1, (PONGMEM->p2pos - PLAYERHEIGHT / 2) / 100, PLAYERHEIGHT / 100, white);
 	
 	//ball
@@ -149,5 +146,4 @@ void ponggame_loop(void* gamemem) {
 }
 void ponggame_free(void* gamemem) {
 	free(gamemem);
-	//ESP_LOGI(TAG, "PongFree");
 }

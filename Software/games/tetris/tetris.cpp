@@ -63,14 +63,17 @@ void tetrisgame_loop(void* gamemem){
 	TETRISMEM->gameplay->tick();
 
 	//Input handling
-	TETRISMEM->gameplay->left(getLRInput(1) < -60);
-	TETRISMEM->gameplay->right(getLRInput(1) > 60);
-	TETRISMEM->gameplay->down(getUDInput(1) > 60);
-	TETRISMEM->gameplay->up(getUDInput(1) < -60);
-	TETRISMEM->gameplay->pause(isMenuButtonPressed(1));
-	TETRISMEM->gameplay->rotateR(isPrimaryButtonPressed(1));
-	TETRISMEM->gameplay->rotateL(isSecondaryButtonPressed(1));
-	TETRISMEM->gameplay->start(isPrimaryButtonPressed(1) || isSecondaryButtonPressed(1));
+	TETRISMEM->gameplay->left(getLInput(1,true));
+	TETRISMEM->gameplay->right(getRInput(1,true));
+	TETRISMEM->gameplay->down(getDInput(1,true));
+	TETRISMEM->gameplay->up(getUInput(1,true));
+	TETRISMEM->gameplay->pause(isMenuButtonPressed(1,true));
+	TETRISMEM->gameplay->rotateR(isPrimaryButtonPressed(1,true));
+	TETRISMEM->gameplay->rotateL(isSecondaryButtonPressed(1,true));
+
+	TETRISMEM->gameplay->holdingDown = getUDInput(1) > 60;
+	TETRISMEM->gameplay->holdingLeft = getLRInput(1) < -60;
+	TETRISMEM->gameplay->holdingRight = getLRInput(1) > 60;
 	
 	if (getRJoystickXAxis(1) > 60)
 		TETRISMEM->gameplay->rotate(1);

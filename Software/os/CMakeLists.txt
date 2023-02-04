@@ -2,7 +2,7 @@ if(${ESP_PLATFORM})
 
 	set(EXTRA_COMPONENT_DIRS "../games/")
 	
-	idf_component_register(SRCS "HLM_os.cpp" "mainMenu/mainMenu.cpp"
+	idf_component_register(SRCS "HLM_os.cpp" "mainMenu/mainMenu.cpp" "settingsMenu/settingsMenu.cpp" "accounts/accounts.cpp"
                     REQUIRES api games
                     INCLUDE_DIRS "../games/" "../platforms/HMatrix/esp32/impl/")
 

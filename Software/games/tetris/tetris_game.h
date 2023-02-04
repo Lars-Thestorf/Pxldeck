@@ -28,7 +28,7 @@ class tetris_game
 		void right(bool pressed);
 		void down(bool pressed);
 		void up(bool pressed);
-		void start(bool pressed);
+
 		void pause(bool pressed);
 		void rotateL(bool pressed);
 		void rotateR(bool pressed);
@@ -45,6 +45,9 @@ class tetris_game
 		tetris_highscore_entry_t highscores[SCORE_LENGTH];
 		void (* saveHighscoreFunc)(uint8_t index, tetris_highscore_entry_t highscore_entry);
 		tetris_highscore_entry_t (* readHighscoreFunc)(uint8_t index);
+		bool holdingDown;
+		bool holdingLeft;
+		bool holdingRight;
     private:
 		uint8_t ingame_state;
 		bool game_paused;
@@ -54,18 +57,6 @@ class tetris_game
 		uint8_t currentBlockId;
 		uint8_t nextBlockId;
 		uint8_t framesToDrop;
-		bool holdingDown;
-		bool holdingUp;
-		bool holdingLeft;
-		bool holdingRight;
-		bool holdingLeftPrev;
-		bool holdingStartPrev;
-		bool holdingRightPrev;
-		bool holdingDownPrev;
-		bool holdingUpPrev;
-		bool holdingRotateRPrev;
-		bool holdingRotateLPrev;
-		bool holdingPausePrev;
 		uint8_t holdingDownFrames;
 		uint8_t holdingLeftFrames;
 		uint8_t holdingRightFrames;

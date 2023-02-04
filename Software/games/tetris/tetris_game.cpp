@@ -227,7 +227,6 @@ void tetris_game::init()
 	rotation = 0;
 	currentblock = &empty_tetronimo;
 	nextblock = &(tetronimos[nextBlockId][rotation]);
-	holdingStartPrev = true;
 }
 void tetris_game::tick()
 {
@@ -370,58 +369,45 @@ void tetris_game::tick()
 }
 void tetris_game::left(bool pressed)
 {
-	holdingLeft = pressed;
-	if (game_state == GAME_STATE_MENU){
-		if (pressed && !holdingLeftPrev)
-			if (level > 0)
-				level--;
+	if (game_state == GAME_STATE_MENU && pressed){
+		if (level > 0)
+			level--;
 	}
-	holdingLeftPrev = pressed;
 }
 void tetris_game::right(bool pressed)
 {
-	holdingRight = pressed;
-	if (game_state == GAME_STATE_MENU){
-		if (pressed && !holdingRightPrev)
+	if (game_state == GAME_STATE_MENU && pressed){
 			if (level < 9)
 				level++;
 	}
-	holdingRightPrev = pressed;
 }
 void tetris_game::down(bool pressed)
 {
-	holdingDown = pressed;
-	if (game_state == GAME_STATE_MENU){
-		if (pressed && !holdingDownPrev)
-			if (highscoreIndex < SCORE_LENGTH - 1)
-				highscoreIndex++;
+	if (game_state == GAME_STATE_MENU && pressed){
+		if (highscoreIndex < SCORE_LENGTH - 1)
+			highscoreIndex++;
 	}
-	holdingDownPrev = pressed;
 }
 void tetris_game::up(bool pressed){
-	holdingUp = pressed;
-	if (game_state == GAME_STATE_MENU){
-		if (pressed && !holdingUpPrev)
-			if (highscoreIndex > 0)
-				highscoreIndex--;
+	if (game_state == GAME_STATE_MENU && pressed){
+		if (highscoreIndex > 0)
+			highscoreIndex--;
 	}
-	holdingUpPrev = pressed;
 }
 void tetris_game::rotateR(bool pressed)
 {
-	if (game_state == GAME_STATE_PLAY && !game_paused) {
-		if (pressed && !holdingRotateRPrev)
-			rotate(rotation + 1);
+	if ((game_state == GAME_STATE_MENU || game_state == GAME_STATE_OVER) && pressed){
+		pause(true);
 	}
-	holdingRotateRPrev = pressed;
+	if (game_state == GAME_STATE_PLAY && !game_paused && pressed) {
+		rotate(rotation + 1);
+	}
 }
 void tetris_game::rotateL(bool pressed)
 {
-	if (game_state == GAME_STATE_PLAY && !game_paused) {
-		if (pressed && !holdingRotateLPrev)
-			rotate(rotation - 1);
+	if (game_state == GAME_STATE_PLAY && !game_paused && pressed) {
+		rotate(rotation - 1);
 	}
-	holdingRotateLPrev = pressed;
 }
 void tetris_game::rotate(uint8_t dir)
 {
@@ -431,16 +417,10 @@ void tetris_game::rotate(uint8_t dir)
 	}
 }
 
-void tetris_game::start(bool pressed){
-	if ((game_state == GAME_STATE_MENU || game_state == GAME_STATE_OVER) && !holdingStartPrev && pressed){
-		pause(true);
-	}
-	holdingStartPrev = pressed;
-}
 
 void tetris_game::pause(bool pressed)
 {
-	if (pressed && !holdingPausePrev) {
+	if (pressed) {
 		switch (game_state) {
 			case GAME_STATE_PLAY:
 				game_paused=!game_paused;
@@ -457,7 +437,6 @@ void tetris_game::pause(bool pressed)
 				game_state = GAME_STATE_PLAY;
 		}
 	}
-	holdingPausePrev = pressed;
 }
 
 bool tetris_game::doesTetronimoFit(const uint8_t (*tetronimo)[4][4], int8_t x, int8_t y)
