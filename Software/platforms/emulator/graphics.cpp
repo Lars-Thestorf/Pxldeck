@@ -104,7 +104,7 @@ void graphics_init_surface(int w, int h){
 bool graphics_init(){
 	instanz = new HLM_graphics();
 	// returns zero on success else non-zero
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("error initializing SDL: %s\n", SDL_GetError());
 		return false;
 	}

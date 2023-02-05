@@ -16,7 +16,7 @@ else()
 	
 	add_library(HLM-os INTERFACE)
 	
-	target_sources(HLM-os INTERFACE "HLM_os.cpp" "mainMenu/mainMenu.cpp")
+	target_sources(HLM-os INTERFACE "HLM_os.cpp" "mainMenu/mainMenu.cpp" "settingsMenu/settingsMenu.cpp" "accounts/accounts.cpp")
 
 	target_include_directories (HLM-os INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} HLM-games)
 	

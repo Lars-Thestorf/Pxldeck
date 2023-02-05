@@ -1,7 +1,7 @@
 if(${ESP_PLATFORM})
 
 	idf_component_register(SRCS "pong/pong.cpp" "Snake/snake_game.cpp" "Snake/snake.cpp" "Snake/effects.cpp" "Snake/point.h" "tetris/tetris.cpp" "tetris/tetris_draw.cpp" "tetris/tetris_game.cpp" "sokoban/sokoban.cpp" "sokoban/level.cpp"
-                    REQUIRES api
+                    REQUIRES api libs
                     INCLUDE_DIRS "." "../api/include/")
 
 else()

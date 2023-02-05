@@ -16,6 +16,8 @@
 #include <HLM_graphics.h>
 #include "playerIcons.c"
 
+#include <defaultInputEvents.h>
+
 HLM_game games[] = {pong_game, snake_game, tetris_gamedesc, sokoban_game};
 
 #define LEMAGOS_STATE_MAINMENU 0
@@ -78,27 +80,29 @@ void DrawMainMenu() {
 			gfx->drawText(0, 0, games[current_sel_game].name, 0xFFFF);
 		
 			
-			for (uint8_t i = 0; i < 8; i++) {
+			for (uint8_t i = 1; i <= 8; i++) {
 	
-				if (isPrimaryButtonPressed(i+1,true)) {
+				if (gotPrimaryButtonPressed(i, false)) {
 					gfx->clear();
-					state = LEMAGOS_STATE_INGAME;
-					gameMem = games[current_sel_game].setupFunction();
+					if (state != LEMAGOS_STATE_INGAME) { //two players starting the game in the same time would be an issue
+						state = LEMAGOS_STATE_INGAME;
+						gameMem = games[current_sel_game].setupFunction();
+					}
 				}
 				
-				if (getLInput(i+1,true)) { //left	
+				if (gotLeftButtonPressed(i, false)) { //left	
 					if (current_sel_game != 0)
 						current_sel_game--;
 					else
 						current_sel_game = sizeof(games)/sizeof(games[0]) - 1;
 				}
-				if (getRInput(i+1,true)) { //right
+				if (gotRightButtonPressed(i, false)) { //right
 					if (current_sel_game < sizeof(games)/sizeof(games[0]) - 1)
 						current_sel_game++;
 					else
 						current_sel_game = 0;
 				}
-				if(isMenuButtonPressed(i+1,true)){
+				if(gotMenuButtonPressed(i, false)){
 					gfx->clear();
 					state = LEMAGOS_STATE_SETTINGSMENU;
 				}
@@ -106,7 +110,7 @@ void DrawMainMenu() {
 		}
 		break;
 		case LEMAGOS_STATE_INGAME: {
-			if (isHomeButtonPressed(1,true)){
+			if (gotHomeButtonPressed(1, false)){
 				gfx->clear();
 				state = LEMAGOS_STATE_MAINMENU;
 				games[current_sel_game].freeFunction(gameMem);
@@ -117,8 +121,8 @@ void DrawMainMenu() {
 		break;
 		case LEMAGOS_STATE_SETTINGSMENU: {
 			DrawSettingsMenu();
-			for (uint8_t i = 0; i < 8; i++) {
-				if(isMenuButtonPressed(i+1,true)){
+			for (uint8_t i = 1; i <= 8; i++) {
+				if(gotMenuButtonPressed(i, false)){
 					gfx->clear();
 					state = LEMAGOS_STATE_MAINMENU;
 				}

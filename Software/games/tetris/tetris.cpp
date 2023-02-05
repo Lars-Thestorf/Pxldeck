@@ -6,6 +6,7 @@
 #include <HLM_graphics.h>
 #include <HLM_playerInput.h>
 #include <HLM_storage.h>
+#include <defaultInputEvents.h>
 
 typedef struct tetrismem_t {
 	HLM_graphics* gfx;
@@ -63,13 +64,13 @@ void tetrisgame_loop(void* gamemem){
 	TETRISMEM->gameplay->tick();
 
 	//Input handling
-	TETRISMEM->gameplay->left(getLInput(1,true));
-	TETRISMEM->gameplay->right(getRInput(1,true));
-	TETRISMEM->gameplay->down(getDInput(1,true));
-	TETRISMEM->gameplay->up(getUInput(1,true));
-	TETRISMEM->gameplay->pause(isMenuButtonPressed(1,true));
-	TETRISMEM->gameplay->rotateR(isPrimaryButtonPressed(1,true));
-	TETRISMEM->gameplay->rotateL(isSecondaryButtonPressed(1,true));
+	TETRISMEM->gameplay->left(gotLeftButtonPressed(1, true));
+	TETRISMEM->gameplay->right(gotRightButtonPressed(1, true));
+	TETRISMEM->gameplay->down(gotDownButtonPressed(1, true));
+	TETRISMEM->gameplay->up(gotUpButtonPressed(1, true));
+	TETRISMEM->gameplay->pause(gotMenuButtonPressed(1, false));
+	TETRISMEM->gameplay->rotateR(gotPrimaryButtonPressed(1, false));
+	TETRISMEM->gameplay->rotateL(gotSecondaryButtonPressed(1, false));
 
 	TETRISMEM->gameplay->holdingDown = getUDInput(1) > 60;
 	TETRISMEM->gameplay->holdingLeft = getLRInput(1) < -60;

@@ -9,6 +9,8 @@
 
 #include "levels.c"
 
+#include <defaultInputEvents.h>
+
 typedef struct sokobanmem_t {
 	bool ingame;
 	uint8_t levelnum;
@@ -57,27 +59,27 @@ void* sokoban_setup() {
 void sokoban_loop(void* gamemem) {
 
 	if(SOKOMEM->ingame){
-		if(scrollLInput(1,500,200))
+		if(gotLeftButtonPressed(1, true))
 			SOKOMEM->level.go_left();
-		if(scrollRInput(1,500,200))
+		if(gotRightButtonPressed(1, true))
 			SOKOMEM->level.go_right();
-		if(scrollUInput(1,500,200))
+		if(gotUpButtonPressed(1, true))
 			SOKOMEM->level.go_up();
-		if(scrollDInput(1,500,200))
+		if(gotDownButtonPressed(1, true))
 			SOKOMEM->level.go_down();
 	}else{
-		if(scrollLInput(1,500,50))
+		if(gotLeftButtonPressed(1, true))
 			if (SOKOMEM->levelnum > 0)
 				SOKOMEM->levelnum--;
-		if(scrollRInput(1,500,50))
+		if(gotRightButtonPressed(1, true))
 			if (SOKOMEM->levelnum < SOKOMEM->levelprogress && SOKOMEM->levelnum < worlds[SOKOMEM->worldnum].levelnum - 1)
 				SOKOMEM->levelnum++;
-		if(scrollUInput(1,500,200))
+		if(gotUpButtonPressed(1, true))
 			if (SOKOMEM->worldnum < WORLDCOUNT - 1){
 				SOKOMEM->worldnum++;
 				get_level_progress(gamemem);
 			}
-		if(scrollDInput(1,500,200))
+		if(gotDownButtonPressed(1, true))
 			if (SOKOMEM->worldnum > 0){
 				SOKOMEM->worldnum--;
 				get_level_progress(gamemem);
@@ -85,18 +87,18 @@ void sokoban_loop(void* gamemem) {
 	}
 	
 
-	if (isPrimaryButtonPressed(1,true) || isSecondaryButtonPressed(1,true)) {
+	if (gotPrimaryButtonPressed(1, false) || gotSecondaryButtonPressed(1, false)) {
 		if (!SOKOMEM->ingame) {
 			SOKOMEM->level.init(worlds[SOKOMEM->worldnum].levels[SOKOMEM->levelnum]);
 			SOKOMEM->ingame = true;
 		}
 	}
-	if (isCoPrimaryButtonPressed(1,true) || isCoSecondaryButtonPressed(1,true)) {
+	if (gotCoPrimaryButtonPressed(1, false) || gotCoSecondaryButtonPressed(1, false)) {
 		if (SOKOMEM->ingame) {
 			SOKOMEM->level.undo();
 		}
 	}
-	if (isMenuButtonPressed(1,true)) {
+	if (gotMenuButtonPressed(1, false)) {
 		if (SOKOMEM->ingame) {
 			SOKOMEM->ingame = false;
 		}

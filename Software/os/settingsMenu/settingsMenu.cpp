@@ -3,11 +3,13 @@
 #include "settingsMenu.h"
 #include <HLM_storage.h>
 #include <stdio.h>
+#include <defaultInputEvents.h>
 
 const char* brightness_storage_key = "Brightness";
 uint8_t state_settings = 0;
 bool in_settings_menu = true;
 char name[12];
+//TODO move to mem struct
 
 #define SETTINGS_STATE_NEW_ACC 0
 #define SETTINGS_STATE_BRIGHTNESS 1
@@ -27,13 +29,15 @@ void DrawSettingsMenu(){
         gfx->drawText(8,8,"*5",0xFFFF);
         gfx->drawText(8,16,"SP",0xFFFF);
 
-        if(getDInput(1,true) && state_settings < 2){
-            state_settings++;
+        if (gotDownButtonPressed(1, true)) {
+            if (state_settings < 2)
+                state_settings++;
         }
-        if(getUInput(1,true) && state_settings > 0){
-            state_settings--;
-        } 
-        if(isPrimaryButtonPressed(1,true)){
+        if (gotUpButtonPressed(1, true)) {
+            if (state_settings > 0)
+                state_settings--;
+        }
+        if(gotPrimaryButtonPressed(1, false)){
             in_settings_menu = false;
             switch (state_settings){
             case SETTINGS_STATE_NEW_ACC:
@@ -60,10 +64,10 @@ void DrawSettingsMenu(){
         case SETTINGS_STATE_NEW_ACC:
             gfx->drawText(0,0,"New Acc",0xFFFF);
             gfx->drawText(0,8,"Name:",0xFFFF);
-            if(scrollDInput(1,500,50) && character < 27){
+            if(gotUpButtonPressed(1, true) && character < 27){
                 character++;
             }
-            if(scrollUInput(1,500,50) && character > 0){
+            if(gotDownButtonPressed(1, true) && character > 0){
                 character--;
             }
             if(character == 0){
@@ -71,14 +75,14 @@ void DrawSettingsMenu(){
             }else{
                 name[character_index] = character_index == 0 ? (character + 64) : (character + 96);
             }
-            if(isPrimaryButtonPressed(1,true) && character_index < 10){
+            if(gotPrimaryButtonPressed(1, false) && character_index < 10){
                 if(character == 0){
                     in_settings_menu = true;
                 }
                 character_index++;
                 character = 0;
             }
-            if(isSecondaryButtonPressed(1,true) && character_index > 0){
+            if(gotSecondaryButtonPressed(1, false) && character_index > 0){
                 name[character_index] = ' ';
                 character_index--;
                 character = 0;
@@ -86,11 +90,11 @@ void DrawSettingsMenu(){
             gfx->drawText(0,20,name,0xFFFF);
             break;
         case SETTINGS_STATE_BRIGHTNESS:
-            if(scrollUInput(1,500,50) && brightness < 100){
+            if(gotUpButtonPressed(1, true) && brightness < 100){
                 brightness++;
                 gfx->setBrightness(brightness);
             }
-            if(scrollDInput(1,500,50) && brightness > 1){
+            if(gotDownButtonPressed(1, true) && brightness > 1){
                 brightness--;
                 gfx->setBrightness(brightness);
             }
@@ -100,12 +104,35 @@ void DrawSettingsMenu(){
             break;
         case SETTINGS_STATE_MODE:
             gfx->drawText(0,0,"Mode",0xFFFF);
+            if (gotUpButtonPressed(1, false)) {
+                cycleInputMethods();
+            }
+            for (uint8_t i = 1; i <= 3; i++)
+            switch(getControllerType(i)) {
+                case CONTROLLERTYPE_FULL:
+                    gfx->drawText(0,i*8,"Full",0xFFFF);
+                    break;
+                case CONTROLLERTYPE_LEFT:
+                    gfx->drawText(0,i*8,"Left",0xFFFF);
+                    break;
+                case CONTROLLERTYPE_RIGHT:
+                    gfx->drawText(0,i*8,"Right",0xFFFF);
+                    break;
+                case CONTROLLERTYPE_KEYBOARD:
+                    gfx->drawText(0,i*8,"Keyboard",0xFFFF);
+                    break;
+                case CONTROLLERTYPE_EXT:
+                    gfx->drawText(0,i*8,"Ext",0xFFFF);
+                    break;
+                case CONTROLLERTYPE_NONE:
+                    break;
+            }
             break;
         default:
             break;
         }
     }
-    if(isPrimaryButtonPressed(1,true)){
+    if(gotPrimaryButtonPressed(1, false)){
         in_settings_menu = true;
         switch (state_settings)
         {
@@ -122,5 +149,5 @@ void DrawSettingsMenu(){
         default:
             break;
         }
-    } 
+    }
 }
