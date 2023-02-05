@@ -17,16 +17,24 @@ char name[12];
 
 void DrawSettingsMenu(){
     char text_buffer[12];
-    static uint8_t brightness = 5;
+    static uint8_t brightness = 0;
     static uint8_t character = 0;
     static uint8_t character_index = 0;
     HLM_graphics* gfx = get_graphics();
     gfx->clear();
 
     if(in_settings_menu){
+        if (brightness == 0) {
+            brightness = 5;
+            if (HLM_storage_exists32(brightness_storage_key)) {
+                brightness = HLM_storage_read32(brightness_storage_key);
+            }
+        }
+
         gfx->drawText(1,state_settings * 8,">",0xFFFF);
         gfx->drawText(8,0,"new acc",0xFFFF);
-        gfx->drawText(8,8,"*5",0xFFFF);
+        snprintf(text_buffer, 12, "* %d", brightness);
+        gfx->drawText(8,8,text_buffer,0xFFFF);
         gfx->drawText(8,16,"SP",0xFFFF);
 
         if (gotDownButtonPressed(1, true)) {
