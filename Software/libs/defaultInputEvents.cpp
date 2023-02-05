@@ -52,6 +52,7 @@ bool gotCoSecondaryButtonPressed(uint8_t player_num, bool with_repeats) {
     return gotPressed(input_event_poll(&state_CoSecondaryButton[player_num], isCoSecondaryButtonPressed(player_num)), with_repeats);
 }
 bool gotHomeButtonPressed(uint8_t player_num, bool with_repeats) {
+    state_MenuButton[player_num].prev_state = true;
     return gotPressed(input_event_poll(&state_HomeButton[player_num], isHomeButtonPressed(player_num)), with_repeats);
 }
 bool gotMenuButtonPressed(uint8_t player_num, bool with_repeats) {
