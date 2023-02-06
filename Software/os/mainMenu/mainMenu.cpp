@@ -12,6 +12,7 @@
 #include <sokoban/sokoban.h>
 
 #include "../settingsMenu/settingsMenu.h"
+#include "../accounts/accounts.h"
 
 #include <HLM_graphics.h>
 #include "playerIcons.c"
@@ -26,11 +27,13 @@ HLM_game games[] = {pong_game, snake_game, tetris_gamedesc, sokoban_game};
 uint8_t state = LEMAGOS_STATE_MAINMENU;
 
 uint8_t current_sel_game = 0;
+uint8_t current_account = 0;
 
 void* gameMem;
 
 void DrawMainMenu() {
 	HLM_graphics* gfx = get_graphics();
+	Accounts* acc = get_accounts();
 	
 	switch(state) {
 		case LEMAGOS_STATE_MAINMENU: {
@@ -78,7 +81,10 @@ void DrawMainMenu() {
 			gfx->drawVLine(40, 8, 16, 0x38E7);
 			gfx->drawImageRaw(26,10,games[current_sel_game].image);
 			gfx->drawText(0, 0, games[current_sel_game].name, 0xFFFF);
-		
+
+			char b[10];
+			acc->getName(b,current_account);
+			gfx->drawText(10, 24, b, 0xFFFF);
 			
 			for (uint8_t i = 1; i <= 8; i++) {
 	
@@ -89,7 +95,12 @@ void DrawMainMenu() {
 						gameMem = games[current_sel_game].setupFunction();
 					}
 				}
-				
+				if(gotDownButtonPressed(i,false) && current_account < 4){
+					current_account++;
+				}
+				if(gotUpButtonPressed(i,false) && current_account > 0){
+					current_account--;
+				}
 				if (gotLeftButtonPressed(i, false)) { //left	
 					if (current_sel_game != 0)
 						current_sel_game--;
@@ -104,6 +115,7 @@ void DrawMainMenu() {
 				}
 				if(gotMenuButtonPressed(i, false)){
 					gfx->clear();
+					setting_menu_init();
 					state = LEMAGOS_STATE_SETTINGSMENU;
 				}
 			}
@@ -124,6 +136,7 @@ void DrawMainMenu() {
 			for (uint8_t i = 1; i <= 8; i++) {
 				if(gotMenuButtonPressed(i, false)){
 					gfx->clear();
+					settings_menu_free();
 					state = LEMAGOS_STATE_MAINMENU;
 				}
 			}

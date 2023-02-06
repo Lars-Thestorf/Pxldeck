@@ -10,6 +10,8 @@ extern "C" {
 #endif
 
 void DrawSettingsMenu();
+void settings_menu_free();
+void setting_menu_init();
 
 #ifdef __cplusplus
 }

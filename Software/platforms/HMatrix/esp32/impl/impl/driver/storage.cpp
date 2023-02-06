@@ -30,5 +30,22 @@ bool HLM_storage_write32(const char name[16], uint32_t value)
     return (err != ESP_OK);
 }
 
+bool HLM_storage_write_str(const char name[16],char * value){
+	nvs_handle_t my_handle;
+	nvs_open("storage", NVS_READWRITE, &my_handle);
+	esp_err_t err = nvs_set_str(my_handle,name,value);
+	nvs_close(my_handle);
+	nvs_commit(my_handle);
+    return (err == ESP_OK);
+}
+
+bool HLM_storage_read_str(const char name[16],char * value, size_t *length){
+	nvs_handle_t my_handle;
+	nvs_open("storage", NVS_READWRITE, &my_handle);
+	nvs_get_str(my_handle, name, value, length);
+	nvs_close(my_handle);
+	return value;
+}
+
 
 

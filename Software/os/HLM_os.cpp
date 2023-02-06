@@ -8,6 +8,7 @@
 #include <cstdio>
 
 #include <defaultInputEvents.h>
+#include "accounts/accounts.h"
 
 void os_init() {
 #ifdef FOO
@@ -17,6 +18,9 @@ void os_init() {
 #endif
 	HLM_graphics *gfx = get_graphics();
 	gfx->init();
+	Accounts *acc = get_accounts();
+	acc->init();
+	acc->loadAccounts();
 	printf("init");
 	init_default_event_lib();
 	if (HLM_storage_exists32("Brightness")) {

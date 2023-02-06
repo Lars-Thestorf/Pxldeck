@@ -3,61 +3,76 @@
 #include "settingsMenu.h"
 #include <HLM_storage.h>
 #include <stdio.h>
+#include <cstdio>
 #include <defaultInputEvents.h>
+#include "../accounts/accounts.h"
+
+typedef struct settings_mem_t {
+	uint8_t state_settings;
+    bool in_settings_menu;
+    uint8_t brightness;
+    char name[10];
+    uint8_t character;
+    uint8_t index;
+} settings_mem_t;
 
 const char* brightness_storage_key = "Brightness";
-uint8_t state_settings = 0;
-bool in_settings_menu = true;
-char name[12];
-//TODO move to mem struct
+settings_mem_t *pointer;
 
 #define SETTINGS_STATE_NEW_ACC 0
-#define SETTINGS_STATE_BRIGHTNESS 1
-#define SETTINGS_STATE_MODE 2  
+#define SETTINGS_STATE_DELETE_ACC 1
+#define SETTINGS_STATE_BRIGHTNESS 2
+#define SETTINGS_STATE_MODE 3  
+
+void setting_menu_init(){
+    pointer = (settings_mem_t*)malloc(sizeof(settings_mem_t));
+    pointer->brightness = 5;
+    pointer->state_settings = 0 ; 
+    pointer->in_settings_menu = true;
+    if (HLM_storage_exists32(brightness_storage_key)) {
+        pointer->brightness = HLM_storage_read32(brightness_storage_key);
+    }   
+}
+
+void settings_menu_free(){
+    free(pointer);
+}
 
 void DrawSettingsMenu(){
     char text_buffer[12];
-    static uint8_t brightness = 0;
-    static uint8_t character = 0;
-    static uint8_t character_index = 0;
     HLM_graphics* gfx = get_graphics();
+    Accounts* acc = get_accounts();
     gfx->clear();
 
-    if(in_settings_menu){
-        if (brightness == 0) {
-            brightness = 5;
-            if (HLM_storage_exists32(brightness_storage_key)) {
-                brightness = HLM_storage_read32(brightness_storage_key);
-            }
-        }
-
-        gfx->drawText(1,state_settings * 8,">",0xFFFF);
+    if(pointer->in_settings_menu){    
+        gfx->drawText(1,pointer->state_settings * 8,">",0xFFFF);
         gfx->drawText(8,0,"new acc",0xFFFF);
-        snprintf(text_buffer, 12, "* %d", brightness);
-        gfx->drawText(8,8,text_buffer,0xFFFF);
-        gfx->drawText(8,16,"SP",0xFFFF);
+        gfx->drawText(8,8,"del acc",0xFFFF);
+        snprintf(text_buffer, 12, "* %d", pointer->brightness);
+        gfx->drawText(8,16,text_buffer,0xFFFF);
+        gfx->drawText(8,24,"Mode",0xFFFF);
 
         if (gotDownButtonPressed(1, true)) {
-            if (state_settings < 2)
-                state_settings++;
+            if (pointer->state_settings < 3)
+                pointer->state_settings++;
         }
         if (gotUpButtonPressed(1, true)) {
-            if (state_settings > 0)
-                state_settings--;
+            if (pointer->state_settings > 0)
+                pointer->state_settings--;
         }
         if(gotPrimaryButtonPressed(1, false)){
-            in_settings_menu = false;
-            switch (state_settings){
+            pointer->in_settings_menu = false;
+            switch (pointer->state_settings){
             case SETTINGS_STATE_NEW_ACC:
-                snprintf(name,12,"           ");
-                character = 0;
-                character_index = 0;
+                snprintf(pointer->name,10,"         ");
+                pointer->character = 0;
+                pointer->index = 0;
+                break;
+            case SETTINGS_STATE_DELETE_ACC:
+                pointer->index = 0;
                 break;
             case SETTINGS_STATE_BRIGHTNESS:
-                brightness = 5;
-                if (HLM_storage_exists32(brightness_storage_key)) {
-		            brightness = HLM_storage_read32(brightness_storage_key);
-	            }
+    
                 break;
             case SETTINGS_STATE_MODE:
 
@@ -68,46 +83,69 @@ void DrawSettingsMenu(){
             }
         }    
     }else{
-        switch (state_settings){
+        switch (pointer->state_settings){
         case SETTINGS_STATE_NEW_ACC:
             gfx->drawText(0,0,"New Acc",0xFFFF);
-            gfx->drawText(0,8,"Name:",0xFFFF);
-            if(gotUpButtonPressed(1, true) && character < 27){
-                character++;
-            }
-            if(gotDownButtonPressed(1, true) && character > 0){
-                character--;
-            }
-            if(character == 0){
-                name[character_index] = '<';
+            if(acc->get_num_valid_accounts() == ACOOUNT_NUM){
+                gfx->drawText(0,8,"No Space",0xFFFF);
+                break;
             }else{
-                name[character_index] = character_index == 0 ? (character + 64) : (character + 96);
+                gfx->drawText(0,8,"Name:",0xFFFF);
             }
-            if(gotPrimaryButtonPressed(1, false) && character_index < 10){
-                if(character == 0){
-                    in_settings_menu = true;
+            if(gotUpButtonPressed(1, true) && pointer->character < 26){
+                pointer->character++;
+            }
+            if(gotDownButtonPressed(1, true) && pointer->character > 0){
+                pointer->character--;
+            }
+            if(pointer->character == 0){
+                pointer->name[pointer->index] = '<';
+            }else{
+                pointer->name[pointer->index] = pointer->index == 0 ? (pointer->character + 64) : (pointer->character + 96);
+            }
+            if(gotPrimaryButtonPressed(1, false) && pointer->index < 8){
+                if(pointer->character == 0 && pointer->index > 0){
+                    pointer->in_settings_menu = true;
+                    pointer->name[pointer->index] = '\0';
+                    acc->createAccount(pointer->name);
                 }
-                character_index++;
-                character = 0;
+                pointer->index++;
+                pointer->character = 0;
             }
-            if(gotSecondaryButtonPressed(1, false) && character_index > 0){
-                name[character_index] = ' ';
-                character_index--;
-                character = 0;
+            if(gotSecondaryButtonPressed(1, false) && pointer->index > 0){
+                pointer->name[pointer->index] = ' ';
+                pointer->index--;
+                pointer->character = 0;
             }
-            gfx->drawText(0,20,name,0xFFFF);
+            gfx->drawText(0,20,pointer->name,0xFFFF);
+            break;
+        case SETTINGS_STATE_DELETE_ACC:
+            gfx->drawText(0,0,"Del acc",0xFFFF);
+            gfx->drawText(0,8,"Accounts:",0xFFFF);
+            acc->getName(pointer->name,pointer->index);
+            snprintf(text_buffer, 15, "%d. %s", pointer->index + 1,pointer->name);
+            gfx->drawText(0,20,text_buffer,0xFFFF);
+            if(gotUpButtonPressed(1, true) && pointer->index < ACOOUNT_NUM - 1){
+                pointer->index++;
+            }
+            if((gotDownButtonPressed(1, true) || gotLeftButtonPressed(1,true)) && pointer->index > 0){
+                pointer->index--;
+            }
+            if(gotPrimaryButtonPressed(1, false)){
+                acc->deleteAccount(pointer->index);
+            }
             break;
         case SETTINGS_STATE_BRIGHTNESS:
-            if(gotUpButtonPressed(1, true) && brightness < 100){
-                brightness++;
-                gfx->setBrightness(brightness);
+            if((gotUpButtonPressed(1, true) || gotRightButtonPressed(1,true)) && pointer->brightness < 100){
+                pointer->brightness++;
+                gfx->setBrightness(pointer->brightness);
             }
-            if(gotDownButtonPressed(1, true) && brightness > 1){
-                brightness--;
-                gfx->setBrightness(brightness);
+            if((gotDownButtonPressed(1, true) || gotLeftButtonPressed(1,true)) && pointer->brightness > 1){
+                pointer->brightness--;
+                gfx->setBrightness(pointer->brightness);
             }
             gfx->drawText(0,0,"Brightness",0xFFFF);
-            snprintf(text_buffer, 12, "* %d", brightness);
+            snprintf(text_buffer, 12, "* %d", pointer->brightness);
             gfx->drawText(0,10,text_buffer,0xFFFF);
             break;
         case SETTINGS_STATE_MODE:
@@ -141,14 +179,17 @@ void DrawSettingsMenu(){
         }
     }
     if(gotPrimaryButtonPressed(1, false)){
-        in_settings_menu = true;
-        switch (state_settings)
+        pointer->in_settings_menu = true;
+        switch (pointer->state_settings)
         {
         case SETTINGS_STATE_NEW_ACC:
             
             break;
+        case SETTINGS_STATE_DELETE_ACC:
+
+            break;
         case SETTINGS_STATE_BRIGHTNESS:
-            HLM_storage_write32(brightness_storage_key, brightness);
+            HLM_storage_write32(brightness_storage_key, pointer->brightness);
             break;
         case SETTINGS_STATE_MODE:
 
