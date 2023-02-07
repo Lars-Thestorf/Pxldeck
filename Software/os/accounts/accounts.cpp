@@ -31,19 +31,19 @@ bool Accounts::createAccount(char* name){
         return false;
     }
     uint8_t acc_id = get_num_first_unused_account();
-    strcpy(account[acc_id].name,name);
+    snprintf(account[acc_id].name,10,"%s",name);
     account[acc_id].active = true;
-    char key1[16];
-    char key2[16];
+    char key1[12];
+    char key2[12];
     snprintf(key1,16,"accName%d",acc_id);
-    printf("writestr %d",HLM_storage_write_str(key1,name));
+    printf("writestr %d",HLM_storage_write_str(key1,account[acc_id].name));
     snprintf(key2,16,"accActive%d", acc_id);
     printf("writeID %d",HLM_storage_write32(key2,1));
     return true;
 }
 void Accounts::loadAccounts(){
-    char key1[16];
-    char key2[16];
+    char key1[12];
+    char key2[12];
     size_t size = 10;
     for(uint8_t i = 0;i < ACOOUNT_NUM;i++){
         snprintf(key1,16,"accActive%d", i);
@@ -51,7 +51,7 @@ void Accounts::loadAccounts(){
         printf("getactive %d",account[i].active);
         if(account[i].active){
             snprintf(key2,16,"accName%d",i);
-             printf("reedstr %d",HLM_storage_read_str(key2,account[i].name,&size));  
+            printf("reedstr %d",HLM_storage_read_str(key2,account[i].name,&size));  
         }else{
             snprintf(account[i].name,10,"------");
         }
