@@ -11,6 +11,7 @@ typedef struct settings_mem_t {
 	uint8_t state_settings;
     bool in_settings_menu;
     uint8_t brightness;
+    uint8_t initial_brightness;
     char name[10];
     uint8_t character;
     uint8_t index;
@@ -31,6 +32,7 @@ void setting_menu_init(){
     pointer->in_settings_menu = true;
     if (HLM_storage_exists32(brightness_storage_key)) {
         pointer->brightness = HLM_storage_read32(brightness_storage_key);
+        pointer->initial_brightness = pointer->brightness;
     }   
 }
 
@@ -46,8 +48,8 @@ void DrawSettingsMenu(){
 
     if(pointer->in_settings_menu){    
         gfx->drawText(1,pointer->state_settings * 8,">",0xFFFF);
-        gfx->drawText(8,0,"new acc",0xFFFF);
-        gfx->drawText(8,8,"del acc",0xFFFF);
+        gfx->drawText(8,0,"Account+",0xFFFF);
+        gfx->drawText(8,8,"Account-",0xFFFF);
         snprintf(text_buffer, 12, "* %d", pointer->brightness);
         gfx->drawText(8,16,text_buffer,0xFFFF);
         gfx->drawText(8,24,"Mode",0xFFFF);
@@ -85,7 +87,7 @@ void DrawSettingsMenu(){
     }else{
         switch (pointer->state_settings){
         case SETTINGS_STATE_NEW_ACC:
-            gfx->drawText(0,0,"New Acc",0xFFFF);
+            gfx->drawText(0,0,"Account+",0xFFFF);
             if(acc->get_num_valid_accounts() == ACOOUNT_NUM){
                 gfx->drawText(0,8,"No Space",0xFFFF);
                 break;
@@ -98,13 +100,19 @@ void DrawSettingsMenu(){
             if(gotDownButtonPressed(1, true) && pointer->character > 0){
                 pointer->character--;
             }
+            if(pointer->index == 0 && pointer->character == 0){
+                pointer->character = 1;
+            }
+            if(pointer->index == 7){
+                pointer->character = 0;
+            }
             if(pointer->character == 0){
                 pointer->name[pointer->index] = '<';
             }else{
                 pointer->name[pointer->index] = pointer->index == 0 ? (pointer->character + 64) : (pointer->character + 96);
             }
-            if(gotPrimaryButtonPressed(1, false) && pointer->index < 8){
-                if(pointer->character == 0 && pointer->index > 0){
+            if(gotPrimaryButtonPressed(1, false)){
+                if(pointer->character == 0){
                     pointer->in_settings_menu = true;
                     pointer->name[pointer->index] = '\0';
                     acc->createAccount(pointer->name);
@@ -112,27 +120,34 @@ void DrawSettingsMenu(){
                 pointer->index++;
                 pointer->character = 0;
             }
-            if(gotSecondaryButtonPressed(1, false) && pointer->index > 0){
-                pointer->name[pointer->index] = ' ';
-                pointer->index--;
-                pointer->character = 0;
+            if(gotSecondaryButtonPressed(1, false)){
+                if(pointer->index > 0){
+                    pointer->name[pointer->index] = ' ';
+                    pointer->index--;
+                    pointer->character = 0;
+                }else{
+                    pointer->in_settings_menu= true;
+                }
             }
             gfx->drawText(0,20,pointer->name,0xFFFF);
             break;
         case SETTINGS_STATE_DELETE_ACC:
-            gfx->drawText(0,0,"Del acc",0xFFFF);
+            gfx->drawText(0,0,"Account-",0xFFFF);
             gfx->drawText(0,8,"Accounts:",0xFFFF);
-            acc->getName(pointer->name,pointer->index);
-            snprintf(text_buffer, 15, "%d. %s", pointer->index + 1,pointer->name);
+            acc->getName(pointer->name);
+            snprintf(text_buffer, 15, "%d. %s", acc->active_account + 1,pointer->name);
             gfx->drawText(0,20,text_buffer,0xFFFF);
-            if(gotUpButtonPressed(1, true) && pointer->index < ACOOUNT_NUM - 1){
-                pointer->index++;
+            if(gotDownButtonPressed(1, true) && acc->active_account < ACOOUNT_NUM - 1){
+                acc->active_account++;
             }
-            if((gotDownButtonPressed(1, true) || gotLeftButtonPressed(1,true)) && pointer->index > 0){
-                pointer->index--;
+            if(gotUpButtonPressed(1, true) && acc->active_account > 0){
+                acc->active_account--;
             }
             if(gotPrimaryButtonPressed(1, false)){
-                acc->deleteAccount(pointer->index);
+                acc->deleteAccount(acc->active_account);
+            }
+            if(gotSecondaryButtonPressed(1, false)){
+                pointer->in_settings_menu= true;
             }
             break;
         case SETTINGS_STATE_BRIGHTNESS:
@@ -143,6 +158,11 @@ void DrawSettingsMenu(){
             if((gotDownButtonPressed(1, true) || gotLeftButtonPressed(1,true)) && pointer->brightness > 1){
                 pointer->brightness--;
                 gfx->setBrightness(pointer->brightness);
+            }
+            if(gotSecondaryButtonPressed(1, false)){
+                pointer->in_settings_menu= true;
+                pointer->brightness = pointer->initial_brightness;
+                gfx->setBrightness(pointer->initial_brightness);
             }
             gfx->drawText(0,0,"Brightness",0xFFFF);
             snprintf(text_buffer, 12, "* %d", pointer->brightness);

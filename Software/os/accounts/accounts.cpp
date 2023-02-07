@@ -10,17 +10,23 @@ Accounts* get_accounts() {
 }
 
 void Accounts::init(){
-
+    setActiveAccount(0);
 }
-void Accounts::getName(char name[10], uint8_t id){
-    strcpy(name,account[id].name);
+void Accounts::setActiveAccount(uint8_t id){
+    active_account = id;
+}
+void Accounts::getName(char* name){
+    strcpy(name,account[active_account].name);
 }
 
-void Accounts::setName(char name[10],uint8_t id){
+void Accounts::setName(char* name){
+    strcpy(account[active_account].name,name);
+}
+void Accounts::setName(char* name,uint8_t id){
     strcpy(account[id].name,name);
 }
 
-bool Accounts::createAccount(char name[10]){
+bool Accounts::createAccount(char* name){
     if(get_num_valid_accounts() == ACOOUNT_NUM){
         return false;
     }

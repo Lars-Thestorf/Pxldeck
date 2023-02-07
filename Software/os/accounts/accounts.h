@@ -14,10 +14,13 @@ typedef struct account_t
 
 class Accounts{
 public:
+    uint8_t active_account;
     void init();
-    void setName(char name[10], uint8_t id);
-    void getName(char name[10],uint8_t id);
-    bool createAccount(char name[10]);
+    void setActiveAccount(uint8_t id);
+    void setName(char* name);
+    void setName(char* name, uint8_t id);
+    void getName(char* name);
+    bool createAccount(char* name);
     void loadAccounts();
     void deleteAccount(uint8_t id);
     uint8_t get_num_valid_accounts();

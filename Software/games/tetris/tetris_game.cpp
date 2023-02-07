@@ -1,6 +1,8 @@
 #include "tetris_game.h"
 #include <HLM_random.h>
 #include <HLM_time.h>
+#include <stdio.h>
+#include <../../os/accounts/accounts.h>
 
 //All values in Frames
 #define DAS_DELAY     12 //Delayed Auto Shift initial Delay
@@ -360,7 +362,14 @@ void tetris_game::tick()
 					flashAnimation--;
 					if (!flashAnimation) {
 						game_state = GAME_STATE_OVER;
-						addToHighscoreList(tetris_highscore_entry_t{score,""});
+						Accounts *acc = get_accounts();
+						char buffer[10];
+						acc->getName(buffer);
+						if (isScoreHighscore(score)){
+							highscores[SCORE_LENGTH - 1].score = score; 
+							snprintf(highscores[SCORE_LENGTH - 1].name,10,"%s",buffer);
+							buildHighscoreList();
+						}
 					}
 					break;
 			}
@@ -518,6 +527,11 @@ void tetris_game::buildHighscoreList()
 		uint32_t temp = highscores[max_idx].score;
 		highscores[max_idx].score = highscores[i].score;
 		highscores[i].score = temp;
+
+		char tempc[10];
+		snprintf(tempc,10,"%s",highscores[max_idx].name);
+		snprintf(highscores[max_idx].name,10,"%s",highscores[i].name);
+		snprintf(highscores[i].name,10,"%s",tempc);
     }
 
 	for(uint8_t i = 0;i < SCORE_LENGTH;i++){

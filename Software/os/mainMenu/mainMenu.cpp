@@ -37,9 +37,6 @@ void DrawMainMenu() {
 	
 	switch(state) {
 		case LEMAGOS_STATE_MAINMENU: {
-			//top bar
-			gfx->drawHLine(0, 7, 64, 0x38E7);
-			
 			//battery
 			uint8_t percent = getBatteryPercentage();
 			uint16_t color = 0x07E0;
@@ -56,7 +53,6 @@ void DrawMainMenu() {
 			gfx->drawVLine(62, 3, 2, color);
 			
 			//players
-			gfx->drawHLine(0, 24, 64, 0x38E7);
 			for (uint8_t i = 0; i<getPlayerCount(); i++){
 				switch(getControllerType(i+1)) {
 					case CONTROLLERTYPE_NONE:
@@ -77,14 +73,16 @@ void DrawMainMenu() {
 			}
 			
 			//selected game
-			gfx->drawVLine(23, 8, 16, 0x38E7);
-			gfx->drawVLine(40, 8, 16, 0x38E7);
+			gfx->drawHLine(0, 8, 64, 0x38E7);
+			gfx->drawHLine(0, 23, 64, 0x38E7);
+			gfx->drawVLine(24, 8, 16, 0x38E7);
+			gfx->drawVLine(39, 8, 16, 0x38E7);
 			gfx->drawImageRaw(26,10,games[current_sel_game].image);
 			gfx->drawText(0, 0, games[current_sel_game].name, 0xFFFF);
 
-			char b[10];
-			acc->getName(b,current_account);
-			gfx->drawText(10, 24, b, 0xFFFF);
+			char buffer[10];
+			acc->getName(buffer);
+			gfx->drawText(20, 24, buffer, 0xFFFF);
 			
 			for (uint8_t i = 1; i <= 8; i++) {
 	
@@ -95,11 +93,11 @@ void DrawMainMenu() {
 						gameMem = games[current_sel_game].setupFunction();
 					}
 				}
-				if(gotDownButtonPressed(i,false) && current_account < 4){
-					current_account++;
+				if(gotDownButtonPressed(i,false) && acc->active_account < ACOOUNT_NUM - 1){
+					acc->active_account++;
 				}
-				if(gotUpButtonPressed(i,false) && current_account > 0){
-					current_account--;
+				if(gotUpButtonPressed(i,false) && acc->active_account > 0){
+					acc->active_account--;
 				}
 				if (gotLeftButtonPressed(i, false)) { //left	
 					if (current_sel_game != 0)
