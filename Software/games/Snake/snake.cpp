@@ -23,14 +23,6 @@ void Snake::removeSnake() {
     isAlive = false;
 }
 
-void Snake::setIsActive(bool isActive){
-    this->isActive = isActive;
-}
-
-bool Snake::getIsActive(){
-    return isActive;
-}
-
 bool Snake::getIsAlive(){
     return isAlive;
 }

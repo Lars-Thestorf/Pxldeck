@@ -36,8 +36,6 @@ class Snake {
 
     void resetSnake();
     void removeSnake();
-    void setIsActive(bool isActive);
-    bool getIsActive();
     bool getIsAlive();
     void reviveSnake();   
     void increaseSize(); 
@@ -59,7 +57,6 @@ class Snake {
     uint16_t _snakeHead;
     bool foodEaten = false;
     bool isAlive = true;
-    bool isActive = true;
     int snakeLength = STARTLENGTH_SNAKE;
     int moveInterval = UPDATE_INTERVALL_SNAKE;
     unsigned long currentMillis = 0;

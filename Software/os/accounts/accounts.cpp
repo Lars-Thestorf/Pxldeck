@@ -1,5 +1,4 @@
 #include "accounts.h"
-#include <string.h>
 #include <stdio.h>
 #include <HLM_storage.h>
 
@@ -16,14 +15,14 @@ void Accounts::setActiveAccount(uint8_t id){
     active_account = id;
 }
 void Accounts::getName(char* name){
-    strcpy(name,account[active_account].name);
+    snprintf(name,10,"%s",account[active_account].name);
 }
 
 void Accounts::setName(char* name){
-    strcpy(account[active_account].name,name);
+    snprintf(account[active_account].name,10,"%s",name);
 }
 void Accounts::setName(char* name,uint8_t id){
-    strcpy(account[id].name,name);
+    snprintf(account[id].name,10,"%s",name);
 }
 
 bool Accounts::createAccount(char* name){
@@ -33,8 +32,8 @@ bool Accounts::createAccount(char* name){
     uint8_t acc_id = get_num_first_unused_account();
     snprintf(account[acc_id].name,10,"%s",name);
     account[acc_id].active = true;
-    char key1[12];
-    char key2[12];
+    char key1[16];
+    char key2[16];
     snprintf(key1,16,"accName%d",acc_id);
     printf("writestr %d",HLM_storage_write_str(key1,account[acc_id].name));
     snprintf(key2,16,"accActive%d", acc_id);
@@ -42,8 +41,8 @@ bool Accounts::createAccount(char* name){
     return true;
 }
 void Accounts::loadAccounts(){
-    char key1[12];
-    char key2[12];
+    char key1[16];
+    char key2[16];
     size_t size = 10;
     for(uint8_t i = 0;i < ACOOUNT_NUM;i++){
         snprintf(key1,16,"accActive%d", i);
@@ -58,7 +57,7 @@ void Accounts::loadAccounts(){
     }
 }
 void Accounts::deleteAccount(uint8_t id){
-    strcpy(account[id].name,"------");
+    snprintf(account[id].name,10,"------");
     account[id].active = false;
     char key[16];
     snprintf(key,16,"accActive%d", id);

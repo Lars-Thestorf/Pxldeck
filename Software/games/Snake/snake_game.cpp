@@ -1,8 +1,6 @@
 #include "snake_game.h"
 #include "snake.h"
 #include "effects.h"
-//#include <esp_log.h>
-//#include "../../graphics.h"
 #include <HLM_graphics.h>
 #include <HLM_playerInput.h>
 #include <cstdlib>
@@ -14,7 +12,9 @@
 
 typedef struct snakemem_t {
   HLM_graphics* gfx;
-  Snake snake;
+  Snake snake[8];
+  uint8_t num_player;
+  uint8_t snakes_alive;
   uint64_t current_time;
   uint64_t prev_time = 0;
   Effect effects[NUM_EFFECT_POINTS];
@@ -42,10 +42,10 @@ bool isOnEffect(Point p,snakemem_t* pointer) {
 
 bool isOnAnySnake(Point p,snakemem_t* pointer) {
   bool res = false;
-  for (int i = 0; i < 4; i++) {
-      pointer->snake.isOnSnakeOrHead(p);
-  }
-  return res;
+  for (int i = 0; i < pointer->num_player; i++) {
+        res |= pointer->snake[i].isOnSnakeOrHead(p);
+      }
+      return res;
 }
 
 Point getEmptyField(snakemem_t* pointer) {
@@ -83,30 +83,36 @@ void setupEffects(snakemem_t* pointer) {
 }
 
 void checkCollision(snakemem_t* pointer) {
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      if (pointer->snake.isImmortal()) {
-          continue;
+  for (int i = 0; i < pointer->num_player; i++) {
+    for (int j = 0; j < pointer->num_player; j++) {
+      if (pointer->snake[j].isImmortal()) {
+        continue;
       }
-      if (pointer->snake.isOnSnake(pointer->snake.head->p)) {
-          pointer->snake.removeSnake();
-      }      
+      if (i == j) {
+        if (pointer->snake[i].isOnSnake(pointer->snake[i].head->p)) {
+          pointer->snake[i].removeSnake();
+        }
+      } else {
+        if (pointer->snake[i].isOnSnakeOrHead(pointer->snake[j].head->p)) {
+          pointer->snake[j].removeSnake();
+        }
+      }     
     }
   }
 }
     
 void checkEffects(snakemem_t* pointer) {
   for (int e = 0; e < NUM_EFFECT_POINTS; e++) {
-    for (int s = 0; s < 4; s++) {
-      if (pointer->effects[e].isOnPoint(pointer->snake.head->p)) {
+    for (int s = 0; s < pointer->num_player; s++) {
+      if (pointer->effects[e].isOnPoint(pointer->snake[s].head->p)) {
         pointer->effects[e].spawn(getEmptyField(pointer));
         switch (pointer->effects[e].type) {
-          case FOOD: pointer->snake.increaseSize(); break;
-          case SPEED: pointer->snake.increaseSpeed(); break;
-          case SLOW: pointer->snake.decreaseSpeed(); break;
-          case IMMORTAL: pointer->snake.makeImmortal(); break;
+          case FOOD: pointer->snake[s].increaseSize(); break;
+          case SPEED: pointer->snake[s].increaseSpeed(); break;
+          case SLOW: pointer->snake[s].decreaseSpeed(); break;
+          case IMMORTAL: pointer->snake[s].makeImmortal(); break;
           case BOMB: break;
-          case INVISIBLE: pointer->snake.makeInvisible();break;
+          case INVISIBLE: pointer->snake[s].makeInvisible();break;
           case NONE: break;
         }
       }
@@ -115,43 +121,47 @@ void checkEffects(snakemem_t* pointer) {
 }
 
 void handleDirectionChanges(snakemem_t* pointer) {
-  if(getLRInput(1) < -60){
-    pointer->snake.setDirection(LEFT);
-  }else if(getLRInput(1) > 60){
-    pointer->snake.setDirection(RIGHT);
-  }else if(getUDInput(1) < -60){
-    pointer->snake.setDirection(DOWN);
-  }else if(getUDInput(1) > 60){
-    pointer->snake.setDirection(UP);
+  for(uint8_t i = 0;i <pointer->num_player;i++){
+    if(getLRInput(i + 1) < -60){
+      pointer->snake[i].setDirection(LEFT);
+    }else if(getLRInput(i + 1) > 60){
+      pointer->snake[i].setDirection(RIGHT);
+    }else if(getUDInput(i + 1) < -60){
+      pointer->snake[i].setDirection(DOWN);
+    }else if(getUDInput(i + 1) > 60){
+      pointer->snake[i].setDirection(UP);
+    }
   }
 }
 
 void updateSnakes(void* gamemem) {
       SNAKEGMEM->current_time = get_ms_since_boot();
-      SNAKEGMEM->snake.render();
+      for(uint8_t i = 0;i < SNAKEGMEM->num_player;i++){
+        SNAKEGMEM->snake[i].render();
+        SNAKEGMEM->snake[i].updateSnake(SNAKEGMEM->current_time);
+      }
       renderEffects((snakemem_t*)gamemem);
-      SNAKEGMEM->snake.updateSnake(SNAKEGMEM->current_time);
       checkEffects((snakemem_t*)gamemem);
       checkCollision((snakemem_t*)gamemem);
       handleDirectionChanges((snakemem_t*)gamemem);
 }
 
 void* snakegame_setup() {
-	//ESP_LOGI(TAG, "SnakeStart");
 	snakemem_t* pointer = (snakemem_t*)malloc(sizeof(snakemem_t));
+  pointer->num_player = 2;
 	pointer->gfx = get_graphics();
-	pointer->snake = Snake(0, newPoint(30,10));
-	pointer->snake.render();
+  for (uint8_t i = 0; i < pointer->num_player; i++){
+    pointer->snake[i] = Snake(i, newPoint(i*8+3,10));
+	  pointer->snake[i].render();
+  }
 	setupEffects(pointer);
 	return pointer;
 }
 
 void snakegame_loop(void* gamemem) {
-	//ESP_LOGI(TAG, "SnakeLoop");
 	updateSnakes(gamemem);
 }
 
 void snakegame_free(void* gamemem) {
 	free(gamemem);
-	//ESP_LOGI(TAG, "SnakeFree");
 }

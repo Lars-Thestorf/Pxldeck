@@ -7,12 +7,12 @@
 extern "C" {
 #endif
 
-#define NUM_FOOD 40
-#define NUM_SPEED 3
-#define NUM_SLOW 3
-#define NUM_IMMORTAL 2
-#define NUM_BOMB 3
-#define NUM_INVISIBLE 1
+#define NUM_FOOD 60
+#define NUM_SPEED 6
+#define NUM_SLOW 6
+#define NUM_IMMORTAL 4
+#define NUM_BOMB 6
+#define NUM_INVISIBLE 3
 #define NUM_EFFECT_POINTS (NUM_FOOD + NUM_SPEED + NUM_SLOW + NUM_IMMORTAL + NUM_BOMB + NUM_INVISIBLE)
 
 #define UPDATE_INTERVALL_RENDER 30
