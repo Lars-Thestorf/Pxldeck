@@ -43,8 +43,9 @@ bool Accounts::createAccount(char* name){
 void Accounts::loadAccounts(){
     char key1[16];
     char key2[16];
-    size_t size = 10;
+    size_t size;
     for(uint8_t i = 0;i < ACOOUNT_NUM;i++){
+        size = 10;
         snprintf(key1,16,"accActive%d", i);
         account[i].active = HLM_storage_read32(key1);
         printf("getactive %d",account[i].active);

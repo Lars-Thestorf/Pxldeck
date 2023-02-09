@@ -12,6 +12,7 @@
 #include <xmegaComm/xmegaComm.h>
 
 #include <graphics.h>
+#include "../impl/Websocketserver/server.h"
 
 #include <HLM_os.h>
 
@@ -40,7 +41,6 @@ void app_main(void)
 	
 	SetupGraphics();
 	os_init();
-
 	
 	MatrixPanel_I2S_DMA* gfx = getGraphics();
 	
