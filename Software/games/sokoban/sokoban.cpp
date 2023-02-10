@@ -93,7 +93,7 @@ void sokoban_loop(void* gamemem) {
 			SOKOMEM->ingame = true;
 		}
 	}
-	if (gotCoPrimaryButtonPressed(1, false) || gotCoSecondaryButtonPressed(1, false)) {
+	if (gotCoPrimaryButtonPressed(1, true) || gotCoSecondaryButtonPressed(1, true)) {
 		if (SOKOMEM->ingame) {
 			SOKOMEM->level.undo();
 		}

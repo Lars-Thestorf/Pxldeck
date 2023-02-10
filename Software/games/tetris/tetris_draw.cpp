@@ -3,7 +3,7 @@
 #include <cstdio>
 
 void drawFuncField1p1(uint8_t x, uint8_t y, uint16_t color, HLM_graphics* gfx) {
-	gfx->drawRect(x*2, y*2, 2, 2, color);
+	gfx->drawRect((x+1)*2, y*2, 2, 2, color);
 }
 void drawFuncHUD1p1(class tetris_game *gameplay, HLM_graphics* gfx) {
 	char tempstr[12];
@@ -20,6 +20,8 @@ void drawFuncHUD1p1(class tetris_game *gameplay, HLM_graphics* gfx) {
 			gfx->drawText((64 - pixel) / 2, 24, tempstr, 0xFFFF);
 			break;
 		case GAME_STATE_PLAY:
+			gfx->drawRect(0, 0, 2, 32, 0x8710);
+			gfx->drawRect(22, 0, 2, 32, 0x8710);
 			snprintf(tempstr, 11, "%d", gameplay->score);
 			gfx->drawText(25, 8, tempstr, 0xFFFF);
 			snprintf(tempstr, 11, "%d", gameplay->level);
