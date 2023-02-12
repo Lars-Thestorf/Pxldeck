@@ -2,7 +2,6 @@
 #include <HLM_random.h>
 #include <HLM_time.h>
 #include <stdio.h>
-#include <../../os/accounts/accounts.h>
 
 //All values in Frames
 #define DAS_DELAY     12 //Delayed Auto Shift initial Delay
@@ -216,7 +215,6 @@ void tetris_game::init()
 	score = 0;
 	lines = 0;
 	level = 9;
-	highscoreIndex = 0;
 	for (uint8_t line = 0; line < FIELD_HEIGHT; line++) {
 		for (uint8_t x=0; x < FIELD_WIDTH; x++) {
 			field[x][line] = 0;
@@ -362,14 +360,7 @@ void tetris_game::tick()
 					flashAnimation--;
 					if (!flashAnimation) {
 						game_state = GAME_STATE_OVER;
-						Accounts *acc = get_accounts();
-						char buffer[10];
-						acc->getName(buffer);
-						if (isScoreHighscore(score)){
-							highscores[SCORE_LENGTH - 1].score = score; 
-							snprintf(highscores[SCORE_LENGTH - 1].name,10,"%s",buffer);
-							buildHighscoreList();
-						}
+						game_end(this);
 					}
 					break;
 			}
@@ -390,19 +381,7 @@ void tetris_game::right(bool pressed)
 				level++;
 	}
 }
-void tetris_game::down(bool pressed)
-{
-	if (game_state == GAME_STATE_MENU && pressed){
-		if (highscoreIndex < SCORE_LENGTH - 1)
-			highscoreIndex++;
-	}
-}
-void tetris_game::up(bool pressed){
-	if (game_state == GAME_STATE_MENU && pressed){
-		if (highscoreIndex > 0)
-			highscoreIndex--;
-	}
-}
+
 void tetris_game::rotateR(bool pressed)
 {
 	if ((game_state == GAME_STATE_MENU || game_state == GAME_STATE_OVER) && pressed){
@@ -496,48 +475,6 @@ uint16_t tetris_game::getRandomNumber(uint16_t max)
 uint64_t tetris_game::getSystemTime()
 {
 	return get_ms_since_boot();
-}
-
-bool tetris_game::isScoreHighscore ( uint32_t score )
-{
-	return score > highscores[SCORE_LENGTH - 1].score;
-}
-bool tetris_game::addToHighscoreList (tetris_highscore_entry_t highscore_entry)
-{
-	if (!isScoreHighscore(highscore_entry.score))
-		return false;
-
-	highscores[SCORE_LENGTH - 1] = highscore_entry; 
-
-	buildHighscoreList(); // Rebuild highscore list (sorting)
-	return true;
-}
-
-void tetris_game::buildHighscoreList()
-{
-	uint8_t i, j, max_idx;
- 
-    for (i = 0; i < SCORE_LENGTH - 1; i++) {
- 
-        max_idx = i;
-        for (j = i + 1; j < SCORE_LENGTH; j++)
-            if (highscores[j].score > highscores[max_idx].score){
-				 max_idx = j;
-			}
-		uint32_t temp = highscores[max_idx].score;
-		highscores[max_idx].score = highscores[i].score;
-		highscores[i].score = temp;
-
-		char tempc[10];
-		snprintf(tempc,10,"%s",highscores[max_idx].name);
-		snprintf(highscores[max_idx].name,10,"%s",highscores[i].name);
-		snprintf(highscores[i].name,10,"%s",tempc);
-    }
-
-	for(uint8_t i = 0;i < SCORE_LENGTH;i++){
-		saveHighscoreFunc(i,highscores[i]);
-	}
-	
 }
 
 

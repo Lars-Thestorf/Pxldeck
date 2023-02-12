@@ -18,8 +18,9 @@ void os_init() {
 #endif
 	HLM_graphics *gfx = get_graphics();
 	gfx->init();
+
+	Accounts::init();
 	Accounts *acc = get_accounts();
-	acc->init();
 	acc->loadAccounts();
 	printf("init");
 	init_default_event_lib();

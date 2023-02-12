@@ -15,7 +15,7 @@ typedef struct account_t
 class Accounts{
 public:
     uint8_t active_account;
-    void init();
+    static void init();
     void setActiveAccount(uint8_t id);
     void setName(char* name);
     void setName(char* name, uint8_t id);
@@ -26,6 +26,7 @@ public:
     uint8_t get_num_valid_accounts();
 
 private:
+    Accounts(){};
 	account_t account[ACOOUNT_NUM];
     int8_t get_num_first_unused_account();
 };

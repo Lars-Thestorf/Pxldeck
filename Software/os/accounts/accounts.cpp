@@ -2,14 +2,17 @@
 #include <stdio.h>
 #include <HLM_storage.h>
 
-Accounts * acc_instanz = new Accounts();
+Accounts * acc_instanz = NULL;
 
 Accounts* get_accounts() {
 	return acc_instanz;
 }
 
 void Accounts::init(){
-    setActiveAccount(0);
+    if(acc_instanz != NULL)
+        return;
+    acc_instanz = new Accounts();
+    acc_instanz->setActiveAccount(0);
 }
 void Accounts::setActiveAccount(uint8_t id){
     active_account = id;

@@ -39,7 +39,6 @@ void setting_menu_init(){
 void settings_menu_free(){
     free(pointer);
 }
-
 void DrawSettingsMenu(){
     char text_buffer[12];
     HLM_graphics* gfx = get_graphics();

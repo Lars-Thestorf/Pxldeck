@@ -12,10 +12,6 @@
 #define GAME_STATE_PLAY 1
 #define GAME_STATE_OVER 2
 
-typedef struct tetris_highscore_entry_t {
-	uint32_t score;
-	char name[10];
-} tetris_highscore_entry_t;
 
 class tetris_game
     {
@@ -26,8 +22,6 @@ class tetris_game
         void tick();
 		void left(bool pressed);
 		void right(bool pressed);
-		void down(bool pressed);
-		void up(bool pressed);
 
 		void pause(bool pressed);
 		void rotateL(bool pressed);
@@ -41,10 +35,7 @@ class tetris_game
 		uint8_t level;
 		uint32_t score;
 		uint16_t lines;
-		uint8_t highscoreIndex;
-		tetris_highscore_entry_t highscores[SCORE_LENGTH];
-		void (* saveHighscoreFunc)(uint8_t index, tetris_highscore_entry_t highscore_entry);
-		tetris_highscore_entry_t (* readHighscoreFunc)(uint8_t index);
+		void (*game_end)(tetris_game *ptr);
 		bool holdingDown;
 		bool holdingLeft;
 		bool holdingRight;
@@ -64,9 +55,6 @@ class tetris_game
 		bool placeTetronimo(const uint8_t (*tetronimo)[4][4], int8_t x, int8_t y);
 		bool checkLineFull(uint8_t line);
 		bool doesTetronimoFit(const uint8_t (*tetronimo)[4][4], int8_t x, int8_t y);
-		bool isScoreHighscore(uint32_t score);
-		bool addToHighscoreList(tetris_highscore_entry_t highscore_entry);
-		void buildHighscoreList();
         uint16_t getRandomNumber(uint16_t max);
 		uint64_t getSystemTime();
     };
