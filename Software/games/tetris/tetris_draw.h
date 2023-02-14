@@ -5,7 +5,14 @@
 #include <HLM_graphics.h>
 #include "tetris_game.h"
 #include "tetris.h"
-void drawNumber(uint8_t x, uint8_t y, char* str, uint16_t color, HLM_graphics* gfx);
+
+enum Direction { UP,
+                 DOWN,
+                 LEFT,
+                 RIGHT
+               };
+               
+void drawSmallText(uint8_t x, uint8_t y, char* str, uint16_t color, HLM_graphics* gfx, Direction dir);
 
 void drawFuncField1p1(uint8_t x, uint8_t y, uint16_t color, HLM_graphics* gfx);
 void drawFuncField2p1(uint8_t x, uint8_t y, uint16_t color, HLM_graphics* gfx);
