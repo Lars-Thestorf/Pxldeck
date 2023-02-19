@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define MAX_PLAYER_COUNT 8
+
 typedef enum controllerType_e {
 	CONTROLLERTYPE_NONE, // Controller not present
 	CONTROLLERTYPE_FULL, // whole console as one player

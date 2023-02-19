@@ -18,6 +18,8 @@ add_subdirectory("../../os/" HLM-os)
 
 add_subdirectory("../../api/" HLM-api)
 
+add_subdirectory("../../libs/" HLM-libs)
+
 target_compile_definitions(HLM-os INTERFACE BAR)
 
 add_executable(HHTVemulator "input.cpp" "main.cpp" "graphics.cpp" "driver/pcrandom.cpp" "driver/pcinput.cpp" "driver/pcbattery.cpp" "driver/pctime.cpp" "driver/pcstorage.cpp")
@@ -27,3 +29,5 @@ target_link_libraries(HHTVemulator ${SDL2_LIBRARIES})
 target_link_libraries(HHTVemulator HLM-os)
 
 target_link_libraries(HHTVemulator HLM-api)
+
+target_link_libraries(HHTVemulator HLM-libs)

@@ -40,8 +40,8 @@ void MatrixPanel_I2S_DMA::fm6124init(const HUB75_I2S_CFG& _cfg){
     #if SERIAL_DEBUG 
         Serial.println( F("MatrixPanel_I2S_DMA - initializing FM6124 driver..."));
     #endif
-    bool REG1[16] = {0,0,0,0,0, 1,1,1,1,1,1, 0,0,0,0,0};    // this sets global matrix brightness power
-    bool REG2[16] = {0,0,0,0,0, 0,0,0,0,1,0, 0,0,0,0,0};    // a single bit enables the matrix output
+    bool REG1[16] = {1,1,1,1,1, 1,1,1,1,1,1, 1,1,1,1,1};    // this sets global matrix brightness power
+    bool REG2[16] = {0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0};    // a single bit enables the matrix output
 
     for (uint8_t _pin:{_cfg.gpio.r1, _cfg.gpio.r2, _cfg.gpio.g1, _cfg.gpio.g2, _cfg.gpio.b1, _cfg.gpio.b2, _cfg.gpio.clk, _cfg.gpio.lat, _cfg.gpio.oe}){
 		gpio_reset_pin((gpio_num_t)_pin);

@@ -2,9 +2,9 @@ if(${ESP_PLATFORM})
 
 	set(EXTRA_COMPONENT_DIRS "../games/")
 	
-	idf_component_register(SRCS "HLM_os.cpp" "mainMenu/mainMenu.cpp"
+	idf_component_register(SRCS "HLM_os.cpp" "mainMenu/mainMenu.cpp" "settingsMenu/settingsMenu.cpp" "accounts/accounts.cpp"
                     REQUIRES api games
-                    INCLUDE_DIRS "../games/")
+                    INCLUDE_DIRS "../games/" "../platforms/HMatrix/esp32/impl/")
 
 	target_link_libraries(${COMPONENT_LIB} INTERFACE idf::main)
 
@@ -16,7 +16,7 @@ else()
 	
 	add_library(HLM-os INTERFACE)
 	
-	target_sources(HLM-os INTERFACE "HLM_os.cpp" "mainMenu/mainMenu.cpp")
+	target_sources(HLM-os INTERFACE "HLM_os.cpp" "mainMenu/mainMenu.cpp" "settingsMenu/settingsMenu.cpp" "accounts/accounts.cpp")
 
 	target_include_directories (HLM-os INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} HLM-games)
 	

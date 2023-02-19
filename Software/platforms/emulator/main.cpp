@@ -64,34 +64,6 @@ int main()
 						case SDLK_c: setButtonPressed(BUTTON_RMENU, false); break;
 					}
 					break;
-				/*case SDL_MOUSEBUTTONDOWN:
-					if (event.button.which != SDL_TOUCH_MOUSEID)
-					{
-						uint16_t x,y;
-						x = event.button.x / DISPLAY_ZOOM;
-						y = event.button.y / DISPLAY_ZOOM;
-						BaReCo_touchdown(BaReCo_getActualX(x, y), BaReCo_getActualY(x, y));
-					}
-					break;
-				case SDL_MOUSEBUTTONUP:
-					if (event.button.which != SDL_TOUCH_MOUSEID)
-					{
-						uint16_t x,y;
-						x = event.button.x / DISPLAY_ZOOM;
-						y = event.button.y / DISPLAY_ZOOM;
-						BaReCo_touchup(BaReCo_getActualX(x, y), BaReCo_getActualY(x, y));
-					}
-					break;
-				case SDL_MOUSEMOTION:
-					if (event.button.which != SDL_TOUCH_MOUSEID) {
-						if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)){
-							uint16_t x,y;
-							x = event.button.x / DISPLAY_ZOOM;
-							y = event.button.y / DISPLAY_ZOOM;
-							BaReCo_touchmove(BaReCo_getActualX(x, y), BaReCo_getActualY(x, y));
-						}
-					}
-					break;*/
 			}
 		}
 		os_loop();

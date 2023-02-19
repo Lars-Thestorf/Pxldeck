@@ -1,6 +1,8 @@
 #include <HLM_playerInput.h>
 #include "../input.h"
 
+void cycleInputMethods() {}
+
 uint8_t getPlayerCount()
 {
 	return 1;

@@ -1,6 +1,7 @@
 #include "tetris_game.h"
 #include <HLM_random.h>
 #include <HLM_time.h>
+#include <stdio.h>
 
 //All values in Frames
 #define DAS_DELAY     12 //Delayed Auto Shift initial Delay
@@ -359,6 +360,7 @@ void tetris_game::tick()
 					flashAnimation--;
 					if (!flashAnimation) {
 						game_state = GAME_STATE_OVER;
+						game_end(this);
 					}
 					break;
 			}
@@ -367,39 +369,33 @@ void tetris_game::tick()
 }
 void tetris_game::left(bool pressed)
 {
-	holdingLeft = pressed;
-	if (game_state == GAME_STATE_MENU){
-		if (pressed && !holdingLeftPrev)
-			if (level > 0)
-				level--;
+	if (game_state == GAME_STATE_MENU && pressed){
+		if (level > 0)
+			level--;
 	}
-	holdingLeftPrev = pressed;
 }
 void tetris_game::right(bool pressed)
 {
-	holdingRight = pressed;
-	if (game_state == GAME_STATE_MENU){
-		if (pressed && !holdingRightPrev)
+	if (game_state == GAME_STATE_MENU && pressed){
 			if (level < 9)
 				level++;
 	}
-	holdingRightPrev = pressed;
 }
+
 void tetris_game::rotateR(bool pressed)
 {
-	if (game_state == GAME_STATE_PLAY && !game_paused) {
-		if (pressed && !holdingRotateRPrev)
-			rotate(rotation + 1);
+	if ((game_state == GAME_STATE_MENU || game_state == GAME_STATE_OVER) && pressed){
+		pause(true);
 	}
-	holdingRotateRPrev = pressed;
+	if (game_state == GAME_STATE_PLAY && !game_paused && pressed) {
+		rotate(rotation + 1);
+	}
 }
 void tetris_game::rotateL(bool pressed)
 {
-	if (game_state == GAME_STATE_PLAY && !game_paused) {
-		if (pressed && !holdingRotateLPrev)
-			rotate(rotation - 1);
+	if (game_state == GAME_STATE_PLAY && !game_paused && pressed) {
+		rotate(rotation - 1);
 	}
-	holdingRotateLPrev = pressed;
 }
 void tetris_game::rotate(uint8_t dir)
 {
@@ -408,13 +404,11 @@ void tetris_game::rotate(uint8_t dir)
 		currentblock = &(tetronimos[currentBlockId][rotation]);
 	}
 }
-void tetris_game::down(bool pressed)
-{
-	holdingDown = pressed;
-}
+
+
 void tetris_game::pause(bool pressed)
 {
-	if (pressed && !holdingPausePrev) {
+	if (pressed) {
 		switch (game_state) {
 			case GAME_STATE_PLAY:
 				game_paused=!game_paused;
@@ -431,7 +425,6 @@ void tetris_game::pause(bool pressed)
 				game_state = GAME_STATE_PLAY;
 		}
 	}
-	holdingPausePrev = pressed;
 }
 
 bool tetris_game::doesTetronimoFit(const uint8_t (*tetronimo)[4][4], int8_t x, int8_t y)
@@ -483,34 +476,6 @@ uint64_t tetris_game::getSystemTime()
 {
 	return get_ms_since_boot();
 }
-
-bool tetris_game::isScoreHighscore ( uint32_t score )
-{
-	return score > highscores[9].highscore_entry.score;
-}
-bool tetris_game::addToHighscoreList (tetris_highscore_entry_t highscore_entry)
-{
-	if (!isScoreHighscore(highscore_entry.score))
-		return false;
-	saveHighscoreFunc(highscores[9].list_slot, highscore_entry); // Overwrite the worst highscore with the new one
-	buildHighscoreList(); // Rebuild highscore list (sorting)
-	return true;
-}
-void tetris_game::buildHighscoreList()
-{
-	for (int i = 0; i < 10; i++) {
-		tetris_highscore_entry_t newscore = readHighscoreFunc(i);
-		uint8_t pos = 0;
-		while (newscore.score < highscores[pos].highscore_entry.score) {
-			pos++;
-		}
-		for (int j = 10; j > pos; j--){
-			highscores[j] = highscores[j - 1];
-		}
-		highscores[pos].highscore_entry = newscore;
-	}
-}
-
 
 
 void tetris_game::free()
