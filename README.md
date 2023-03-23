@@ -1,7 +1,7 @@
 
-# DiyGameMatrix
+# Pxldeck
 
-Handheld Games Console with an 32x64 Led Matrix driven by ESP32.
+DIY Handheld Games Console with an 32x64 Led Matrix driven by ESP32.
 
 ![Image showing the Game Console running Sokoban](Photos/SokobanGame.png "Sokoban Gameplay")
 
@@ -14,5 +14,5 @@ The Case is entirely 3D printed.
 - 15 buttons and two analog sticks as input
 - 3000mAh battery which lasts like 10 hours
 - ESP32 microcontroller providing WiFi Capabilitys, does all the gameplay processing and is driving the Screen
-- ATXMega microcontroller doing battery management and input handling since the ESP just hasn't enaugh pins for all of that. It also serves as an USB to Uart converter so the consoles software can be updated just by plugging it into the PC.
+- ATXMega microcontroller doing battery management and input handling since the ESP just hasn't enough pins for all of that. It also serves as an USB to Uart converter so the consoles software can be updated just by plugging it into the PC.
 - This Repo also contains an "Emulator" to run the games code on PC.
