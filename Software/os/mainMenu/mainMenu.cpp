@@ -10,6 +10,7 @@
 #include <Snake/snake_game.h>
 #include <tetris/tetris.h>
 #include <sokoban/sokoban.h>
+#include <tictactoe/tictactoe.h>
 
 #include "../settingsMenu/settingsMenu.h"
 #include "../accounts/accounts.h"
@@ -19,7 +20,8 @@
 
 #include <defaultInputEvents.h>
 
-HLM_game games[] = {pong_game, snake_game, tetris_gamedesc, sokoban_game};
+HLM_game games[] = {pong_game, snake_game, tetris_gamedesc, sokoban_game, tictactoe_game};
+//HLM_game games[] = {pong_game, snake_game, tetris_gamedesc, sokoban_game};
 
 #define LEMAGOS_STATE_MAINMENU 0
 #define LEMAGOS_STATE_INGAME 1

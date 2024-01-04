@@ -19,6 +19,8 @@ extern "C" {
 
 #include <freertos/FreeRTOS.h>
 #include <driver/i2s.h>
+#include <soc/i2s_struct.h>
+#include "soc/i2s_reg.h"
 #include <esp_err.h>
 #include <esp32/rom/lldesc.h>
 

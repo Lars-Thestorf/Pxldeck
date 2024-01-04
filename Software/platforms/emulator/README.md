@@ -1,5 +1,5 @@
 ## prepare
-    sudo apt install libsdl2-dev
+    sudo apt install libsdl2-dev libsdl2-net-dev
 
 ## build
     mkdir build

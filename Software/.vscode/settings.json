@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "cstdlib": "cpp",
+        "bootlogo.c": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "ranges": "cpp",
+        "*.tcc": "cpp",
+        "iterator": "cpp"
+    },
+    "cmake.configureOnOpen": false
+}

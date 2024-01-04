@@ -27,7 +27,7 @@ statusReportData_t cached_status;
 bool CommEstablished = false;
 bool isXmegaCommEstablished(void)
 {
-	return CommEstablished;
+	return true;
 }
 
 void SetupXmegaComm(void)

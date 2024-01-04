@@ -12,7 +12,7 @@
 #include <xmegaComm/xmegaComm.h>
 
 #include <graphics.h>
-#include "../impl/Websocketserver/server.h"
+//#include "../impl/Websocketserver/server.h"
 
 #include <HLM_os.h>
 

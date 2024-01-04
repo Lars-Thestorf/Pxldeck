@@ -171,7 +171,7 @@ void tetrisgame_saveHighscore(uint8_t index, tetris_highscore_entry_t highscore_
 	HLM_storage_write32(tetris_storage_key, highscore_entry.score);
 	snprintf(tetris_storage_key, 12, "TetrisN%d", index) ;
 	HLM_storage_write_str(tetris_storage_key, highscore_entry.name);
-	printf("write tetris Score: %d\n", highscore_entry.score);	
+	printf("write tetris Score: %ld\n", highscore_entry.score);	
 	printf("write tetris name: %s\n", highscore_entry.name);	
 }
 tetris_highscore_entry_t tetrisgame_readHighscore(uint8_t index){
@@ -183,7 +183,7 @@ tetris_highscore_entry_t tetrisgame_readHighscore(uint8_t index){
 	snprintf(tetris_storage_key, 12, "TetrisS%d", index) ;
 	if (HLM_storage_exists32(tetris_storage_key)) {
 		ret.score = HLM_storage_read32(tetris_storage_key);
-		printf("read tetris Score: %d\n", ret.score);
+		printf("read tetris Score: %ld\n", ret.score);
 	}
 	snprintf(tetris_storage_key, 12, "TetrisN%d", index);
 	HLM_storage_read_str(tetris_storage_key, ret.name, &size);
@@ -222,7 +222,7 @@ void buildHighscoreList()
 
 		char tempc[10];
 		snprintf(tempc,10,"%s",pointer_tetris->highscores[max_idx].name);
-		snprintf(pointer_tetris->highscores[max_idx].name,10,"%s",pointer_tetris->highscores[i].name);
+		//snprintf(pointer_tetris->highscores[max_idx].name,10,"%s",pointer_tetris->highscores[i].name);
 		snprintf(pointer_tetris->highscores[i].name,10,"%s",tempc);
     }
 

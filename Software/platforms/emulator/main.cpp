@@ -7,6 +7,8 @@
 #include <HLM_random.h>
 #include "input.h"
 
+#include "driver/pcnetwork.h"
+
 int main()
 {
     graphics_init();
@@ -66,6 +68,7 @@ int main()
 					break;
 			}
 		}
+		network_worker();
 		os_loop();
 		graphics_render();
 	}

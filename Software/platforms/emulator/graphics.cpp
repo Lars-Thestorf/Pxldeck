@@ -59,7 +59,7 @@ void HLM_graphics::setBrightness ( uint8_t percent )
 	printf("Screen Brightness %d unimplemented\r\n", percent);
 }
 
-void HLM_graphics::drawText(uint8_t x, uint8_t y, char* str, uint16_t color)
+void HLM_graphics::drawText(uint8_t x, uint8_t y, const char* str, uint16_t color)
 {
 	int pos = 0;
 	char c = str[pos];

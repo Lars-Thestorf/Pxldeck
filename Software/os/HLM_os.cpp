@@ -2,6 +2,7 @@
 #include <HLM_graphics.h>
 #include <HLM_random.h>
 #include <HLM_storage.h>
+#include <HLM_network.h>
 
 #include "mainMenu/mainMenu.h"
 
@@ -21,6 +22,9 @@ void os_init() {
 
 	Accounts::init();
 	Accounts *acc = get_accounts();
+
+	//network_broadcast(nullptr, 0);
+
 	acc->loadAccounts();
 	printf("init");
 	init_default_event_lib();

@@ -22,6 +22,10 @@
 #include <driver/periph_ctrl.h>
 #include <esp32/rom/gpio.h>
 #include <soc/gpio_sig_map.h>
+#include "soc/io_mux_reg.h"
+#include "soc/gpio_periph.h"
+
+#define I2S_NUM_MAX 2
 
 // Header
 #include "esp32_i2s_parallel_v2.h"

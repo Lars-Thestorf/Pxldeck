@@ -224,7 +224,7 @@ void drawFuncHUD2p1(tetrismem_t *mem, HLM_graphics* gfx) {
 			drawSmallText(25, 0, tempstr, 0xffff, gfx, DOWN);
 			snprintf(tempstr, 11, "Highscore");
 			drawSmallText(19, 0, tempstr, 0xffff, gfx, DOWN);
-			pixel = snprintf(tempstr, 11, "%d. %d", mem->highscoreIndex + 1, mem->highscores[mem->highscoreIndex].score) * 6;
+			pixel = snprintf(tempstr, 11, "%d. %ld", mem->highscoreIndex + 1, mem->highscores[mem->highscoreIndex].score) * 6;
 			drawSmallText(13, 0, tempstr, 0xffff, gfx, DOWN);
 			pixel = snprintf(tempstr, 11, "%s", mem->highscores[mem->highscoreIndex].name) * 6;
 			drawSmallText(7, 0, tempstr, 0xffff, gfx, DOWN);
@@ -234,7 +234,7 @@ void drawFuncHUD2p1(tetrismem_t *mem, HLM_graphics* gfx) {
 		case GAME_STATE_PLAY:
 			gfx->fillRect(0, FIELD_WIDTH * 2, 32, 12, 0x10);
 
-			snprintf(tempstr, 11, "%d", mem->gameplay[0]->score);
+			snprintf(tempstr, 11, "%ld", mem->gameplay[0]->score);
 			drawSmallText(20, 21, tempstr, 0xffff, gfx, DOWN);
 			snprintf(tempstr, 11, "%d", mem->gameplay[0]->level);
 			drawSmallText(14, 21, tempstr, 0xffff, gfx, DOWN);
@@ -246,7 +246,7 @@ void drawFuncHUD2p1(tetrismem_t *mem, HLM_graphics* gfx) {
 			drawSmallText(25, 0, tempstr, 0xffff, gfx, DOWN);
 			snprintf(tempstr, 11, "Score:");
 			drawSmallText(19, 0, tempstr, 0xffff, gfx, DOWN);
-			snprintf(tempstr, 11, "%d", mem->gameplay[0]->score);
+			snprintf(tempstr, 11, "%ld", mem->gameplay[0]->score);
 			drawSmallText(13, 0, tempstr, 0xffff, gfx, DOWN);
 			break;
 	}
@@ -277,7 +277,7 @@ void drawFuncHUD1p1(tetrismem_t *mem, HLM_graphics* gfx) {
 			gfx->drawText(8, 1, tempstr, 0xFFFF);
 			snprintf(tempstr, 11, "Highscores");
 			gfx->drawText(2, 8, tempstr, 0xFFFF);
-			pixel = snprintf(tempstr, 11, "%d. %d", mem->highscoreIndex + 1, mem->highscores[mem->highscoreIndex].score) * 6;
+			pixel = snprintf(tempstr, 11, "%d. %ld", mem->highscoreIndex + 1, mem->highscores[mem->highscoreIndex].score) * 6;
 			gfx->drawText((64 - pixel) / 2, 16, tempstr, 0xFFFF);
 			pixel = snprintf(tempstr, 11, "%s", mem->highscores[mem->highscoreIndex].name) * 6;
 			gfx->drawText((64 - pixel) / 2, 24, tempstr, 0xFFFF);
@@ -285,7 +285,7 @@ void drawFuncHUD1p1(tetrismem_t *mem, HLM_graphics* gfx) {
 		case GAME_STATE_PLAY:
 			gfx->drawRect(0, 0, 2, 32, 0x8710);
 			gfx->drawRect(22, 0, 2, 32, 0x8710);
-			snprintf(tempstr, 11, "%d", mem->gameplay[0]->score);
+			snprintf(tempstr, 11, "%ld", mem->gameplay[0]->score);
 			gfx->drawText(25, 8, tempstr, 0xFFFF);
 			snprintf(tempstr, 11, "%d", mem->gameplay[0]->level);
 			gfx->drawText(25, 16, tempstr, 0xFFFF);
@@ -297,7 +297,7 @@ void drawFuncHUD1p1(tetrismem_t *mem, HLM_graphics* gfx) {
 			gfx->drawText(6, 4, tempstr, 0xFFFF);
 			snprintf(tempstr, 11, "Score:");
 			gfx->drawText(6, 12, tempstr, 0xFFFF);
-			snprintf(tempstr, 11, "%d", mem->gameplay[0]->score);
+			snprintf(tempstr, 11, "%ld", mem->gameplay[0]->score);
 			gfx->drawText(6, 21, tempstr, 0xFFFF);
 			break;
 	}

@@ -7,8 +7,9 @@ set(CMAKE_CXX_STANDARD 14)
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+pkg_search_module (SDL_NET REQUIRED SDL2_net)
 
-include_directories(${SDL2_INCLUDE_DIRS})
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL_NET_INCLUDE_DIRS})
 
 #include_directories("../../api/include")
 
@@ -22,9 +23,9 @@ add_subdirectory("../../libs/" HLM-libs)
 
 target_compile_definitions(HLM-os INTERFACE BAR)
 
-add_executable(HHTVemulator "input.cpp" "main.cpp" "graphics.cpp" "driver/pcrandom.cpp" "driver/pcinput.cpp" "driver/pcbattery.cpp" "driver/pctime.cpp" "driver/pcstorage.cpp")
+add_executable(HHTVemulator "input.cpp" "main.cpp" "graphics.cpp" "driver/pcrandom.cpp" "driver/pcinput.cpp" "driver/pcbattery.cpp" "driver/pctime.cpp" "driver/pcstorage.cpp" "driver/pcnetwork.cpp")
 
-target_link_libraries(HHTVemulator ${SDL2_LIBRARIES})
+target_link_libraries(HHTVemulator ${SDL2_LIBRARIES} ${SDL_NET_LIBRARIES})
 
 target_link_libraries(HHTVemulator HLM-os)
 
