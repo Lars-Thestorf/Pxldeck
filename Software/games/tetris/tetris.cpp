@@ -43,6 +43,7 @@ void* tetrisgame_setup(){
 			pointer_tetris->drawFuncField[0] = drawFuncField2p2;
 			break;
 		default:
+			pointer_tetris->drawFuncField[0] = drawFuncField1p1;
 			break;
 		}
 		pointer_tetris->drawFuncHUD[0] = drawFuncHUD1p1;
