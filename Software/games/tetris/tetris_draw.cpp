@@ -205,6 +205,8 @@ void drawFuncField2p1(uint8_t x, uint8_t y, uint16_t color, HLM_graphics* gfx) {
 	x *= 2;
 	y *= 2;
 	orientation_32_32_section(&x,&y,RIGHT);
+	x &= ~1;
+	y &= ~1;
 	gfx->drawRect(x, y, 2, 2, color);
 }
 void drawFuncField2p2(uint8_t x, uint8_t y, uint16_t color, HLM_graphics* gfx) {
@@ -212,6 +214,8 @@ void drawFuncField2p2(uint8_t x, uint8_t y, uint16_t color, HLM_graphics* gfx) {
 	x += 32;
 	y *= 2;
 	orientation_32_32_section(&x,&y,LEFT);
+	x &= ~1;
+	y &= ~1;
 	gfx->drawRect(x, y, 2, 2, color);
 }
 
@@ -232,7 +236,7 @@ void drawFuncHUD2p1(tetrismem_t *mem, HLM_graphics* gfx) {
 
 			break;
 		case GAME_STATE_PLAY:
-			gfx->fillRect(0, FIELD_WIDTH * 2, 32, 12, 0x10);
+			gfx->fillRect(0, FIELD_WIDTH * 2, 32, 12, 0x0010);
 
 			snprintf(tempstr, 11, "%ld", mem->gameplay[0]->score);
 			drawSmallText(20, 21, tempstr, 0xffff, gfx, DOWN);
@@ -257,13 +261,33 @@ void drawFuncHUD2p2(tetrismem_t *mem, HLM_graphics* gfx) {
 	uint8_t pixel;
 	switch(mem->gameplay[1]->game_state) {
 		case GAME_STATE_MENU:
+			snprintf(tempstr, 11, "Level: %d", mem->gameplay[0]->level);
+			drawSmallText(57, 29, tempstr, 0xffff, gfx, UP);
+			snprintf(tempstr, 11, "Highscore");
+			drawSmallText(51, 29, tempstr, 0xffff, gfx, UP);
+			pixel = snprintf(tempstr, 11, "%d. %ld", mem->highscoreIndex + 1, mem->highscores[mem->highscoreIndex].score) * 6;
+			drawSmallText(45, 29, tempstr, 0xffff, gfx, UP);
+			pixel = snprintf(tempstr, 11, "%s", mem->highscores[mem->highscoreIndex].name) * 6;
+			drawSmallText(39, 29, tempstr, 0xffff, gfx, UP);
 
 			break;
 		case GAME_STATE_PLAY:
-			gfx->drawRect(FIELD_HEIGHT * 2, 0, 32, 12, 0x8710);
+			gfx->fillRect(FIELD_HEIGHT * 2, 0, 32, 12, 0x8000);
+
+			snprintf(tempstr, 11, "%ld", mem->gameplay[0]->score);
+			drawSmallText(52, 8, tempstr, 0xffff, gfx, UP);
+			snprintf(tempstr, 11, "%d", mem->gameplay[0]->level);
+			drawSmallText(46, 8, tempstr, 0xffff, gfx, UP);
+			snprintf(tempstr, 11, "%d", mem->gameplay[0]->lines);
+			drawSmallText(40, 8, tempstr, 0xffff, gfx, UP);
 			break;
 		case GAME_STATE_OVER:
-
+			snprintf(tempstr, 11, "GameOver");
+			drawSmallText(57, 29, tempstr, 0xffff, gfx, UP);
+			snprintf(tempstr, 11, "Score:");
+			drawSmallText(51, 29, tempstr, 0xffff, gfx, UP);
+			snprintf(tempstr, 11, "%ld", mem->gameplay[0]->score);
+			drawSmallText(45, 29, tempstr, 0xffff, gfx, UP);
 			break;
 	}
 }

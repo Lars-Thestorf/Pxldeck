@@ -217,13 +217,15 @@ void buildHighscoreList()
             if (pointer_tetris->highscores[j].score > pointer_tetris->highscores[max_idx].score){
 				 max_idx = j;
 			}
+		
 		uint32_t temp = pointer_tetris->highscores[max_idx].score;
 		pointer_tetris->highscores[max_idx].score = pointer_tetris->highscores[i].score;
 		pointer_tetris->highscores[i].score = temp;
 
-		char tempc[10];
+		char tempc[10], tempc2[10];
 		snprintf(tempc,10,"%s",pointer_tetris->highscores[max_idx].name);
-		//snprintf(pointer_tetris->highscores[max_idx].name,10,"%s",pointer_tetris->highscores[i].name);
+		snprintf(tempc2,10,"%s",pointer_tetris->highscores[i].name);
+		snprintf(pointer_tetris->highscores[max_idx].name,10,"%s",tempc2);
 		snprintf(pointer_tetris->highscores[i].name,10,"%s",tempc);
     }
 
