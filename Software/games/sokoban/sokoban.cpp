@@ -68,22 +68,39 @@ void sokoban_loop(void* gamemem) {
 		if(gotDownButtonPressed(1, true))
 			SOKOMEM->level.go_down();
 	}else{
-		if(gotLeftButtonPressed(1, true))
-			if (SOKOMEM->levelnum > 0)
+		if(gotLeftButtonPressed(1, true)) {
+			if (SOKOMEM->levelnum > 0) {
 				SOKOMEM->levelnum--;
-		if(gotRightButtonPressed(1, true))
-			if (SOKOMEM->levelnum < SOKOMEM->levelprogress && SOKOMEM->levelnum < worlds[SOKOMEM->worldnum].levelnum - 1)
+			} else {
+				SOKOMEM->levelnum = SOKOMEM->levelprogress;
+				if (SOKOMEM->levelnum > worlds[SOKOMEM->worldnum].levelnum - 1) {
+					SOKOMEM->levelnum = worlds[SOKOMEM->worldnum].levelnum - 1;
+				}
+			}
+		}
+		if(gotRightButtonPressed(1, true)) {
+			if (SOKOMEM->levelnum < SOKOMEM->levelprogress && SOKOMEM->levelnum < worlds[SOKOMEM->worldnum].levelnum - 1) {
 				SOKOMEM->levelnum++;
-		if(gotUpButtonPressed(1, true))
+			} else {
+				SOKOMEM->levelnum = 0;
+			}
+		}
+		if(gotDownButtonPressed(1, true)) {
 			if (SOKOMEM->worldnum < WORLDCOUNT - 1){
 				SOKOMEM->worldnum++;
 				get_level_progress(gamemem);
+			} else {
+				SOKOMEM->worldnum = 0;
 			}
-		if(gotDownButtonPressed(1, true))
+		}
+		if(gotUpButtonPressed(1, true)) {
 			if (SOKOMEM->worldnum > 0){
 				SOKOMEM->worldnum--;
 				get_level_progress(gamemem);
+			} else {
+				SOKOMEM->worldnum = WORLDCOUNT - 1;
 			}
+		}
 	}
 	
 

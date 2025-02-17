@@ -16,8 +16,6 @@ struct statusReportData_t {
 	uint8_t checksumL;
 };
 
-//char msgggg[] = "Hallo\r\nWelt\r\ndies\r\nist\r\nein\r\nTest\r\n";
-
 void SetupComm()
 {
 	
@@ -55,8 +53,6 @@ void SendDeviceStatus()
 	while((CRC.STATUS & CRC_BUSY_bm));
 	data.checksumL = CRC.CHECKSUM0;
 	data.checksumH = CRC.CHECKSUM1; 
-	
-	//inject_data_usb(data.raw, sizeof(data));
+
 	inject_data_uart(data.raw, sizeof(data));
-	//inject_data_uart(msgggg, sizeof(msgggg) - 1);
 }

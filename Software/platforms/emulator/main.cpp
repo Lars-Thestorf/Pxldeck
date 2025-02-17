@@ -4,7 +4,6 @@
 #include <HLM_graphics.h>
 //#include "../HMatrix/esp32/main/bootlogo.c"
 #include <HLM_os.h>
-#include <HLM_random.h>
 #include "input.h"
 
 #include "driver/pcnetwork.h"
@@ -13,9 +12,6 @@ int main()
 {
     graphics_init();
     graphics_drawpixel(1,1,0xFFFF);
-	//graphics_drawImage1Bit(0, 0, bootlogo, 64, 32, 0x0000, 0xFFFF);
-
-	printf("Die heutige Zahl des Tages: %d\n", HLM_random(42));
 	
 	os_init();
     
